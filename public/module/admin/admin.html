@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Elite Tutorial — Admin Panel. Manage content, users, and platform settings." />
+  <title>Admin Panel | Elite Tutorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+  
+  <!-- Supabase & Auth -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../js/supabase-config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="../../js/auth.js"></script>
+</head>
+<body>
+
+  <!-- No sidebar in admin -->
+  <!-- ═══════════════════════════════════════
+       LOGIN GATE OVERLAY
+  ═══════════════════════════════════════ -->
+  <div class="login-overlay active" id="login-overlay">
+    <div class="login-bg-canvas">
+      <div class="login-bg-grid"></div>
+    </div>
+
+    <div class="login-card" id="login-card">
+      <div class="login-shield">🛡️</div>
+      <h1 class="login-title">Admin Access</h1>
+      <p class="login-subtitle">Enter your credentials to access the admin panel.</p>
+
+      <form id="admin-login-form" autocomplete="off">
+        <div class="login-field">
+          <label for="admin-username">Username</label>
+          <input type="text" id="admin-username" placeholder="Enter username" required />
+        </div>
+        <div class="login-field">
+          <label for="admin-password">Password</label>
+          <div class="password-wrap">
+            <input type="password" id="admin-password" placeholder="Enter password" required />
+            <button type="button" class="toggle-pw" id="toggle-pw">👁️</button>
+          </div>
+        </div>
+        <p class="login-error" id="login-error"></p>
+        <button type="submit" class="login-btn" id="login-btn">
+          <span>Authenticate</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </form>
+
+      <a href="../dashboard/dashboard.html" class="login-back">← Back to Dashboard</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       ADMIN PANEL (hidden until login)
+  ═══════════════════════════════════════ -->
+  <div class="admin-wrapper" id="admin-wrapper">
+
+    <!-- Topbar -->
+    <header class="admin-topbar">
+      <div class="admin-topbar-left">
+        <button class="hamburger-btn" id="sidebar-menu-toggle" aria-label="Open navigation" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <a href="../dashboard/dashboard.html" class="admin-back-btn" title="Back to Dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </a>
+        <div class="admin-topbar-brand">
+          <div class="admin-topbar-logo">Z</div>
+          <span class="admin-topbar-title">🛡️ Admin Panel</span>
+        </div>
+      </div>
+      <div class="admin-topbar-right">
+        <span class="admin-topbar-user">Admin</span>
+        <button class="admin-logout-btn" id="admin-logout-btn">🚪 Logout</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+
+      <div class="admin-page-header">
+        <h2 class="admin-page-title">🛡️ Admin Section</h2>
+        <p class="admin-page-sub">Manage content, users, and platform settings. Restricted to Admins only.</p>
+      </div>
+
+      <!-- Admin Sub-Tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="admin-dashboard">📊 Dashboard</button>
+        <button class="admin-tab" data-tab="admin-studio">✨ Content Studio</button>
+
+      </div>
+
+      <!-- Admin Tab: Dashboard -->
+      <div class="admin-tab-panel active" id="admin-dashboard">
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card" style="--a-color:#3b82f6;">
+            <div class="admin-stat-icon" style="background:rgba(59,130,246,0.12);color:#60a5fa;">👥</div>
+            <div class="admin-stat-body">
+              <span class="admin-stat-num" id="stat-total-students">—</span>
+              <span class="admin-stat-label">Total Students</span>
+            </div>
+          </div>
+          <div class="admin-stat-card" style="--a-color:#9d6aff;">
+            <div class="admin-stat-icon" style="background:rgba(124,58,237,0.12);color:#9d6aff;">❓</div>
+            <div class="admin-stat-body">
+              <span class="admin-stat-num" id="stat-total-questions">—</span>
+              <span class="admin-stat-label">Total Questions</span>
+            </div>
+          </div>
+          <div class="admin-stat-card" style="--a-color:#34d399;">
+            <div class="admin-stat-icon" style="background:rgba(5,150,105,0.12);color:#34d399;">📋</div>
+            <div class="admin-stat-body">
+              <span class="admin-stat-num" id="stat-active-exams">—</span>
+              <span class="admin-stat-label">Active Exams</span>
+            </div>
+          </div>
+          <div class="admin-stat-card" style="--a-color:#fbbf24;">
+            <div class="admin-stat-icon" style="background:rgba(217,119,6,0.12);color:#fbbf24;">🧩</div>
+            <div class="admin-stat-body">
+              <span class="admin-stat-num" id="stat-flashcards">—</span>
+              <span class="admin-stat-label">Flash Cards</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-recent-card">
+          <div class="card-header">
+            <h3 class="card-title">⚡ Recent Submissions</h3>
+            <span class="card-badge" style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);color:#9d6aff;">Live</span>
+          </div>
+          <div class="table-scroll">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Exam / Module</th>
+                  <th>Score</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="admin-submissions-list">
+                <!-- Dynamically populated -->
+                <tr><td colspan="5" style="text-align:center; padding: 20px;">Loading submissions...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Tab: AI Content Studio -->
+      <div class="admin-tab-panel" id="admin-studio">
+        <div class="studio-intro">
+          <h3 class="studio-intro-title">AI Content Studio</h3>
+          <p class="studio-intro-desc">Generate exam sets, flash card decks, and Elite Puzzle arenas with AI — then deploy to all students or selected cohorts.</p>
+        </div>
+        <div class="studio-cards-grid">
+          <a href="exam_question_generation.html" class="studio-card studio-card-exam">
+            <div class="studio-card-glow"></div>
+            <div class="studio-card-icon">📋</div>
+            <div class="studio-card-body">
+              <h4 class="studio-card-title">Exam Question Generator</h4>
+              <p class="studio-card-desc">Prompt AI to build full exam sets — e.g. 40 Mathematics questions with A–D/E options, difficulty tiers, and model selection.</p>
+              <ul class="studio-card-features">
+                <li>Custom AI prompt & subject</li>
+                <li>4 or 5 options per question</li>
+                <li>Send to all or selected users</li>
+              </ul>
+            </div>
+            <span class="studio-card-cta">Open Studio <span>→</span></span>
+          </a>
+          <a href="flash_card_generation.html" class="studio-card studio-card-flash">
+            <div class="studio-card-glow"></div>
+            <div class="studio-card-icon">🃏</div>
+            <div class="studio-card-body">
+              <h4 class="studio-card-title">Flash Card Generator</h4>
+              <p class="studio-card-desc">Create study decks with AI-generated front/back pairs. Package by subject and push decks to your students.</p>
+              <ul class="studio-card-features">
+                <li>Deck name & description</li>
+                <li>5–50 cards per generation</li>
+                <li>Targeted student dispatch</li>
+              </ul>
+            </div>
+            <span class="studio-card-cta">Open Studio <span>→</span></span>
+          </a>
+          <a href="elite_puzzle_generation.html" class="studio-card studio-card-puzzle">
+            <div class="studio-card-glow"></div>
+            <div class="studio-card-icon">🧩</div>
+            <div class="studio-card-body">
+              <h4 class="studio-card-title">Elite Puzzle Generator</h4>
+              <p class="studio-card-desc">Build timed puzzle arenas with scoring rules, round count, and catch-the-ball answer options for the game module.</p>
+              <ul class="studio-card-features">
+                <li>Timer & +/- scoring</li>
+                <li>Configurable rounds</li>
+                <li>Launch to all or selected</li>
+              </ul>
+            </div>
+            <span class="studio-card-cta">Open Studio <span>→</span></span>
+          </a>
+        </div>
+      </div>
+
+
+
+    </main>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- User Detail Modal -->
+  <div class="login-overlay" id="user-detail-modal" style="z-index: 10000; align-items: center; padding: 20px;">
+    <div class="admin-recent-card" style="width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative;">
+      <div class="card-header" style="position: sticky; top: -24px; background: var(--dark-700); z-index: 10; padding: 24px 0 20px 0; border-bottom: 1px solid var(--glass-border); margin-bottom: 20px; margin-top: -24px;">
+        <h3 class="card-title" id="ud-student-name">Student Detail</h3>
+        <button id="ud-close-btn" style="background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+      
+      <div class="admin-stats-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 30px;">
+        <div class="admin-stat-card" style="--a-color:#3b82f6;">
+          <div class="admin-stat-icon" style="background:rgba(59,130,246,0.12);color:#60a5fa;">📋</div>
+          <div class="admin-stat-body">
+            <span class="admin-stat-num" id="ud-exams-taken">0</span>
+            <span class="admin-stat-label">Exams Taken</span>
+          </div>
+        </div>
+        <div class="admin-stat-card" style="--a-color:#34d399;">
+          <div class="admin-stat-icon" style="background:rgba(5,150,105,0.12);color:#34d399;">📊</div>
+          <div class="admin-stat-body">
+            <span class="admin-stat-num" id="ud-avg-score">0%</span>
+            <span class="admin-stat-label">Average Score</span>
+          </div>
+        </div>
+      </div>
+
+      <h4 style="margin-bottom: 15px; color: var(--text-white); font-weight: 600;">Exam History</h4>
+      <div class="table-scroll">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Exam Title</th>
+              <th>Score</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="ud-history-list">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

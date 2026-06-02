@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signing in… | Elite Tutorial</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      background: #080808;
+      color: #fff;
+    }
+    .box {
+      text-align: center;
+      padding: 40px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top-color: #e01c1c;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .err { color: #ff7070; max-width: 360px; line-height: 1.5; }
+    a { color: #fbbf24; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="spinner" id="spinner"></div>
+    <p id="status">Completing sign-in…</p>
+    <p class="err" id="error" style="display:none"></p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../js/supabase-config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="../../js/auth.js"></script>
+  <script>
+    (async () => {
+      try {
+        await window.EliteAuth.completeOAuthCallback();
+      } catch (e) {
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('status').style.display = 'none';
+        const err = document.getElementById('error');
+        err.style.display = 'block';
+        err.innerHTML = (e.message || 'Sign-in failed.') + '<br><br><a href="login.html">Back to login</a>';
+      }
+    })();
+  </script>
+</body>
+</html>

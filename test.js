@@ -1,0 +1,1 @@
+const { createClient } = require('@supabase/supabase-js'); const client = createClient(require('./public/js/supabase-config.js').SUPABASE_URL, require('./public/js/supabase-config.js').SUPABASE_ANON_KEY); client.from('flash_cards').select('*').limit(1).then(res => console.log(JSON.stringify(res.data, null, 2)));

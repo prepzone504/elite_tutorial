@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en" class="page-puzzle">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Elite Tutorial — AI Elite Puzzle Generator. Create gamified puzzle sets and deploy to students." />
+  <title>Elite Puzzle Generator | Elite Tutorial Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="generation.css" />
+</head>
+
+<body class="page-puzzle">
+
+  <div id="auth-gate" class="auth-gate" style="display:none">
+    <div class="auth-gate-card">
+      <h2>🔒 Admin Required</h2>
+      <p>Sign in to the admin panel to access the AI Content Studio.</p>
+      <a href="admin.html">Go to Admin Login</a>
+    </div>
+  </div>
+
+  <div class="studio-bg">
+    <div class="studio-grid"></div>
+  </div>
+
+  <div class="studio-shell">
+    <header class="studio-topbar">
+      <div class="studio-topbar-left">
+        <a href="admin.html" class="studio-back" title="Back to Admin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </a>
+        <div class="studio-brand">
+          <div class="studio-brand-icon">🧩</div>
+          <div class="studio-brand-text">
+            <h1>Elite Puzzle Studio</h1>
+            <p>AI Content Generator</p>
+          </div>
+        </div>
+      </div>
+      <span class="studio-badge">Puzzle Module</span>
+    </header>
+
+    <main class="studio-main">
+      <div class="studio-hero">
+        <h2>Generate & Deploy Elite Puzzles</h2>
+        <p>Create fast-paced puzzle question sets for the Elite Puzzle arena — floating-ball gameplay with scoring,
+          timer, and negative marking. AI-generate rounds, preview, then dispatch.</p>
+        <div class="studio-hero-meta">
+          <span class="hero-pill">⏱️ Timed arena</span>
+          <span class="hero-pill">✅ +10 / ❌ −5 scoring</span>
+          <span class="hero-pill">🎾 Catch-the-ball answers</span>
+        </div>
+      </div>
+
+      <div class="studio-grid-layout">
+        <div class="studio-panel">
+          <div class="panel-header">
+            <h3>Puzzle Configuration</h3>
+            <span>Step 1 — Define arena</span>
+          </div>
+          <div class="panel-body">
+            <form id="puzzle-gen-form" autocomplete="off">
+
+              <div class="form-section">
+                <div class="form-section-title">Puzzle Details</div>
+                <div class="form-row">
+                  <div class="form-field">
+                    <label for="puzzle-title">Puzzle Title</label>
+                    <input type="text" id="puzzle-title" placeholder="win #1500 when you take first" value="" />
+                  </div>
+                  <div class="form-field">
+                    <label for="puzzle-subject-select">Course Code</label>
+                    <input type="text" id="puzzle-subject-select" placeholder="e.g. CHM 203" />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-field">
+                    <label for="time-limit">Time Limit <span class="hint">(minutes)</span></label>
+                    <input type="number" id="time-limit" min="1" max="15" value="3" />
+                  </div>
+                  <div class="form-field">
+                    <label for="puzzle-level">Level Label</label>
+                    <input type="text" id="puzzle-level" placeholder="e.g. Level 5" value="Level 5" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">Generation Mode</div>
+                <div class="mode-toggle">
+                  <button type="button" class="mode-btn active" id="mode-auto">✨ Auto (AI Generate)</button>
+                  <button type="button" class="mode-btn" id="mode-manual">✍️ Manual (Admin Paste)</button>
+                </div>
+                <div id="auto-section">
+                  <div class="form-field">
+                    <label for="puzzle-prompt">AI Prompt</label>
+                    <textarea id="puzzle-prompt"
+                      placeholder="e.g. Generate quick-fire Biology puzzle questions suitable for a 3-minute timed game. Include sequence puzzles, definitions, and calculation rounds. Answers should work as floating-ball options."></textarea>
+                  </div>
+                </div>
+                <div id="manual-section" class="mode-section hidden">
+                  <div class="form-field">
+                    <label>Fixed AI Prompt <span class="hint">(Instructions given to AI)</span></label>
+                    <textarea readonly style="background: rgba(0,0,0,0.03); cursor: not-allowed; resize: none; color: #888; border-color: rgba(0,0,0,0.1); min-height: 60px;">Return exactly the question, options a - d, correct answer, explanation (optional).</textarea>
+                  </div>
+                  <div class="form-field">
+                    <label for="manual-puzzle">Paste Puzzle Rounds <span class="hint">(tell the AI do not change or modify the question)</span></label>
+                    <textarea id="manual-puzzle"
+                      placeholder="Example (repeat blocks):\n\n1) Find the missing number: 2, 4, 8, ?, 32\nA) 12\nB) 16\nC) 20\nD) 14\nE) 18\nAnswer: B\n\n2) Which organelle is the powerhouse of the cell?\nA) Nucleus\nB) Mitochondria\nC) Ribosome\nD) Golgi\nAnswer: B"></textarea>
+                    <div class="manual-help">Manual mode: Do not change or modify the question. You can manual paste
+                      (question, short options, answer and explanation) and the API will do the arrangement manually.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">Game Format</div>
+                <div class="form-field">
+                  <label>Answer Options per Round</label>
+                  <div class="option-pills" id="puzzle-option-pills"></div>
+                </div>
+                <div class="form-field">
+                  <label>Difficulty Level</label>
+                  <div class="difficulty-chips" id="puzzle-difficulty-chips"></div>
+                </div>
+                <div class="form-row">
+                  <div class="form-field">
+                    <label for="points-correct">Points (Correct)</label>
+                    <input type="number" id="points-correct" min="1" max="50" value="10" />
+                  </div>
+                  <div class="form-field">
+                    <label for="points-wrong">Penalty (Wrong)</label>
+                    <input type="number" id="points-wrong" min="0" max="20" value="5" />
+                  </div>
+                </div>
+                <div class="form-field" id="count-wrap">
+                  <label for="round-count">Number of Rounds to Generate</label>
+                  <div class="range-wrap">
+                    <input type="range" id="round-count" min="5" max="40" value="15" step="1" />
+                    <span class="range-value" id="round-count-display">15</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">AI Model</div>
+                <div class="model-grid" id="puzzle-model-grid">
+                  <button type="button" class="model-card active" data-model="mistral-large-latest">
+                    <div class="model-name">Mistral Large</div>
+                    <div class="model-desc">Best reasoning & exam quality</div>
+                    <span class="model-tag">Recommended</span>
+                  </button>
+                  <button type="button" class="model-card" data-model="mistral-medium-latest">
+                    <div class="model-name">Mistral Medium</div>
+                    <div class="model-desc">Balanced speed & quality</div>
+                    <span class="model-tag">Balanced</span>
+                  </button>
+                  <button type="button" class="model-card" data-model="mistral-small-latest">
+                    <div class="model-name">Mistral Small</div>
+                    <div class="model-desc">Fast bulk generation</div>
+                    <span class="model-tag">Fast</span>
+                  </button>
+                  <button type="button" class="model-card" data-model="open-mistral-7b">
+                    <div class="model-name">Mistral 7B</div>
+                    <div class="model-desc">Cost-efficient drafts</div>
+                    <span class="model-tag">Economy</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">Dispatch to Students</div>
+                <div class="dispatch-toggle">
+                  <button type="button" class="dispatch-btn active" id="puzzle-dispatch-all">📢 All Students</button>
+                  <button type="button" class="dispatch-btn" id="puzzle-dispatch-selected">👥 Selected Only</button>
+                </div>
+                <div class="user-select-panel hidden" id="puzzle-user-panel">
+                  <div class="user-select-toolbar">
+                    <input type="text" id="puzzle-user-search" placeholder="Search students…" />
+                    <button type="button" class="btn-select-all" id="puzzle-user-list-select-all">Select All</button>
+                  </div>
+                  <div class="user-list" id="puzzle-user-list"></div>
+                </div>
+              </div>
+
+              <div class="gen-loading" id="gen-loading" style="display:none;">
+                <div class="gen-spinner"></div>
+                <div class="gen-loading-text" id="gen-loading-text">Processing 0 questions…</div>
+              </div>
+
+              <div class="action-bar">
+                <button type="button" class="btn-primary-gen" id="btn-generate">
+                  <span>✨</span> Generate Arena Preview
+                </button>
+                <button type="button" class="btn-secondary-gen" id="btn-clear">Clear</button>
+                <button type="button" class="btn-send" id="btn-send">
+                  <span>🚀</span> Approve & Launch Puzzle
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="studio-panel">
+          <div class="panel-header">
+            <h3>Arena Preview</h3>
+            <span id="preview-status">Awaiting generation</span>
+          </div>
+          <div class="panel-body">
+            <div class="preview-stats" id="preview-stats" style="display:none"></div>
+            <div class="panel-body scrollable preview-list" id="preview-list">
+              <div class="preview-empty">
+                <div class="icon">🧩</div>
+                <h4>Preview puzzle rounds</h4>
+                <p>Configure scoring, timer, and AI prompt — then generate rounds before launching to students.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../js/supabase-config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="generation.js?v=2"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!checkAdminAuth()) return;
+
+      const getModel = initModelGrid('puzzle-model-grid', 'mistral-large-latest');
+      const getDiff = initDifficultyChips('puzzle-difficulty-chips');
+      const getOptions = initOptionPills('puzzle-option-pills', 5);
+      const getCount = initQuestionRange('round-count', 'round-count-display', 15);
+      const dispatch = initUserDispatch('puzzle-user-list', 'puzzle-user-search', 'puzzle-dispatch-all', 'puzzle-dispatch-selected', 'puzzle-user-panel');
+      const getMode = initModeToggle('mode-auto', 'mode-manual', 'auto-section', 'manual-section', 'auto', (mode) => {
+        const countWrap = document.getElementById('count-wrap');
+        if (countWrap) {
+          countWrap.style.display = mode === 'auto' ? 'block' : 'none';
+        }
+      });
+
+      let generatedItems = [];
+      const loading = document.getElementById('gen-loading');
+      const loadingText = document.getElementById('gen-loading-text');
+      const previewList = document.getElementById('preview-list');
+      const previewStats = document.getElementById('preview-stats');
+      const previewStatus = document.getElementById('preview-status');
+      const btnSend = document.getElementById('btn-send');
+
+      document.getElementById('btn-generate').addEventListener('click', async () => {
+        const subject = document.getElementById('puzzle-subject-select').value.trim();
+        const title = document.getElementById('puzzle-title').value.trim();
+
+        if (!subject) { showToast('Please enter a course code.', 'error'); return; }
+        const mode = getMode();
+
+        const count = getCount();
+        const model = getModel();
+        const modelName = AI_MODELS.find(m => m.id === model)?.name || model;
+        const pts = parseInt(document.getElementById('points-correct').value, 10) || 10;
+        const pen = parseInt(document.getElementById('points-wrong').value, 10) || 5;
+        const optionCount = getOptions();
+
+        document.getElementById('btn-generate').disabled = true;
+
+        if (mode === 'auto') {
+          const prompt = document.getElementById('puzzle-prompt').value.trim();
+          if (!prompt) { showToast('Please enter an AI prompt.', 'error'); document.getElementById('btn-generate').disabled = false; return; }
+
+          setGenerating(loading, true, loadingText, `AI is generating <strong>${count}</strong> rounds…`);
+          try {
+            const items = await generatePuzzleQuestions(count, subject, prompt, getDiff(), model, optionCount, (processed, total, msg) => {
+              if (loadingText) loadingText.innerHTML = `${msg} <span style="font-size:0.8em;opacity:0.8">(${processed} / ${total})</span>`;
+            });
+            generatedItems = items.map(item => ({ ...item, points: pts, penalty: pen }));
+            renderPuzzlePreview(previewList, generatedItems);
+            updatePreviewStats(previewStats, count, subject, model);
+            previewStatus.textContent = `${count} rounds · ${document.getElementById('time-limit').value} min`;
+            btnSend.classList.add('visible');
+            showToast(`✅ Generated ${count} puzzle rounds for "${title}"`, 'success');
+          } catch (err) {
+            showToast(err.message, 'error');
+          } finally {
+            setGenerating(loading, false);
+            document.getElementById('btn-generate').disabled = false;
+          }
+          return;
+        }
+
+        const raw = document.getElementById('manual-puzzle').value;
+        const parsed = parseManualPuzzleInput(raw, optionCount);
+        if (!parsed.length) { showToast('Paste at least one puzzle round.', 'error'); document.getElementById('btn-generate').disabled = false; return; }
+
+        const diff = getDiff();
+        await simulateGeneration(loading, loadingText, parsed.length, modelName, () => {
+          generatedItems = parsed.map((p, idx) => ({
+            num: idx + 1,
+            question: `[${subject}] ${p.question}`,
+            correctAnswer: p.correctAnswer,
+            options: p.options,
+            difficulty: randomDiff(diff),
+            points: pts,
+            penalty: pen,
+          }));
+          renderPuzzlePreview(previewList, generatedItems);
+          updatePreviewStats(previewStats, generatedItems.length, subject, model);
+          previewStatus.textContent = `${generatedItems.length} rounds · ${document.getElementById('time-limit').value} min`;
+          btnSend.classList.add('visible');
+          showToast(`✅ Arranged ${generatedItems.length} manual puzzle rounds for "${title}"`, 'success');
+          document.getElementById('btn-generate').disabled = false;
+        });
+      });
+
+      document.getElementById('btn-clear').addEventListener('click', () => {
+        generatedItems = [];
+        renderPuzzlePreview(previewList, []);
+        previewStats.style.display = 'none';
+        previewStatus.textContent = 'Awaiting generation';
+        btnSend.classList.remove('visible');
+        document.getElementById('puzzle-prompt').value = '';
+        const m = document.getElementById('manual-puzzle');
+        if (m) m.value = '';
+      });
+
+      document.getElementById('btn-send').addEventListener('click', async () => {
+        if (!generatedItems.length) { showToast('Generate puzzle rounds first.', 'error'); return; }
+        const d = dispatch.getDispatch();
+        if (d.mode === 'selected' && !d.users.length) {
+          showToast('Select at least one student.', 'error');
+          return;
+        }
+
+        const title = document.getElementById('puzzle-title').value.trim() || 'Untitled Puzzle';
+        const courseCode = document.getElementById('puzzle-subject-select').value.trim() || 'General';
+        const timeLimit = document.getElementById('time-limit').value;
+        const levelLabel = document.getElementById('puzzle-level').value;
+
+        btnSend.disabled = true;
+        const ogText = btnSend.innerHTML;
+        btnSend.innerHTML = `<span>⏳</span> Saving Puzzle…`;
+
+        try {
+          await saveElitePuzzle(title, courseCode, timeLimit, levelLabel, generatedItems);
+
+          const target = d.mode === 'all' ? 'all students' : `${d.users.length} selected student(s)`;
+          showToast(`🚀 Puzzle "${title}" launched for ${target}!`, 'success');
+          previewStatus.textContent = `Live for ${target}`;
+        } catch (err) {
+          showToast('Failed to save puzzle: ' + err.message, 'error');
+        } finally {
+          btnSend.disabled = false;
+          btnSend.innerHTML = ogText;
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

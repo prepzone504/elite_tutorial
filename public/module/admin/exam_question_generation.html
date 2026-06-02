@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en" class="page-exam">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Elite Tutorial — AI Exam Question Generator. Create and deploy exam sets to students." />
+  <title>Exam Generator | Elite Tutorial Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="generation.css" />
+</head>
+
+<body class="page-exam">
+
+  <div id="auth-gate" class="auth-gate" style="display:none">
+    <div class="auth-gate-card">
+      <h2>🔒 Admin Required</h2>
+      <p>Sign in to the admin panel to access the AI Content Studio.</p>
+      <a href="admin.html">Go to Admin Login</a>
+    </div>
+  </div>
+
+  <div class="studio-bg">
+    <div class="studio-grid"></div>
+  </div>
+
+  <div class="studio-shell">
+    <header class="studio-topbar">
+      <div class="studio-topbar-left">
+        <a href="admin.html" class="studio-back" title="Back to Admin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </a>
+        <div class="studio-brand">
+          <div class="studio-brand-icon">📋</div>
+          <div class="studio-brand-text">
+            <h1>Exam Question Studio</h1>
+            <p>AI Content Generator</p>
+          </div>
+        </div>
+      </div>
+      <span class="studio-badge">Exam Module</span>
+    </header>
+
+    <main class="studio-main">
+      <div class="studio-hero">
+        <h2>Generate & Deploy Exam Sets</h2>
+        <p>Create full exam question banks with AI — e.g. 40 Mathematics questions with configurable options,
+          difficulty, and model. Preview, approve, then push to all students or a selected cohort.</p>
+        <div class="studio-hero-meta">
+          <span class="hero-pill">✨ Multi-option (A–E)</span>
+          <span class="hero-pill">🎯 Difficulty control</span>
+          <span class="hero-pill">📤 Bulk dispatch</span>
+        </div>
+      </div>
+
+      <div class="studio-grid-layout">
+        <!-- CONFIG -->
+        <div class="studio-panel">
+          <div class="panel-header">
+            <h3>Configuration</h3>
+            <span>Step 1 — Define exam</span>
+          </div>
+          <div class="panel-body">
+            <form id="exam-gen-form" autocomplete="off">
+
+              <div class="form-section">
+                <div class="form-section-title">Exam Details</div>
+                <div class="form-row">
+                  <div class="form-field">
+                    <label for="exam-title">Exam Title</label>
+                    <input type="text" id="exam-title" placeholder="e.g. the study of living thing" />
+                  </div>
+                  <div class="form-field">
+                    <label for="subject-select">Course Code</label>
+                    <input type="text" id="subject-select" placeholder="e.g. bio 325 batch 1" />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-field">
+                    <label for="exam-duration">Duration <span class="hint">(minutes)</span></label>
+                    <input type="number" id="exam-duration" min="10" max="180" value="60" />
+                  </div>
+                  <div class="form-field">
+                    <label for="pass-mark">Pass Mark <span class="hint">(%)</span></label>
+                    <input type="number" id="pass-mark" min="0" max="100" value="60" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">Generation Mode</div>
+                <div class="form-field">
+                  <label for="ai-prompt" id="ai-prompt-label">AI Prompt <span class="hint">(topic, syllabus,
+                      style)</span></label>
+                  <textarea id="ai-prompt"
+                    placeholder="e.g. Generate WAEC-style Mathematics questions covering quadratic equations, differentiation, probability, and geometry. Use clear wording suitable for SS3 students. Include real-world application problems."></textarea>
+                </div>
+                <div class="mode-toggle">
+                  <button type="button" class="mode-btn active" id="mode-auto">✨ Auto (AI Generate)</button>
+                  <button type="button" class="mode-btn" id="mode-manual">✍️ Manual (Admin Paste)</button>
+                </div>
+                <div id="manual-section" class="mode-section hidden">
+                  <div class="form-field">
+                    <label for="manual-questions">Paste Questions + Options <span class="hint">(AI will
+                        arrange)</span></label>
+                    <textarea id="manual-questions" rows="15" placeholder="Example (repeat blocks):
+
+1) Solve for x: 2x^2 + 5x - 3 = 0
+A) x = 1, x = -2
+B) x = 1/2, x = -3
+C) x = -1/2, x = 3
+D) x = 2, x = -1
+Answer: B
+
+2) The gradient of y = 3x - 7 is
+A) 3
+B) -3
+C) 7
+D) -7
+Answer: A"></textarea>
+                    <div class="manual-help">Manual mode: paste your questions above, then the system formats and saves
+                      them — <strong>no content will be altered</strong>.</div>
+                    <div id="manual-count" class="manual-question-count" style="display:none">0 questions detected</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">Question Format</div>
+                <div class="form-field">
+                  <label>Number of Options per Question</label>
+                  <div class="option-pills" id="option-pills"></div>
+                </div>
+                <div class="form-field">
+                  <label>Difficulty Level</label>
+                  <div class="difficulty-chips" id="difficulty-chips"></div>
+                </div>
+                <div class="form-field" id="count-wrap">
+                  <label for="question-count">Number of Questions to Generate</label>
+                  <div class="range-wrap">
+                    <input type="range" id="question-count" min="5" max="60" value="5" step="1" />
+                    <span class="range-value" id="question-count-display">5</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">AI Model</div>
+                <div class="model-grid" id="model-grid">
+                  <button type="button" class="model-card active" data-model="mistral-large-latest">
+                    <div class="model-name">Mistral Large</div>
+                    <div class="model-desc">Best reasoning & exam quality</div>
+                    <span class="model-tag">Recommended</span>
+                  </button>
+                  <button type="button" class="model-card" data-model="mistral-medium-latest">
+                    <div class="model-name">Mistral Medium</div>
+                    <div class="model-desc">Balanced speed & quality</div>
+                    <span class="model-tag">Balanced</span>
+                  </button>
+                  <button type="button" class="model-card" data-model="mistral-small-latest">
+                    <div class="model-name">Mistral Small</div>
+                    <div class="model-desc">Fast bulk generation</div>
+                    <span class="model-tag">Fast</span>
+                  </button>
+                  <button type="button" class="model-card" data-model="open-mistral-7b">
+                    <div class="model-name">Mistral 7B</div>
+                    <div class="model-desc">Cost-efficient drafts</div>
+                    <span class="model-tag">Economy</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">Dispatch to Students</div>
+                <div class="dispatch-toggle">
+                  <button type="button" class="dispatch-btn active" id="dispatch-all">📢 All Students</button>
+                  <button type="button" class="dispatch-btn" id="dispatch-selected">👥 Selected Only</button>
+                </div>
+                <div class="user-select-panel hidden" id="user-select-panel">
+                  <div class="user-select-toolbar">
+                    <input type="text" id="user-search" placeholder="Search students…" />
+                    <button type="button" class="btn-select-all" id="user-list-select-all">Select All</button>
+                  </div>
+                  <div class="user-list" id="user-list"></div>
+                </div>
+              </div>
+
+              <div class="gen-loading" id="gen-loading">
+                <div class="gen-spinner"></div>
+                <div class="gen-loading-text" id="gen-loading-text">Generating…</div>
+              </div>
+
+              <div class="action-bar">
+                <button type="button" class="btn-primary-gen" id="btn-generate">
+                  <span>✨</span> Generate / Arrange Preview
+                </button>
+                <button type="button" class="btn-secondary-gen" id="btn-clear">Clear</button>
+                <button type="button" class="btn-send" id="btn-send">
+                  <span>🚀</span> Approve & Send to Students
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="studio-panel">
+          <div class="panel-header">
+            <h3>Live Preview</h3>
+            <span id="preview-status">Awaiting generation</span>
+          </div>
+          <div class="panel-body">
+            <div class="preview-stats" id="preview-stats" style="display:none"></div>
+            <div class="panel-body scrollable preview-list" id="preview-list">
+              <div class="preview-empty">
+                <div class="icon">📋</div>
+                <h4>Preview your exam set</h4>
+                <p>Set your prompt, choose 40 questions (or any count), then generate to review before sending.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../js/supabase-config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="generation.js?v=2"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!checkAdminAuth()) return;
+
+      const getModel = initModelGrid('model-grid');
+      const getDiff = initDifficultyChips('difficulty-chips');
+      const getOptions = initOptionPills('option-pills', 4);
+      // Hard-coded instruction for manual mode: AI must NOT edit the provided content, only format it
+      const MANUAL_INSTRUCTION = 'You are a formatting assistant. Take the block of text you receive (questions, options, answer line, and optional explanation). Do NOT modify, delete, or rewrite any question, option, answer, or explanation. Your task is to convert it into the JSON schema used by our exam database. Return a JSON array of objects with keys: question_text, options (array of strings), answer (letter), and optional explanation.';
+      const getCount = initQuestionRange('question-count', 'question-count-display', 5);
+      const dispatch = initUserDispatch('user-list', 'user-search', 'dispatch-all', 'dispatch-selected', 'user-select-panel');
+      let savedAutoPrompt = '';
+      const manualCount = document.getElementById('manual-count');
+      const manualTextarea = document.getElementById('manual-questions');
+      function updateManualCount() {
+        const raw = manualTextarea.value.trim();
+        if (!raw) { manualCount.style.display = 'none'; return; }
+        const blocks = splitIntoBlocks(raw);
+        const count = blocks.length;
+        manualCount.textContent = count + ' question' + (count !== 1 ? 's' : '') + ' detected';
+        manualCount.style.display = '';
+      }
+      if (manualTextarea) {
+        manualTextarea.addEventListener('input', updateManualCount);
+      }
+
+      const countWrap = document.getElementById('count-wrap');
+      const getMode = initModeToggle('mode-auto', 'mode-manual', null, 'manual-section', 'auto', (mode) => {
+        const promptEl = document.getElementById('ai-prompt');
+        const promptLabel = document.getElementById('ai-prompt-label');
+        if (mode === 'manual') {
+          savedAutoPrompt = promptEl.value;
+          promptEl.value = MANUAL_INSTRUCTION;
+          promptEl.readOnly = true;
+          promptEl.style.opacity = '0.65';
+          promptEl.style.cursor = 'not-allowed';
+          promptEl.style.background = 'rgba(255,255,255,0.04)';
+          if (promptLabel) promptLabel.innerHTML = 'AI Instruction <span class="hint">(read-only — sent automatically in manual mode)</span>';
+          if (countWrap) countWrap.style.display = 'none';
+        } else {
+          promptEl.value = savedAutoPrompt;
+          promptEl.readOnly = false;
+          promptEl.style.opacity = '';
+          promptEl.style.cursor = '';
+          promptEl.style.background = '';
+          if (promptLabel) promptLabel.innerHTML = 'AI Prompt <span class="hint">(topic, syllabus, style)</span>';
+          if (countWrap) countWrap.style.display = '';
+        }
+      });
+
+      let generatedItems = [];
+
+      const loading = document.getElementById('gen-loading');
+      const loadingText = document.getElementById('gen-loading-text');
+      const previewList = document.getElementById('preview-list');
+      const previewStats = document.getElementById('preview-stats');
+      const previewStatus = document.getElementById('preview-status');
+      const btnSend = document.getElementById('btn-send');
+      const btnGenerate = document.getElementById('btn-generate');
+
+      /* ── GENERATE button ── */
+      btnGenerate.addEventListener('click', async () => {
+        const subject = document.getElementById('subject-select').value;
+        const title = document.getElementById('exam-title').value.trim();
+
+        if (!subject) { showToast('Please select a subject.', 'error'); return; }
+
+        const mode = getMode();
+        const optionCount = getOptions();
+        const count = getCount();
+        const modelId = getModel();
+
+        // Grab the name from the manually placed model-card
+        const activeCard = document.querySelector(`#model-grid .model-card.active .model-name`);
+        const modelName = activeCard ? activeCard.textContent.trim() : modelId;
+
+        btnGenerate.disabled = true;
+
+        // -- MANUAL mode: send pasted questions to Mistral AI for arrangement --
+        if (mode === 'manual') {
+          const raw = document.getElementById('manual-questions').value.trim();
+          if (!raw) {
+            showToast('Paste at least one question block first.', 'error');
+            btnGenerate.disabled = false;
+            return;
+          }
+
+          const diff = getDiff();
+          const blocks = splitIntoBlocks(raw);
+          if (!blocks.length) {
+            showToast('Paste at least one question block first.', 'error');
+            btnGenerate.disabled = false;
+            return;
+          }
+
+          const BATCH_SIZE = 10;
+          generatedItems = [];
+
+          setGenerating(loading, true, loadingText,
+            'Sending to <strong>Mistral AI</strong> for arrangement…');
+
+          try {
+            for (let i = 0; i < blocks.length; i += BATCH_SIZE) {
+              const chunkBlocks = blocks.slice(i, i + BATCH_SIZE);
+              const chunkText = chunkBlocks.join('\\n\\n');
+
+              setGenerating(loading, true, loadingText, `Arranging blocks <strong>${i + 1} to ${Math.min(i + BATCH_SIZE, blocks.length)}</strong> of ${blocks.length}…`);
+
+              // Strict prompt: AI must NOT alter any content, only format into JSON
+              const lines = [
+                'You are a formatting assistant. The admin has pasted exam questions below.',
+                '',
+                'CRITICAL RULES:',
+                '- Do NOT change, rephrase, or alter any question text, option text, answer, or explanation.',
+                '- Do NOT add, remove, or reorder questions.',
+                '- Your ONLY job is to read each question block and output it as valid JSON.',
+                '- Return a JSON array with NO markdown, NO code fences -- pure JSON only.',
+                '- Each object must have exactly these keys:',
+                '    "question"     -- the question text exactly as written (strip leading numbers like "1.","1)")',
+                '    "options"      -- array of {letter, text, correct:bool}',
+                '    "difficulty"   -- use "' + (diff === 'mixed' ? 'medium' : diff) + '"',
+                '    "explanation"  -- explanation text if present, else "No explanation provided."',
+                '- Mark correct:true on the option whose letter matches the Answer line.',
+                '',
+                'PASTED QUESTIONS:',
+                chunkText
+              ];
+              const manualPrompt = lines.join('\\n');
+
+              let retries = 3;
+              let parsed = null;
+
+              while (retries > 0) {
+                try {
+                  const rawText = await callMistralApi(modelId, manualPrompt);
+
+                  // Strip markdown fences if any
+                  let clean = rawText.trim();
+                  if (clean.startsWith('```')) {
+                    const firstNewline = clean.indexOf('\\n');
+                    clean = firstNewline !== -1 ? clean.slice(firstNewline + 1) : clean;
+                  }
+                  if (clean.endsWith('```')) {
+                    const lastNewline = clean.lastIndexOf('\\n');
+                    clean = lastNewline !== -1 ? clean.slice(0, lastNewline) : clean;
+                  }
+                  clean = clean.trim();
+
+                  try {
+                    parsed = JSON.parse(clean);
+                  } catch (e) {
+                    // Try to find a JSON array in the text
+                    const arrStart = clean.indexOf('[');
+                    const arrEnd = clean.lastIndexOf(']');
+                    if (arrStart === -1 || arrEnd === -1) throw new Error('AI returned invalid JSON. Please try again.');
+                    parsed = JSON.parse(clean.slice(arrStart, arrEnd + 1));
+                  }
+
+                  if (!Array.isArray(parsed) || !parsed.length) {
+                    throw new Error('AI returned no questions. Please try again.');
+                  }
+                  break;
+                } catch (err) {
+                  retries--;
+                  if (retries === 0) throw err;
+                }
+              }
+
+              const batchItems = parsed.map(function (item) {
+                return {
+                  question: item.question,
+                  options: (item.options || []).map(function (o) {
+                    return { letter: o.letter, text: o.text, correct: !!o.correct };
+                  }),
+                  difficulty: item.difficulty || diff,
+                  explanation: item.explanation || 'No explanation provided.',
+                };
+              });
+
+              generatedItems = generatedItems.concat(batchItems);
+            }
+
+            generatedItems = generatedItems.map(function (item, idx) {
+              return {
+                num: idx + 1,
+                question: item.question || ('Question ' + (idx + 1)),
+                options: item.options,
+                difficulty: item.difficulty,
+                explanation: item.explanation,
+              };
+            });
+
+            setGenerating(loading, false);
+            renderExamPreview(previewList, generatedItems);
+            updatePreviewStats(previewStats, generatedItems.length, subject, modelId);
+            previewStatus.textContent = generatedItems.length + ' questions arranged ✅';
+            btnSend.classList.add('visible');
+            showToast('✅ Arranged ' + generatedItems.length + ' questions for "' + title + '"', 'success');
+          } catch (err) {
+            setGenerating(loading, false);
+            showToast('❌ ' + err.message, 'error');
+            console.error(err);
+          } finally {
+            btnGenerate.disabled = false;
+          }
+          return;
+        }
+
+        // ── AUTO mode (real Mistral AI) ──
+        const prompt = document.getElementById('ai-prompt').value.trim();
+        if (!prompt) {
+          showToast('Please enter an AI prompt.', 'error');
+          btnGenerate.disabled = false;
+          return;
+        }
+
+        setGenerating(loading, true, loadingText,
+          `Connecting to <strong>Mistral AI (${modelName})</strong>…`);
+
+        try {
+          generatedItems = await generateExamQuestions(
+            count, optionCount, subject, prompt, getDiff(), modelId,
+            (processed, total, msg) => setGenerating(loading, true, loadingText,
+              `${msg} &nbsp;<strong>${processed} / ${total}</strong>`)
+          );
+
+          setGenerating(loading, false);
+          renderExamPreview(previewList, generatedItems);
+          updatePreviewStats(previewStats, generatedItems.length, subject, modelId);
+          previewStatus.textContent = `${generatedItems.length} questions ready ✅`;
+          btnSend.classList.add('visible');
+          showToast(`✅ Generated ${generatedItems.length} exam questions for "${title}"`, 'success');
+        } catch (err) {
+          setGenerating(loading, false);
+          showToast(`❌ ${err.message}`, 'error');
+          console.error(err);
+        } finally {
+          btnGenerate.disabled = false;
+        }
+      });
+
+      /* ── CLEAR button ── */
+      document.getElementById('btn-clear').addEventListener('click', () => {
+        generatedItems = [];
+        renderExamPreview(previewList, []);
+        previewStats.style.display = 'none';
+        previewStatus.textContent = 'Awaiting generation';
+        btnSend.classList.remove('visible');
+        document.getElementById('ai-prompt').value = '';
+        const m = document.getElementById('manual-questions');
+        if (m) m.value = '';
+      });
+
+      /* ── APPROVE & SEND button — saves to Supabase ── */
+      btnSend.addEventListener('click', async () => {
+        if (!generatedItems.length) { showToast('Generate questions first.', 'error'); return; }
+
+        const d = dispatch.getDispatch();
+        if (d.mode === 'selected' && !d.users.length) {
+          showToast('Select at least one student.', 'error');
+          return;
+        }
+
+        const title = document.getElementById('exam-title').value.trim() || 'Untitled Exam';
+        const subject = document.getElementById('subject-select').value;
+        const duration = parseInt(document.getElementById('exam-duration').value, 10) || 60;
+        const passMark = parseInt(document.getElementById('pass-mark').value, 10) || 60;
+        const dispatchTo = d.mode === 'all' ? 'all' : JSON.stringify(d.users);
+        const target = d.mode === 'all' ? 'all students' : `${d.users.length} selected student(s)`;
+
+        btnSend.disabled = true;
+        showToast('💾 Saving to Supabase…', 'info');
+
+        try {
+          const client = window.getSupabaseClient();
+
+          // Generate a single batch ID for ALL questions in this send
+          const batchId = crypto.randomUUID();
+
+          const rows = generatedItems.map(item => ({
+            exam_batch_id: batchId,
+            exam_title: title,
+            subject: subject,
+            question_text: item.question,
+            options: item.options,
+            explanation: item.explanation || null,
+            difficulty: item.difficulty,
+            duration_mins: duration,
+            pass_mark: passMark,
+            dispatched_to: dispatchTo,
+          }));
+
+          const { error } = await client
+            .from('exam_questions')
+            .insert(rows);
+
+          if (error) throw new Error(error.message);
+
+          showToast(`🚀 Exam "${title}" saved & sent to ${target}!`, 'success');
+          previewStatus.textContent = `Deployed to ${target} ✅`;
+        } catch (err) {
+          showToast(`❌ Save failed: ${err.message}`, 'error');
+          console.error(err);
+        } finally {
+          btnSend.disabled = false;
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>

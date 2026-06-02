@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Leaderboard | Elite Tutorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <!-- Shared sidebar -->
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="leaderboard.css" />
+</head>
+<body id="page-leaderboard">
+
+  <!-- Shared Sidebar -->
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <!-- ═══════════════════════════════════════
+       LOGIN GATE OVERLAY
+  ═══════════════════════════════════════ -->
+  <div class="login-overlay active" id="login-overlay">
+    <div class="login-bg-canvas">
+      <div class="login-bg-grid"></div>
+    </div>
+
+    <div class="login-card" id="login-card">
+      <div class="login-shield">🏆</div>
+      <h1 class="login-title">Admin Access</h1>
+      <p class="login-subtitle">Enter your credentials to access the leaderboard.</p>
+
+      <form id="admin-login-form" autocomplete="off">
+        <div class="login-field">
+          <label for="admin-username">Username</label>
+          <input type="text" id="admin-username" placeholder="Enter username" required />
+        </div>
+        <div class="login-field">
+          <label for="admin-password">Password</label>
+          <div class="password-wrap">
+            <input type="password" id="admin-password" placeholder="Enter password" required />
+            <button type="button" class="toggle-pw" id="toggle-pw">👁️</button>
+          </div>
+        </div>
+        <p class="login-error" id="login-error"></p>
+        <button type="submit" class="login-btn" id="login-btn">
+          <span>Authenticate</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </form>
+
+      <a href="../../index.html" class="login-back">← Back to Home</a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       MAIN WRAPPER
+  ══════════════════════════════ -->
+  <div class="main-wrapper" id="lb-main-wrapper" style="display: none;">
+
+    <!-- Mobile Top Bar -->
+    <header class="lb-topbar" id="lb-topbar">
+      <button class="hamburger-btn" id="sidebar-menu-toggle" aria-label="Open navigation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+      <h1 class="lb-topbar-title">🏆 Leaderboard</h1>
+      <div class="lb-avatar" id="lb-user-avatar">IM</div>
+    </header>
+
+    <div class="lb-layout">
+      <main class="lb-main-panel">
+        
+        <!-- Tabs -->
+        <div class="lb-tabs-container">
+          <button class="lb-tab active" data-tab="exam">Exam for Today</button>
+          <button class="lb-tab" data-tab="puzzle">Elite Puzzle</button>
+        </div>
+
+        <!-- Filters -->
+        <div class="lb-filters" id="lb-filters-container">
+          <div class="custom-select-wrapper" id="exam-select-wrapper">
+            <select class="lb-subject-select" id="lb-subject-select">
+              <option value="all">All Subjects</option>
+              <!-- Injected via JS -->
+            </select>
+            <svg class="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="custom-select-wrapper" id="puzzle-select-wrapper" style="display:none;">
+            <select class="lb-subject-select" id="lb-puzzle-select">
+              <option value="all">All Puzzles</option>
+              <!-- Injected via JS -->
+            </select>
+            <svg class="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+
+        <!-- Podium Top 3 -->
+        <div class="podium-container" id="podium-container">
+          <!-- 2nd Place -->
+          <div class="podium-item place-2" id="podium-2">
+            <div class="podium-rank-badge">2</div>
+            <div class="podium-avatar">U</div>
+            <div class="podium-name">Loading...</div>
+            <div class="podium-score">0 pts</div>
+            <div class="podium-bar"></div>
+          </div>
+
+          <!-- 1st Place -->
+          <div class="podium-item place-1" id="podium-1">
+            <div class="podium-crown">👑</div>
+            <div class="podium-rank-badge">1</div>
+            <div class="podium-avatar">U</div>
+            <div class="podium-name">Loading...</div>
+            <div class="podium-score">0 pts</div>
+            <div class="podium-bar"></div>
+          </div>
+
+          <!-- 3rd Place -->
+          <div class="podium-item place-3" id="podium-3">
+            <div class="podium-rank-badge">3</div>
+            <div class="podium-avatar">U</div>
+            <div class="podium-name">Loading...</div>
+            <div class="podium-score">0 pts</div>
+            <div class="podium-bar"></div>
+          </div>
+        </div>
+
+        <!-- Ranks 4 to 20 -->
+        <div class="lb-list-container">
+          <ul class="lb-list" id="lb-list">
+            <!-- Rows injected via JS -->
+            <div style="text-align:center; padding: 40px; color: var(--text-muted);">Loading ranking...</div>
+          </ul>
+        </div>
+
+      </main>
+    </div>
+
+  </div><!-- /main-wrapper -->
+
+  <!-- Fixed Bottom Bar for Current User (hidden by default, shown by JS when not top 3) -->
+  <div class="user-sticky-bar hidden" id="user-sticky-bar">
+    <div class="usb-left">
+      <div class="usb-rank" id="usb-rank">--</div>
+      <div class="usb-avatar" id="usb-avatar">IM</div>
+      <div class="usb-info">
+        <div class="usb-name" id="usb-name">You</div>
+        <div class="usb-sub" id="usb-sub">Your Rank</div>
+      </div>
+    </div>
+    <div class="usb-right">
+      <div class="usb-score" id="usb-score">0 pts</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../js/supabase-config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="../../js/auth.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initSharedSidebar({ activePage: 'leaderboard', rootPath: '../../' });
+    });
+  </script>
+  <script src="leaderboard.js"></script>
+</body>
+</html>

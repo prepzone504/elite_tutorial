@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Elite Tutorial — Flash Cards" />
+  <meta name="theme-color" content="#080808" />
+  <title>Flash Cards | Elite Tutorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <!-- Shared sidebar -->
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+  <link rel="stylesheet" href="../../css/start_overlay.css" />
+  <link rel="stylesheet" href="flash_card.css" />
+</head>
+<body>
+
+  <!-- Shared Sidebar -->
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <!-- ══════════════════════════════
+       MAIN WRAPPER
+  ══════════════════════════════ -->
+  <div class="main-wrapper">
+
+    <!-- Mobile Top Bar -->
+    <header class="fc-topbar" id="fc-topbar">
+      <button class="hamburger-btn" id="sidebar-menu-toggle" aria-label="Open navigation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+      <span class="fc-topbar-title">🃏 Flash Cards</span>
+      <div class="deck-progress" id="deck-progress" style="display: none;">
+        <span id="progress-text">0 / 20</span>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════
+         VIEW 1: DECK SELECTION
+    ══════════════════════════════ -->
+    <main class="deck-view" id="deck-view">
+      <div class="deck-view-header">
+        <h1 class="deck-view-title">Pick a Study Deck</h1>
+        <p class="deck-view-sub">Select a subject deck to start reviewing your flash cards.</p>
+      </div>
+
+      <div class="deck-grid" id="deck-grid" style="display:flex; flex-direction:column; gap:20px;">
+        <div class="empty-state">Loading decks...</div>
+      </div>
+
+      </div>
+    </main>
+
+    <!-- ══════════════════════════════
+         START SCREEN OVERLAY (PRE-DECK)
+    ══════════════════════════════ -->
+    <div class="start-screen-overlay" id="start-view" style="display: none;">
+      <div class="start-box">
+        <div class="start-icon" id="start-icon">📇</div>
+        <h2 class="start-title" id="start-title">Deck Name</h2>
+        <p class="start-desc" id="start-desc">Loading deck details...</p>
+        <button class="btn-start-now" id="btn-start-deck">Start Studying</button>
+        <button class="btn-back-overlay" id="btn-back-to-library">← Back to Library</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         VIEW 2: CARD VIEWER
+    ══════════════════════════════ -->
+    <main class="card-view" id="card-view" style="display: none;">
+      
+      <!-- TOP NAV -->
+      <div class="cv-top-nav">
+        <div class="cv-progress-container">
+          <div class="cv-progress-bar" id="progress-fill"></div>
+        </div>
+        <div class="cv-header">
+          <span class="cv-deck-badge" id="cv-deck-badge">🧬 Bio123</span>
+          <button class="btn-quit" id="btn-quit">Quit Session</button>
+        </div>
+      </div>
+
+      <!-- CENTER ARENA -->
+      <div class="cv-center-arena">
+        <div class="flashcard" id="flashcard">
+          <div class="flashcard-inner" id="flashcard-inner">
+            <!-- FRONT -->
+            <div class="flashcard-front">
+              <div class="fc-subject-tag">Question</div>
+              <p class="fc-question" id="fc-question">Loading...</p>
+              <div class="fc-tap-hint">Tap card to flip ↺</div>
+            </div>
+            <!-- BACK -->
+            <div class="flashcard-back">
+              <div class="fc-subject-tag">Answer</div>
+              <p class="fc-answer" id="fc-answer">Loading...</p>
+              <p class="fc-explanation" id="fc-explanation"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM CONTROLS -->
+      <div class="cv-bottom-nav">
+        <div class="fc-controls-inner">
+          <button class="fc-nav-btn" id="btn-prev">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><polyline points="15 18 9 12 15 6"/></svg>
+            <span class="nav-label">Previous</span>
+          </button>
+          <div class="fc-rate-row" id="rate-row" style="opacity: 0; pointer-events: none; transform: translateY(10px);">
+            <button class="fc-rate-btn wrong" id="btn-wrong">
+              <span style="font-size:1.2rem">😕</span> <span class="rate-label">Hard</span>
+            </button>
+            <button class="fc-rate-btn correct" id="btn-correct">
+              <span style="font-size:1.2rem">😊</span> <span class="rate-label">Got It</span>
+            </button>
+          </div>
+          <button class="fc-nav-btn" id="btn-next">
+            <span class="nav-label">Next</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ══════════════════════════════
+         VIEW 3: COMPLETION
+    ══════════════════════════════ -->
+    <div class="completion-view" id="completion-view" style="display: none;">
+      <div class="comp-box">
+        <div class="comp-icon">🎉</div>
+        <h2 class="comp-title">Deck Completed!</h2>
+        <p class="comp-sub">You've successfully reviewed all cards in <strong>Bio123</strong>.</p>
+        
+        <div class="comp-stats">
+          <div class="cs-item">
+            <span class="cs-num" id="cs-gotit" style="color: #34d399;">0</span>
+            <span class="cs-label">Got It</span>
+          </div>
+          <div class="cs-item">
+            <span class="cs-num" id="cs-hard" style="color: #ff7070;">0</span>
+            <span class="cs-label">Hard</span>
+          </div>
+        </div>
+
+        <div class="comp-actions">
+          <button class="comp-btn restart" id="btn-restart">Restart Deck</button>
+          <button class="comp-btn home" id="btn-home">Return to Library</button>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div><!-- /main-wrapper -->
+
+  <script src="../../js/sidebar.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initSharedSidebar({ activePage: 'flashcard', rootPath: '../../' });
+    });
+  </script>
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../js/supabase-config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="flash_card.js"></script>
+</body>
+</html>

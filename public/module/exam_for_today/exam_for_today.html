@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Elite Tutorial — Biology Exam" />
+  <meta name="theme-color" content="#080808" />
+  <title>Biology Exam | Elite Tutorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="exam_for_today.css" />
+  <!-- Shared sidebar -->
+  <link rel="stylesheet" href="../../css/sidebar.css" />
+</head>
+
+<body>
+
+  <!-- Shared Sidebar -->
+  <aside class="sidebar" id="sidebar"></aside>
+
+  <!-- All page content in main-wrapper so it sits right of sidebar -->
+  <div class="main-wrapper">
+
+    <!-- ══════════════════════════════
+       START EXAM OVERLAY
+  ══════════════════════════════ -->
+    <div class="start-screen-overlay" id="start-screen-overlay">
+      <div class="start-box">
+        <div class="start-icon">⏳</div>
+        <h2 class="start-title">Ready to Begin?</h2>
+        <p class="start-desc" id="start-desc-text">Loading exam details...</p>
+        <button class="btn-start-now" id="btn-start-now">Start Exam & Begin Timer</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+       SUBMIT CONFIRMATION MODAL
+  ══════════════════════════════ -->
+    <div class="modal-overlay" id="submit-modal">
+      <div class="modal-box">
+        <div class="modal-icon">📋</div>
+        <h3 class="modal-title">Submit Exam?</h3>
+        <div class="modal-summary" id="modal-summary"></div>
+        <p class="modal-note">You cannot change your answers after submitting.</p>
+        <div class="modal-actions">
+          <button class="modal-btn cancel" id="modal-cancel">Review Answers</button>
+          <button class="modal-btn confirm" id="modal-confirm">Submit Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+       RESULT SCREEN
+  ══════════════════════════════ -->
+    <div class="result-screen" id="result-screen">
+      <div class="result-card">
+        <div class="result-emoji" id="result-emoji">🎉</div>
+        <h2 class="result-title" id="result-title">Exam Submitted!</h2>
+        <div class="result-score-ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10" />
+            <circle cx="60" cy="60" r="50" fill="none" stroke="url(#scoreGrad)" stroke-width="10" stroke-linecap="round"
+              stroke-dasharray="314" stroke-dashoffset="314" id="score-ring-circle" transform="rotate(-90 60 60)" />
+            <defs>
+              <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#e01c1c" />
+                <stop offset="100%" stop-color="#ff5555" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="result-score-text">
+            <span class="result-score-num" id="result-score-num">0</span>
+            <span class="result-score-label" id="result-score-total">/ 20</span>
+          </div>
+        </div>
+        <div class="result-stats">
+          <div class="result-stat correct-stat">
+            <span class="rs-num" id="rs-correct">0</span>
+            <span class="rs-label">Correct</span>
+          </div>
+          <div class="result-stat wrong-stat">
+            <span class="rs-num" id="rs-wrong">0</span>
+            <span class="rs-label">Wrong</span>
+          </div>
+          <div class="result-stat skip-stat">
+            <span class="rs-num" id="rs-skipped">0</span>
+            <span class="rs-label">Skipped</span>
+          </div>
+        </div>
+        <p class="result-message" id="result-message">Your exam has been saved successfully!</p>
+        <p class="result-sub-message" style="font-size:0.85rem;color:var(--text-muted);margin-bottom:24px;">You can
+          review your answers and see corrections below.</p>
+        <div class="result-actions">
+          <button class="result-btn review" id="result-review-btn">Review Answers</button>
+          <a href="../dashboard/dashboard.html" class="result-btn home">Back to Dashboard</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+       QUESTION NAVIGATOR DRAWER (MOBILE)
+  ══════════════════════════════ -->
+    <div class="nav-drawer-overlay" id="nav-drawer-overlay"></div>
+    <div class="nav-drawer" id="nav-drawer">
+      <div class="nav-drawer-handle"></div>
+      <div class="nav-drawer-header">
+        <h4 class="nav-drawer-title">Question Navigator</h4>
+        <button class="nav-drawer-close" id="nav-drawer-close">✕</button>
+      </div>
+      <div class="nav-legend">
+        <div class="legend-item"><span class="legend-dot answered"></span> Answered</div>
+        <div class="legend-item"><span class="legend-dot not-answered"></span> Not Answered</div>
+        <div class="legend-item"><span class="legend-dot not-visited"></span> Not Visited</div>
+        <div class="legend-item"><span class="legend-dot flagged"></span> Flagged</div>
+      </div>
+      <div class="q-grid" id="q-grid-drawer"></div>
+    </div>
+
+    <!-- ══════════════════════════════
+       TOP HEADER
+  ══════════════════════════════ -->
+    <header class="exam-header" id="exam-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button class="hamburger-btn" id="sidebar-menu-toggle" aria-label="Open navigation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <a href="../dashboard/dashboard.html" class="back-btn" id="back-btn" title="Back to dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </a>
+      </div>
+      <div class="exam-header-info">
+        <span class="exam-subject-tag">🧬 Biology</span>
+        <span class="exam-title-text">Exam for Today</span>
+      </div>
+      <div class="exam-header-right">
+        <div class="timer-block" id="timer-block">
+          <svg class="timer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          <span class="timer-display" id="timer-display">40:00</span>
+        </div>
+        <button class="submit-top-btn" id="submit-btn-top">Submit</button>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════
+       MAIN LAYOUT
+  ══════════════════════════════ -->
+    <div class="exam-layout">
+
+      <!-- ── QUESTION PANEL ── -->
+      <main class="question-panel" id="question-panel">
+
+        <!-- Progress bar -->
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+
+        <!-- Question header -->
+        <div class="q-header">
+          <span class="q-number-badge" id="q-number-badge">Q 1 / 20</span>
+          <button class="flag-btn" id="flag-btn" title="Flag this question">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+              <line x1="4" y1="22" x2="4" y2="15" />
+            </svg>
+            <span id="flag-label">Flag</span>
+          </button>
+        </div>
+
+        <!-- Question text -->
+        <div class="question-card" id="question-card">
+          <p class="question-text" id="question-text">Loading question...</p>
+        </div>
+
+        <!-- Options -->
+        <div class="options-list" id="options-list">
+          <button class="option-btn" id="opt-a" data-opt="0">
+            <span class="opt-letter">A</span>
+            <span class="opt-text" id="opt-a-text"></span>
+          </button>
+          <button class="option-btn" id="opt-b" data-opt="1">
+            <span class="opt-letter">B</span>
+            <span class="opt-text" id="opt-b-text"></span>
+          </button>
+          <button class="option-btn" id="opt-c" data-opt="2">
+            <span class="opt-letter">C</span>
+            <span class="opt-text" id="opt-c-text"></span>
+          </button>
+          <button class="option-btn" id="opt-d" data-opt="3">
+            <span class="opt-letter">D</span>
+            <span class="opt-text" id="opt-d-text"></span>
+          </button>
+        </div>
+
+        <!-- Prev / Next Controls -->
+        <div class="q-nav-controls" id="q-nav-controls">
+          <button class="qn-btn" id="qn-prev">← Previous</button>
+          <button class="qn-btn" id="qn-next">Next →</button>
+        </div>
+
+        <!-- Review mode answer key (hidden during exam) -->
+        <div class="answer-review-box" id="answer-review-box"
+          style="display: none; gap: 16px; align-items: flex-start; padding: 16px; background: rgba(5, 150, 105, 0.05); border: 1px solid rgba(5, 150, 105, 0.2); border-radius: 12px; margin-top: 24px;">
+          <img src="../../assets/imo_images/imo_talking.png" alt="IMO AI"
+            style="width: 80px; height: 80px; object-fit: contain; flex-shrink: 0; border-radius: 50%; background: #111; padding: 4px; border: 2px solid var(--accent-primary);" />
+          <div>
+            <div class="arb-correct" style="margin-bottom: 8px; font-weight: 600;">
+              <span class="arb-label">✅ Correct Answer:</span>
+              <span class="arb-value" id="arb-correct-val" style="color: var(--accent-primary);"></span>
+            </div>
+            <div class="arb-explain" id="arb-explain"
+              style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;"></div>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- ── SIDEBAR NAVIGATOR (DESKTOP) ── -->
+      <aside class="sidebar-navigator" id="sidebar-navigator">
+        <div class="sn-header">
+          <h4 class="sn-title">Question Navigator</h4>
+        </div>
+        <div class="nav-legend">
+          <div class="legend-item"><span class="legend-dot answered"></span> Answered</div>
+          <div class="legend-item"><span class="legend-dot not-answered"></span> Not Answered</div>
+          <div class="legend-item"><span class="legend-dot not-visited"></span> Not Visited</div>
+          <div class="legend-item"><span class="legend-dot flagged"></span> Flagged</div>
+        </div>
+        <div class="q-grid" id="q-grid-desktop"></div>
+        <button class="sn-submit-btn" id="submit-btn-sidebar">
+          Submit Exam
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </button>
+      </aside>
+
+    </div><!-- /exam-layout -->
+
+    <!-- ══════════════════════════════
+       BOTTOM NAV BAR (MOBILE)
+  ══════════════════════════════ -->
+    <nav class="bottom-nav" id="bottom-nav">
+      <button class="bn-btn" id="bn-prev">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+        <span>Prev</span>
+      </button>
+
+      <button class="bn-btn bn-navigator" id="bn-navigator">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" />
+          <rect x="14" y="3" width="7" height="7" />
+          <rect x="14" y="14" width="7" height="7" />
+          <rect x="3" y="14" width="7" height="7" />
+        </svg>
+        <span>Navigator</span>
+      </button>
+
+      <button class="bn-btn bn-flag" id="bn-flag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+          <line x1="4" y1="22" x2="4" y2="15" />
+        </svg>
+        <span>Flag</span>
+      </button>
+
+      <button class="bn-btn bn-next" id="bn-next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+        <span>Next</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../js/supabase-config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="../../js/auth.js"></script>
+  <script src="../../js/sidebar.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initSharedSidebar({ activePage: 'exam', rootPath: '../../' });
+    });
+  </script>
+  <script src="exam_for_today.js"></script>
+</body>
+
+</html>

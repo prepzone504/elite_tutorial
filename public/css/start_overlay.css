@@ -1,0 +1,52 @@
+/* ============================================
+   ELITE TUTORIAL — SHARED START OVERLAY CSS
+   public/css/start_overlay.css
+   Used for pre-game / pre-exam confirmation screens
+============================================ */
+
+.start-screen-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(8,8,8,0.95); backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; transition: opacity 0.4s ease;
+}
+
+.start-screen-overlay.hidden { opacity: 0; pointer-events: none; }
+
+.start-box {
+  background: var(--dark-800, #0f0f0f);
+  border: 1px solid rgba(224,28,28,0.25);
+  border-radius: 24px; padding: 40px 24px; max-width: 400px;
+  width: 100%;
+  text-align: center; box-shadow: 0 16px 48px rgba(224,28,28,0.15);
+  position: relative;
+}
+
+.start-icon { font-size: 3.5rem; margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+.start-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; }
+.start-desc { font-size: 0.95rem; color: var(--text-silver, #c8c8c8); line-height: 1.6; margin-bottom: 32px; }
+
+.btn-start-now {
+  width: 100%; padding: 16px; border-radius: 14px;
+  background: linear-gradient(135deg, var(--red-primary, #e01c1c), #8a0000);
+  color: #fff; font-family: var(--font, 'Outfit', sans-serif); font-size: 1.05rem; font-weight: 700;
+  border: none; cursor: pointer; box-shadow: 0 8px 24px var(--red-glow, rgba(224,28,28,0.3));
+  transition: transform 0.2s;
+}
+
+.btn-start-now:hover { transform: translateY(-2px); box-shadow: 0 12px 32px var(--red-glow, rgba(224,28,28,0.4)); }
+
+/* Back to List button for overlay */
+.btn-back-overlay {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted, #7a7a7a);
+  text-decoration: none;
+  background: none; border: none; cursor: pointer;
+  transition: color 0.2s;
+}
+.btn-back-overlay:hover { color: #fff; }

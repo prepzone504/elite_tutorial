@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en" class="page-flash">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Elite Tutorial — AI Flash Card Generator. Create study decks and deploy to students." />
+  <title>Flash Card Generator | Elite Tutorial Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="generation.css" />
+</head>
+<body class="page-flash">
+
+  <div id="auth-gate" class="auth-gate" style="display:none">
+    <div class="auth-gate-card">
+      <h2>🔒 Admin Required</h2>
+      <p>Sign in to the admin panel to access the AI Content Studio.</p>
+      <a href="admin.html">Go to Admin Login</a>
+    </div>
+  </div>
+
+  <div class="studio-bg"><div class="studio-grid"></div></div>
+
+  <div class="studio-shell">
+    <header class="studio-topbar">
+      <div class="studio-topbar-left">
+        <a href="admin.html" class="studio-back" title="Back to Admin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </a>
+        <div class="studio-brand">
+          <div class="studio-brand-icon">🃏</div>
+          <div class="studio-brand-text">
+            <h1>Flash Card Studio</h1>
+            <p>AI Content Generator</p>
+          </div>
+        </div>
+      </div>
+      <span class="studio-badge">Flash Card Module</span>
+    </header>
+
+    <main class="studio-main">
+      <div class="studio-hero">
+        <h2>Generate & Deploy Flash Card Decks</h2>
+        <p>Build rich study decks with AI-generated front/back pairs. Set subject, difficulty, card count, and model — then push decks to all students or hand-pick recipients.</p>
+        <div class="studio-hero-meta">
+          <span class="hero-pill">🃏 Front / Back pairs</span>
+          <span class="hero-pill">📚 Deck packaging</span>
+          <span class="hero-pill">📤 Targeted dispatch</span>
+        </div>
+      </div>
+
+      <div class="studio-grid-layout">
+        <div class="studio-panel">
+          <div class="panel-header">
+            <h3>Deck Configuration</h3>
+            <span>Step 1 — Define deck</span>
+          </div>
+          <div class="panel-body">
+            <form id="flash-gen-form" autocomplete="off">
+
+              <div class="form-section">
+                <div class="form-section-title">Deck Details</div>
+                <div class="form-row">
+                  <div class="form-field">
+                    <label for="deck-name">Deck Name</label>
+                    <input type="text" id="deck-name" placeholder="enter deck" value="" />
+                  </div>
+                  <div class="form-field">
+                    <label for="flash-subject-select">Course</label>
+                    <input type="text" id="flash-subject-select" placeholder="enter course" value="" />
+                  </div>
+                </div>
+                <div class="form-field">
+                  <label for="deck-description">Deck Description <span class="hint">(optional)</span></label>
+                  <input type="text" id="deck-description" placeholder="enter description" value="" />
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">Generation Mode</div>
+                <div class="mode-toggle">
+                  <button type="button" class="mode-btn active" id="mode-auto">✨ Auto (AI Generate)</button>
+                  <button type="button" class="mode-btn" id="mode-manual">✍️ Manual (Admin Paste)</button>
+                </div>
+                <div id="auto-section">
+                  <div class="form-field">
+                    <label for="flash-prompt">AI Prompt</label>
+                    <textarea id="flash-prompt" placeholder="e.g. Create flash cards on cell organelles, mitosis, and osmosis. Front: concise question or term. Back: clear 2–3 sentence explanation with an example."></textarea>
+                  </div>
+                </div>
+                <div id="manual-section" class="mode-section hidden">
+                  <div class="form-field">
+                    <label>Fixed AI Prompt <span class="hint">(Instructions given to AI)</span></label>
+                    <textarea readonly style="background: rgba(0,0,0,0.03); cursor: not-allowed; resize: none; color: #888; border-color: rgba(0,0,0,0.1); min-height: 60px;">Do not change the question. Only return front and back or question and answer.</textarea>
+                  </div>
+                  <div class="form-field">
+                    <label for="manual-flash">Paste Flash Cards <span class="hint">(do not change or modify the question)</span></label>
+                    <textarea id="manual-flash" placeholder="Paste your questions and answers here..."></textarea>
+                    <div class="manual-help">Manual mode: you provide the content; the AI will format it into proper JSON flash cards. Please do not change or modify the question.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">Generation Settings</div>
+                <div class="form-field">
+                  <label>Difficulty Level</label>
+                  <div class="difficulty-chips" id="flash-difficulty-chips"></div>
+                </div>
+                <div class="form-field" id="count-wrap">
+                  <label for="card-count">Number of Cards to Generate</label>
+                  <div class="range-wrap">
+                    <input type="range" id="card-count" min="5" max="50" value="20" step="1" />
+                    <span class="range-value" id="card-count-display">20</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">AI Model</div>
+                <div class="model-grid" id="flash-model-grid">
+                  <button type="button" class="model-card active" data-model="mistral-large-latest">
+                    <div class="model-name">Mistral Large</div>
+                    <div class="model-desc">Best reasoning & exam quality</div>
+                    <span class="model-tag">Recommended</span>
+                  </button>
+                  <button type="button" class="model-card" data-model="mistral-medium-latest">
+                    <div class="model-name">Mistral Medium</div>
+                    <div class="model-desc">Balanced speed & quality</div>
+                    <span class="model-tag">Balanced</span>
+                  </button>
+                  <button type="button" class="model-card" data-model="mistral-small-latest">
+                    <div class="model-name">Mistral Small</div>
+                    <div class="model-desc">Fast bulk generation</div>
+                    <span class="model-tag">Fast</span>
+                  </button>
+                  <button type="button" class="model-card" data-model="open-mistral-7b">
+                    <div class="model-name">Mistral 7B</div>
+                    <div class="model-desc">Cost-efficient drafts</div>
+                    <span class="model-tag">Economy</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-title">Dispatch to Students</div>
+                <div class="dispatch-toggle">
+                  <button type="button" class="dispatch-btn active" id="flash-dispatch-all">📢 All Students</button>
+                  <button type="button" class="dispatch-btn" id="flash-dispatch-selected">👥 Selected Only</button>
+                </div>
+                <div class="user-select-panel hidden" id="flash-user-panel">
+                  <div class="user-select-toolbar">
+                    <input type="text" id="flash-user-search" placeholder="Search students…" />
+                    <button type="button" class="btn-select-all" id="flash-user-list-select-all">Select All</button>
+                  </div>
+                  <div class="user-list" id="flash-user-list"></div>
+                </div>
+              </div>
+
+              <div class="gen-loading" id="gen-loading" style="display:none;">
+                <div class="gen-spinner"></div>
+                <div class="gen-loading-text" id="gen-loading-text">Processing 0 questions…</div>
+              </div>
+
+              <div class="action-bar">
+                <button type="button" class="btn-primary-gen" id="btn-generate">
+                  <span>✨</span> Generate Deck Preview
+                </button>
+                <button type="button" class="btn-secondary-gen" id="btn-clear">Clear</button>
+                <button type="button" class="btn-send" id="btn-send">
+                  <span>🚀</span> Approve & Send Deck
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="studio-panel">
+          <div class="panel-header">
+            <h3>Deck Preview</h3>
+            <span id="preview-status">Awaiting generation</span>
+          </div>
+          <div class="panel-body">
+            <div class="preview-stats" id="preview-stats" style="display:none"></div>
+            <div class="panel-body scrollable preview-list" id="preview-list">
+              <div class="preview-empty">
+                <div class="icon">🃏</div>
+                <h4>Preview your flash card deck</h4>
+                <p>Configure your prompt and card count, then generate to review front/back pairs before dispatch.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../js/supabase-config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="generation.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!checkAdminAuth()) return;
+
+      const getModel = initModelGrid('flash-model-grid', 'mistral-large-latest');
+      const getDiff = initDifficultyChips('flash-difficulty-chips');
+      const getCount = initQuestionRange('card-count', 'card-count-display', 20);
+      const dispatch = initUserDispatch('flash-user-list', 'flash-user-search', 'flash-dispatch-all', 'flash-dispatch-selected', 'flash-user-panel');
+      const getMode = initModeToggle('mode-auto', 'mode-manual', 'auto-section', 'manual-section', 'auto', (mode) => {
+        const countWrap = document.getElementById('count-wrap');
+        if (countWrap) {
+          countWrap.style.display = mode === 'auto' ? 'block' : 'none';
+        }
+      });
+
+      let generatedItems = [];
+      const loading = document.getElementById('gen-loading');
+      const loadingText = document.getElementById('gen-loading-text');
+      const previewList = document.getElementById('preview-list');
+      const previewStats = document.getElementById('preview-stats');
+      const previewStatus = document.getElementById('preview-status');
+      const btnSend = document.getElementById('btn-send');
+
+      document.getElementById('btn-generate').addEventListener('click', async () => {
+        const subject = document.getElementById('flash-subject-select').value.trim();
+        const deckName = document.getElementById('deck-name').value.trim();
+
+        if (!deckName) { showToast('Please enter a deck name.', 'error'); return; }
+        if (!subject) { showToast('Please enter a course.', 'error'); return; }
+
+        const mode = getMode();
+        const count = getCount();
+        const model = getModel();
+        const modelName = AI_MODELS.find(m => m.id === model)?.name || model;
+
+        document.getElementById('btn-generate').disabled = true;
+
+        if (mode === 'auto') {
+          const prompt = document.getElementById('flash-prompt').value.trim();
+          if (!prompt) { showToast('Please enter an AI prompt.', 'error'); document.getElementById('btn-generate').disabled = false; return; }
+          
+          setGenerating(loading, true, loadingText, `Initializing…`);
+          try {
+            generatedItems = await generateFlashCardsAI(count, subject, prompt, getDiff(), model, (done, total, msg) => {
+              if (loadingText) loadingText.innerHTML = `${msg} <span style="font-size:0.8em;opacity:0.8">(${done} / ${total})</span>`;
+            });
+            renderFlashPreview(previewList, generatedItems);
+            updatePreviewStats(previewStats, count, subject, model);
+            previewStatus.textContent = `${generatedItems.length} cards in "${deckName}"`;
+            btnSend.classList.add('visible');
+            showToast(`✅ Generated ${generatedItems.length} flash cards for deck "${deckName}"`, 'success');
+          } catch (err) {
+            showToast(err.message, 'error');
+          } finally {
+            setGenerating(loading, false);
+            document.getElementById('btn-generate').disabled = false;
+          }
+          return;
+        }
+
+        const raw = document.getElementById('manual-flash').value.trim();
+        if (!raw) { showToast('Paste at least one flash card.', 'error'); document.getElementById('btn-generate').disabled = false; return; }
+        
+        const diff = getDiff();
+        const estCount = parseManualFlashInput(raw).length || raw.split(/\\n\\s*\\n/).filter(x=>x.trim()).length || 1;
+        setGenerating(loading, true, loadingText, `Processing <strong>${estCount}</strong> questions…`);
+        try {
+          generatedItems = await formatManualFlashCardsAI(raw, subject, diff, model, (done, total, msg) => {
+            if (loadingText) {
+              if (total > 0) {
+                loadingText.innerHTML = `${msg} <span style="font-size:0.8em;opacity:0.8">(${done} processed)</span>`;
+              } else {
+                loadingText.innerHTML = `Processing <strong>${estCount}</strong> questions…`;
+              }
+            }
+          });
+          renderFlashPreview(previewList, generatedItems);
+          updatePreviewStats(previewStats, generatedItems.length, subject, model);
+          previewStatus.textContent = `${generatedItems.length} cards in "${deckName}"`;
+          btnSend.classList.add('visible');
+          showToast(`✅ Formatted ${generatedItems.length} flash cards for "${deckName}"`, 'success');
+        } catch (err) {
+          showToast(err.message, 'error');
+        } finally {
+          setGenerating(loading, false);
+          document.getElementById('btn-generate').disabled = false;
+        }
+      });
+
+      document.getElementById('btn-clear').addEventListener('click', () => {
+        generatedItems = [];
+        renderFlashPreview(previewList, []);
+        previewStats.style.display = 'none';
+        previewStatus.textContent = 'Awaiting generation';
+        btnSend.classList.remove('visible');
+        document.getElementById('flash-prompt').value = '';
+        const m = document.getElementById('manual-flash');
+        if (m) m.value = '';
+      });
+
+      document.getElementById('btn-send').addEventListener('click', async () => {
+        if (!generatedItems.length) { showToast('Generate cards first.', 'error'); return; }
+        const d = dispatch.getDispatch();
+        if (d.mode === 'selected' && !d.users.length) {
+          showToast('Select at least one student.', 'error');
+          return;
+        }
+        
+        const deckName = document.getElementById('deck-name').value.trim();
+        const course = document.getElementById('flash-subject-select').value.trim();
+        const description = document.getElementById('deck-description').value.trim();
+        const target = d.mode === 'all' ? 'all students' : `${d.users.length} selected student(s)`;
+
+        btnSend.disabled = true;
+        showToast('💾 Saving flash cards to Supabase…', 'info');
+        
+        try {
+          await saveFlashCardsToDB(deckName, course, description, generatedItems);
+          showToast(`🚀 Deck "${deckName}" saved & sent to ${target}!`, 'success');
+          previewStatus.textContent = `Deployed to ${target}`;
+        } catch (err) {
+          showToast('Error saving: ' + err.message, 'error');
+        } finally {
+          btnSend.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

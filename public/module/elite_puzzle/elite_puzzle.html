@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="Elite Tutorial — Elite Puzzle" />
+    <meta name="theme-color" content="#080808" />
+    <title>Elite Puzzle | Elite Tutorial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <!-- Shared sidebar styles (must come before module CSS so module can override if needed) -->
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../../css/start_overlay.css" />
+    <link rel="stylesheet" href="elite_puzzle.css" />
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════════════
+         SHARED SIDEBAR (populated by sidebar.js)
+    ═══════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- ═══════════════════════════════════════
+         MAIN CONTENT
+    ═══════════════════════════════════════ -->
+    <div class="main-wrapper">
+
+        <!-- Mobile top-bar with hamburger -->
+        <header class="pzl-topbar" id="pzl-topbar">
+            <button class="hamburger-btn" id="sidebar-menu-toggle" aria-label="Open navigation">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+            <span class="pzl-topbar-title">🧩 Elite Puzzle</span>
+        </header>
+
+        <main class="page-content" id="page-content">
+
+            <!-- ── PUZZLE LIST ── -->
+            <div class="puzzle-list-view" id="puzzle-list-view">
+                <div class="pl-content">
+                    <div class="pl-stats-bar">
+                        <div class="pl-stat">
+                            <span class="pl-stat-num" id="pl-total-puzzles">0</span>
+                            <span class="pl-stat-label">Puzzles</span>
+                        </div>
+                        <div class="pl-stat">
+                            <span class="pl-stat-num" id="pl-completed-puzzles">0</span>
+                            <span class="pl-stat-label">Completed</span>
+                        </div>
+                        <div class="pl-stat">
+                            <span class="pl-stat-num" id="pl-new-puzzles">0</span>
+                            <span class="pl-stat-label">New</span>
+                        </div>
+                    </div>
+                    <h1 class="pl-title-main">🧩 Elite Puzzle</h1>
+                    <p class="pl-sub-main">Challenge your mind with subject-based puzzles</p>
+                    <div class="pl-grid" id="puzzle-card-grid">
+                        <div class="pl-loading">Loading puzzles...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── PUZZLE START SCREEN ── -->
+            <div class="start-screen-overlay" id="start-view" style="display: none;">
+                <div class="start-box">
+                    <div class="start-icon" id="ps-icon">🧠</div>
+                    <h2 class="start-title" id="puzzle-detail-title">Puzzle Name</h2>
+                    <p class="start-desc" id="puzzle-detail-desc">Puzzle description goes here.</p>
+
+                    <ul class="rules-list" id="ps-rules">
+                        <li>⏱️ Time Limit: <strong id="rule-time">2:00 minutes</strong></li>
+                        <li>🎯 Scoring: <strong>+10</strong> correct, <strong style="color: var(--accent-danger, #ef4444);">-5</strong> wrong</li>
+                    </ul>
+
+                    <button class="btn-start-now" id="btn-start-game">Enter Puzzle Arena</button>
+                    <button class="btn-back-overlay" id="btn-back-list">← Back to Puzzles</button>
+                </div>
+            </div>
+
+            <!-- ── GAME ARENA ── -->
+            <div class="puzzle-game-view" id="game-view" style="display: none;">
+                <header class="game-header">
+                    <button class="btn-quit" id="btn-quit" title="Quit Game">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                    </button>
+
+                    <div class="timer-box" id="timer-box">
+                        <span class="tb-icon">⏳</span>
+                        <span class="tb-time" id="time-display">03:00</span>
+                    </div>
+
+                    <div class="score-box" id="score-box">
+                        <span class="sb-label">Score</span>
+                        <span class="sb-val" id="score-display">0</span>
+                    </div>
+                </header>
+
+                <div class="question-container">
+                    <h2 class="question-text" id="question-text">Loading question...</h2>
+                </div>
+
+                <div class="arena" id="arena"></div>
+                <div class="feedback-pop" id="feedback-pop"></div>
+            </div>
+
+            <!-- ── RESULTS SCREEN ── -->
+            <div class="puzzle-result-view" id="result-view" style="display: none;">
+                <div class="result-box">
+                    <div class="res-icon" id="res-icon">🏆</div>
+                    <h1 class="res-title" id="res-title">Time's Up!</h1>
+                    <p class="res-sub" id="res-sub-text">Here is how you performed:</p>
+                    <div class="res-score-circle">
+                        <span class="rsc-label">Final Score</span>
+                        <span class="rsc-val" id="final-score">0</span>
+                    </div>
+                    <div class="res-stats">
+                        <div class="rst-item"><span class="rst-val correct" id="res-correct">0</span> Correct</div>
+                        <div class="rst-item"><span class="rst-val wrong" id="res-wrong">0</span> Wrong</div>
+                    </div>
+                    <div class="res-actions">
+                        <button class="btn-start-game" id="btn-play-again">Play Again</button>
+                        <button class="btn-back-list" id="btn-back-from-result">← Back to Puzzles</button>
+                    </div>
+                </div>
+
+                <!-- ── REVIEW SECTION ── -->
+                <div class="review-wrapper" id="review-section" style="display: none;"></div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/supabase-config.js"></script>
+    <script src="../../js/supabase-client.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script>
+        // Init shared sidebar once DOM is ready (auth.js may load async)
+        document.addEventListener('DOMContentLoaded', () => {
+            initSharedSidebar({ activePage: 'puzzle', rootPath: '../../' });
+        });
+    </script>
+    <script src="elite_puzzle.js?v=5"></script>
+</body>
+
+</html>

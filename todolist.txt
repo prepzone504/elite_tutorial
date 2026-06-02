@@ -1,0 +1,144 @@
+3-Day Ship Plan: Elite Tutorial (UI Complete)
+Goal: finish backend + connect UI + deploy in 3 days (production-ready MVP)
+
+Required Features & Sections (from app UI):
+- Dashboard (Home, stats, activity feed, sidebar navigation)
+- Exam for Today (preview + full timed exam flow)
+- Flash Card (deck library + flip/study session)
+- Elite Puzzle (rules screen + timed game arena)
+- Analytics (progress summary on dashboard)
+- Admin Section (admin-only: login gate, CRUD, users, settings)
+- Auth (Login + Register)
+- Marketing Landing (public/index.html)
+
+Public UI map:
+  public/index.html                          → Landing / marketing page
+  public/module/auth/login.html              → User login
+  public/module/auth/register.html           → User registration
+  public/module/dashboard/dashboard.html     → Main app shell (multi-page SPA)
+  public/module/exam_for_today/              → Standalone exam UI
+  public/module/flash_card/                  → Standalone flash card UI
+  public/module/elite_puzzle/                → Standalone puzzle game UI
+  public/module/admin/admin.html             → Admin panel (separate page)
+
+--------------------------------------------------
+
+Assumption: UI is complete. Focus is backend + integration + deployment.
+
+Day 1 (Backend Foundation): Auth + Database + Core APIs (must be working end-to-end)
+- Backend: Supabase (Auth + Postgres + Row Level Security)
+
+- Data model (Supabase tables + relationships):
+  - profiles (1:1 with auth.users):
+    - id (uuid, PK, references auth.users.id)
+    - full_name, role (student|admin), created_at
+  - exams:
+    - id (uuid), title, subject, duration_mins, pass_mark, active_date, created_by, created_at
+  - exam_questions:
+    - id (uuid), exam_id, question_text, difficulty, created_at
+  - exam_options:
+    - id (uuid), question_id, option_letter (A-E), option_text, is_correct
+  - flash_decks:
+    - id (uuid), name, subject, description, created_by, created_at
+  - flash_cards:
+    - id (uuid), deck_id, front, back, difficulty, created_at
+  - puzzles:
+    - id (uuid), title, subject, time_limit_mins, level_label, points_correct, penalty_wrong, created_by, created_at
+  - puzzle_rounds:
+    - id (uuid), puzzle_id, question_text, difficulty, correct_answer, created_at
+  - puzzle_round_options:
+    - id (uuid), round_id, option_text
+  - assignments (generic “send to all/selected”):
+    - id (uuid), user_id, content_type (exam|flash_deck|puzzle), content_id, assigned_at
+  - submissions:
+    - id (uuid), user_id, content_type (exam|puzzle), content_id, score, breakdown_json, submitted_at
+
+- RLS (Row Level Security) MUST be enabled:
+  - profiles: user can read own profile; admin can read all
+  - assignments: user can read own assignments; admin can insert assignments
+  - content tables (exams/decks/puzzles): admin insert/update/delete; students read only when assigned (via policies or RPC)
+
+- Auth (Supabase Auth):
+  - Register (email/password) + create profile row
+  - Login / Logout
+  - Get current session user
+  - Admin role: stored in profiles.role and enforced by RLS/policies
+
+- Core queries (via supabase-js from frontend or via RPC):
+  - Exam for today: fetch assigned exam for user (active_date = today)
+  - Exam questions/options by exam_id
+  - Flash decks assigned to user + cards by deck_id
+  - Active puzzle assigned to user + rounds/options
+
+- Definition of Done (Day 1):
+  - Supabase project created + keys available
+  - Tables created + RLS policies applied
+  - Can register/login and see a profile row
+  - Student can only read their own assignments/content (verify with a second user)
+
+--------------------------------------------------
+
+Day 2 (Admin Content + Delivery): Use admin studio to create content & distribute
+- Admin authentication:
+  - Admin is a normal Supabase user with profiles.role='admin'
+  - UI checks role, but security is enforced by RLS
+
+- Admin Content Studio (Supabase inserts + assignment writes):
+  - Exam Generator:
+    - Save exam set with N questions (A–D/E), difficulty, correct answers
+    - Mark as “Exam for Today” for date/subject
+    - Assign to: ALL users or selected users (insert into assignments)
+  - Flash Card Generator:
+    - Save deck + cards
+    - Assign deck to ALL or selected users (assignments)
+  - Elite Puzzle Generator:
+    - Save puzzle config + rounds + scoring
+    - Assign to ALL or selected users (assignments)
+
+- Seeding + sanity data:
+  - Create at least 1 exam (40 questions), 1 deck (20 cards), 1 puzzle (15 rounds)
+  - Create at least 2 student users and assign content to one of them (prove “selected user” works)
+
+- Definition of Done (Day 2):
+  - Admin can create exam/deck/puzzle rows in Supabase
+  - Admin can “send” content by writing assignments (all or selected)
+  - Student only sees content assigned to them (RLS proof)
+
+--------------------------------------------------
+
+Day 3 (Integration + QA + Deploy): Wire UI to backend and ship
+- Frontend integration:
+  - login/register → Supabase Auth
+  - store session securely (supabase-js handles refresh)
+  - dashboard home summary → query assignments + submissions
+  - exam_for_today → fetch exam + questions/options → submit → insert submissions
+  - flash_card → fetch assigned decks + cards
+  - elite_puzzle → fetch assigned puzzle + rounds/options → submit score
+  - admin panel + studios → replace “demo send” with Supabase inserts
+
+- Testing checklist (must pass):
+  - Register → login → dashboard loads
+  - Exam: start → answer → submit → result saved → visible in analytics/summary
+  - Flash: deck list shows assigned decks → cards load
+  - Puzzle: rounds load → score submit works
+  - Admin: create exam/deck/puzzle → assign to selected user → student sees it
+  - Security: student cannot call admin endpoints (verify forbidden)
+
+- Deployment:
+  - Firebase Hosting deploy for `public/`
+  - Backend is Supabase (no server deploy)
+  - Set frontend env/config:
+    - SUPABASE_URL
+    - SUPABASE_ANON_KEY
+  - Confirm production site is calling the correct Supabase project
+
+- Definition of Done (Day 3):
+  - All flows work from landing → auth → learning modules → admin creation → student consumption
+  - Deployed URL works on phone + desktop
+
+--------------------------------------------------
+
+Notes / “don’t forget”:
+- Avoid hardcoding credentials in production (remove demo admin username/password).
+- Keep one source of truth for questions: backend.
+- If anything slips: ship Exam + Admin Exam Generator first (highest value), then flash cards, then puzzle.

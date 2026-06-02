@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Elite Tutorial Dashboard — Your personalized learning hub." />
+  <title>Dashboard | Elite Tutorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="../leaderboard/leaderboard.css" />
+</head>
+
+<body>
+
+  <!-- Mentor Dopamine Overlay -->
+  <div id="mentor-overlay" class="mentor-overlay">
+    <img id="mentor-avatar" class="mentor-avatar" src="../../assets/imo_images/imo_idle.png" alt="Mentor Dopamine">
+    <div class="mentor-bubble">
+      <span id="mentor-text" class="mentor-text"></span><span id="mentor-cursor" class="mentor-cursor"></span>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       SIDEBAR
+  ═══════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Logo -->
+    <a href="../../index.html" class="sidebar-logo">
+      <div class="logo-icon">Z</div>
+      <span class="logo-text">Elite <span>Tutorial</span></span>
+    </a>
+
+    <!-- Nav Links -->
+    <nav class="sidebar-nav" aria-label="Main navigation">
+      <ul class="nav-list">
+
+        <li class="nav-item">
+          <a href="#home" class="nav-link active" id="nav-home" data-page="home">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+            </span>
+            <span class="nav-label">Home</span>
+            <span class="nav-badge active-dot"></span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#exam" class="nav-link" id="nav-exam" data-page="exam">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+            </span>
+            <span class="nav-label">Exam for Today</span>
+            <span class="nav-badge pending-badge" id="sidebar-exam-badge" style="display:none;">0</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#flashcard" class="nav-link" id="nav-flashcard" data-page="flashcard">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="3" />
+                <line x1="2" y1="10" x2="22" y2="10" />
+              </svg>
+            </span>
+            <span class="nav-label">Flash Card</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#puzzle" class="nav-link" id="nav-puzzle" data-page="puzzle">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
+                <line x1="7" y1="7" x2="7.01" y2="7" />
+              </svg>
+            </span>
+            <span class="nav-label">Elite Puzzle</span>
+            <span class="nav-badge new-badge" id="sidebar-puzzle-badge" style="display:none;">0</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#analytics" class="nav-link" id="nav-analytics" data-page="analytics">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="6" y1="20" x2="6" y2="14" />
+              </svg>
+            </span>
+            <span class="nav-label">Analytics</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="../leaderboard/leaderboard.html" class="nav-link" id="nav-leaderboard" data-page="leaderboard">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="12" cy="8" r="7" />
+                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+              </svg>
+            </span>
+            <span class="nav-label">Leaderboard</span>
+          </a>
+        </li>
+
+        <!-- Admin Section (Admin Only) -->
+        <li class="nav-item nav-admin-divider">
+          <span class="nav-section-label">Admin</span>
+        </li>
+        <li class="nav-item">
+          <a href="#admin" class="nav-link admin-link" id="nav-admin" data-page="admin">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            </span>
+            <span class="nav-label">Admin Section</span>
+            <span class="nav-badge admin-badge">Admin</span>
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <div class="user-mini">
+        <div class="user-avatar-sm" id="sidebar-user-avatar">IM</div>
+        <div class="user-info-sm">
+          <span class="user-name-sm" id="sidebar-user-name">Imohiosen</span>
+          <span class="user-role-sm">Student</span>
+        </div>
+      </div>
+      <button class="logout-btn" id="logout-btn" title="Logout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+          <polyline points="16 17 21 12 16 7" />
+          <line x1="21" y1="12" x2="9" y2="12" />
+        </svg>
+        <span>Logout</span>
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- ═══════════════════════════════════════
+       MAIN CONTENT
+  ═══════════════════════════════════════ -->
+  <div class="main-wrapper">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <button class="hamburger-btn" id="menu-toggle" aria-label="Toggle menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+
+      <div class="topbar-breadcrumb">
+        <span class="breadcrumb-page" id="breadcrumb-title">Home</span>
+      </div>
+
+      <div class="topbar-right">
+        <button class="notif-btn" id="notif-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 01-3.46 0" />
+          </svg>
+          <span class="notif-dot" id="notif-dot" style="display:none;"></span>
+        </button>
+        <div class="topbar-avatar" id="topbar-user-avatar">IM</div>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content" id="page-content">
+
+      <!-- ─────────────────────────────────
+           HOME PAGE
+      ───────────────────────────────── -->
+      <section class="page home-page active" id="page-home">
+
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+          <div class="welcome-text">
+            <div class="welcome-greeting">
+              <span class="wave">👋</span>
+              <span>Good morning,</span>
+            </div>
+            <h1 class="welcome-name" id="user-greeting-name">Student!</h1>
+            <p class="welcome-sub" id="welcome-sub-text">
+              You have <span class="highlight-pill" id="welcome-pending-count">0 pending exams</span> waiting for you
+              today. Keep up the momentum!
+            </p>
+            <a href="#exam" class="btn-start-exam" id="start-exam-link">
+              Take Exam Now
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </a>
+          </div>
+          <div class="welcome-illustration">
+            <div class="illus-ring ring-1"></div>
+            <div class="illus-ring ring-2"></div>
+            <div class="illus-ring ring-3"></div>
+
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+          <div class="stat-card" id="stat-card-pending" style="--accent:#e01c1c; display: none;">
+            <div class="stat-card-icon" style="background:rgba(224,28,28,0.12);color:#e01c1c;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              </svg>
+            </div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="stat-pending-num">—</span>
+              <span class="stat-card-label">Pending Exam</span>
+            </div>
+            <div class="stat-card-trend up">⚠️ Due Today</div>
+          </div>
+
+          <div class="stat-card" style="--accent:#2563eb;">
+            <div class="stat-card-icon" style="background:rgba(37,99,235,0.12);color:#60a5fa;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M9 11l3 3L22 4" />
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+              </svg>
+            </div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="stat-exams-participated">—</span>
+              <span class="stat-card-label">Exams Done</span>
+            </div>
+            <div class="stat-card-trend up">Participated</div>
+          </div>
+
+          <div class="stat-card" style="--accent:#7c3aed;">
+            <div class="stat-card-icon" style="background:rgba(124,58,237,0.12);color:#9d6aff;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="3" />
+                <line x1="2" y1="10" x2="22" y2="10" />
+              </svg>
+            </div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="stat-flashcard-num">—</span>
+              <span class="stat-card-label">Flash Cards</span>
+            </div>
+            <div class="stat-card-trend up">Available</div>
+          </div>
+
+          <div class="stat-card" style="--accent:#059669;">
+            <div class="stat-card-icon" style="background:rgba(5,150,105,0.12);color:#34d399;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+            </div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="stat-avg-score">—</span>
+              <span class="stat-card-label">Avg. Score</span>
+            </div>
+            <div class="stat-card-trend up">Overall</div>
+          </div>
+
+          <div class="stat-card" style="--accent:#d97706;">
+            <div class="stat-card-icon" style="background:rgba(217,119,6,0.12);color:#fbbf24;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            </div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="stat-study-hours">—</span>
+              <span class="stat-card-label">Study Hours</span>
+            </div>
+            <div class="stat-card-trend up">Total Time</div>
+          </div>
+        </div>
+
+        <!-- Lower Row -->
+        <div class="content-row">
+
+          <!-- Upcoming Exam Card -->
+          <div class="card upcoming-exam-card" id="upcoming-exam-container" style="display: none;">
+            <div class="card-header">
+              <h3 class="card-title">📋 Pending Exam</h3>
+              <span class="card-badge due">Due Today</span>
+            </div>
+            <div class="exam-item-main">
+              <div class="exam-subject-icon" id="upcoming-exam-icon">📐</div>
+              <div class="exam-details">
+                <h4 class="exam-name" id="upcoming-exam-title">Loading...</h4>
+                <p class="exam-meta" id="upcoming-exam-meta">0 Questions &nbsp;·&nbsp; 0 Minutes &nbsp;·&nbsp; Multiple
+                  Choice</p>
+                <div class="exam-progress-bar-wrap">
+                  <div class="exam-progress-bar" style="width:0%"></div>
+                </div>
+                <span class="exam-progress-label">Not started</span>
+              </div>
+            </div>
+            <a href="#exam" class="btn-exam-action" id="take-exam-card-btn">
+              Start Exam
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </a>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="card activity-card">
+            <div class="card-header">
+              <h3 class="card-title">⚡ Recent Activity</h3>
+            </div>
+            <ul class="activity-list" id="recent-activity-list">
+              <!-- Dynamically populated via JS -->
+              <li style="text-align:center; padding: 20px; color: #888;">Loading activity...</li>
+            </ul>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ─────────────────────────────────
+           EXAM FOR TODAY PAGE
+      ───────────────────────────────── -->
+      <section class="page exam-page" id="page-exam">
+        <div class="page-inner-header">
+          <h2 class="page-inner-title">📋 Exam for Today</h2>
+          <p class="page-inner-sub">Complete your assigned exam before the deadline.</p>
+        </div>
+
+        <!-- Dynamic exam list — populated by dashboard.js -->
+        <div id="all-exams-list" style="display:flex; flex-direction:column; gap:20px; margin-top: 8px;">
+          <!-- Cards injected here by JS -->
+          <div style="text-align:center; padding:40px; color:#888;">Loading exams...</div>
+        </div>
+      </section>
+
+      <!-- ─────────────────────────────────
+           FLASH CARD PAGE
+      ───────────────────────────────── -->
+      <section class="page flashcard-page" id="page-flashcard">
+        <div class="page-inner-header">
+          <h2 class="page-inner-title">🃏 Flash Cards</h2>
+          <p class="page-inner-sub">Flip through your study cards and reinforce what you've learned.</p>
+        </div>
+
+        <div id="all-flashcards-list" style="display:flex; flex-direction:column; gap:20px; margin-top: 8px;">
+
+          <div class="exam-card-full fc-theme" style="margin:0; padding:0;">
+            <div style="padding: 24px;">
+              <div class="ecf-top">
+                <div class="ecf-subject-badge">🧬 Biology</div>
+                <span class="card-badge new-badge" style="background:rgba(56,189,248,0.15);color:#38bdf8;">New
+                  Deck</span>
+              </div>
+              <h3 class="ecf-title">Bio123 — Core Biology</h3>
+              <p class="ecf-desc">Cell structure, genetics, human anatomy, and ecosystems.</p>
+              <div class="ecf-meta-row">
+                <div class="ecf-meta-item"><span class="ecf-meta-icon">📝</span><span>20 Cards</span></div>
+                <div class="ecf-meta-item"><span class="ecf-meta-icon">⭐</span><span>New</span></div>
+              </div>
+            </div>
+            <a href="../flash_card/flash_card.html?deck=bio123" class="btn-begin-exam"
+              style="display: block; width: calc(100% - 48px); margin: 0 24px 24px; text-decoration: none; text-align: center;">
+              Study Now <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </a>
+          </div>
+
+          <div class="exam-card-full fc-theme" style="margin:0; padding:0;">
+            <div style="padding: 24px;">
+              <div class="ecf-top">
+                <div class="ecf-subject-badge">📐 Mathematics</div>
+                <span class="card-badge locked-badge"
+                  style="background:rgba(224,28,28,0.15);color:#ff7070;">Locked</span>
+              </div>
+              <h3 class="ecf-title">Math201 — Calculus</h3>
+              <p class="ecf-desc">Derivatives, integrals, and limits.</p>
+              <div class="ecf-meta-row">
+                <div class="ecf-meta-item"><span class="ecf-meta-icon">🔒</span><span>Complete Bio123 First</span></div>
+              </div>
+            </div>
+            <button class="btn-begin-exam"
+              style="display: block; width: calc(100% - 48px); margin: 0 24px 24px; background: var(--dark-500); color: var(--text-muted); cursor: not-allowed; box-shadow: none;"
+              disabled>
+              Complete Bio123 First
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ─────────────────────────────────
+           Elite PUZZLE PAGE
+      ───────────────────────────────── -->
+      <section class="page puzzle-page" id="page-puzzle">
+        <div class="page-inner-header">
+          <h2 class="page-inner-title">🧩 Elite Puzzle</h2>
+          <p class="page-inner-sub">Challenge your mind with subject-based puzzles and brain teasers.</p>
+        </div>
+
+        <div id="all-puzzles-list" style="display:flex; flex-direction:column; gap:20px; margin-top: 8px;">
+          <!-- Puzzles injected here by JS -->
+          <div style="text-align:center; padding:40px; color:#888;">Loading puzzles...</div>
+        </div>
+      </section>
+
+      <!-- ─────────────────────────────────
+           ANALYTICS PAGE
+      ───────────────────────────────── -->
+      <section class="page analytics-page" id="page-analytics">
+        <div class="page-inner-header">
+          <h2 class="page-inner-title">📊 Analytics</h2>
+          <p class="page-inner-sub">Track your academic progress and performance trends.</p>
+        </div>
+
+        <div class="analytics-grid">
+
+          <!-- Score Overview -->
+          <div class="analytics-card span-2">
+            <div class="card-header">
+              <h3 class="card-title">📈 Score Trends</h3>
+              <span style="font-size:0.8rem;color:var(--text-muted);">Last 7 days</span>
+            </div>
+            <div class="chart-area">
+              <div class="bar-chart" id="bar-chart">
+                <!-- Bars injected by JS -->
+              </div>
+              <div class="chart-labels" id="chart-labels"></div>
+            </div>
+          </div>
+
+          <!-- Subject breakdown -->
+          <div class="analytics-card">
+            <div class="card-header">
+              <h3 class="card-title">📚 Subject Scores</h3>
+            </div>
+            <ul class="subject-scores">
+              <li class="subj-row">
+                <span class="subj-name">Mathematics</span>
+                <div class="subj-bar-wrap">
+                  <div class="subj-bar" style="width:87%;background:#e01c1c;"></div>
+                </div>
+                <span class="subj-pct">87%</span>
+              </li>
+              <li class="subj-row">
+                <span class="subj-name">Physics</span>
+                <div class="subj-bar-wrap">
+                  <div class="subj-bar" style="width:92%;background:#9d6aff;"></div>
+                </div>
+                <span class="subj-pct">92%</span>
+              </li>
+              <li class="subj-row">
+                <span class="subj-name">Chemistry</span>
+                <div class="subj-bar-wrap">
+                  <div class="subj-bar" style="width:74%;background:#fbbf24;"></div>
+                </div>
+                <span class="subj-pct">74%</span>
+              </li>
+              <li class="subj-row">
+                <span class="subj-name">Biology</span>
+                <div class="subj-bar-wrap">
+                  <div class="subj-bar" style="width:80%;background:#34d399;"></div>
+                </div>
+                <span class="subj-pct">80%</span>
+              </li>
+              <li class="subj-row">
+                <span class="subj-name">English</span>
+                <div class="subj-bar-wrap">
+                  <div class="subj-bar" style="width:88%;background:#60a5fa;"></div>
+                </div>
+                <span class="subj-pct">88%</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Summary stats -->
+          <div class="analytics-card">
+            <div class="card-header">
+              <h3 class="card-title">🏅 Summary</h3>
+            </div>
+            <div class="summary-stats">
+              <div class="summ-item">
+                <span class="summ-num" style="color:#e01c1c;">12</span>
+                <span class="summ-label">Exams Taken</span>
+              </div>
+              <div class="summ-item">
+                <span class="summ-num" style="color:#34d399;">87%</span>
+                <span class="summ-label">Average Score</span>
+              </div>
+              <div class="summ-item">
+                <span class="summ-num" style="color:#fbbf24;">14h</span>
+                <span class="summ-label">Study Time</span>
+              </div>
+              <div class="summ-item">
+                <span class="summ-num" style="color:#9d6aff;">🔥 7</span>
+                <span class="summ-label">Day Streak</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Admin Section has been moved to ../admin/admin.html -->
+
+      <!-- ═══════════════════════════════════════
+           PAGE: LEADERBOARD
+      ═══════════════════════════════════════ -->
+      <section class="page" id="page-leaderboard">
+        <div class="page-inner-header">
+          <h2 class="page-inner-title">Leaderboard</h2>
+          <p class="page-inner-sub">See how you stack up against the best.</p>
+        </div>
+
+        <div class="lb-layout" style="padding: 0; max-width: 100%;">
+          <main class="lb-main-panel">
+
+            <!-- Tabs -->
+            <div class="lb-tabs-container">
+              <button class="lb-tab active" data-tab="exam">Exam for Today</button>
+              <button class="lb-tab" data-tab="puzzle">Elite Puzzle</button>
+            </div>
+
+            <!-- Filters (Exam specific) -->
+            <div class="lb-filters" id="lb-filters-container">
+              <div class="custom-select-wrapper">
+                <select class="lb-subject-select" id="lb-subject-select">
+                  <option value="all">All Subjects</option>
+                  <!-- Injected via JS -->
+                </select>
+                <svg class="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Podium Top 3 -->
+            <div class="podium-container" id="podium-container">
+              <!-- 2nd Place -->
+              <div class="podium-item place-2" id="podium-2">
+                <div class="podium-rank-badge">2</div>
+                <div class="podium-avatar">U</div>
+                <div class="podium-name">Loading...</div>
+                <div class="podium-score">0 pts</div>
+                <div class="podium-bar"></div>
+              </div>
+
+              <!-- 1st Place -->
+              <div class="podium-item place-1" id="podium-1">
+                <div class="podium-crown">👑</div>
+                <div class="podium-rank-badge">1</div>
+                <div class="podium-avatar">U</div>
+                <div class="podium-name">Loading...</div>
+                <div class="podium-score">0 pts</div>
+                <div class="podium-bar"></div>
+              </div>
+
+              <!-- 3rd Place -->
+              <div class="podium-item place-3" id="podium-3">
+                <div class="podium-rank-badge">3</div>
+                <div class="podium-avatar">U</div>
+                <div class="podium-name">Loading...</div>
+                <div class="podium-score">0 pts</div>
+                <div class="podium-bar"></div>
+              </div>
+            </div>
+
+            <!-- Ranks 4 to 20 -->
+            <div class="lb-list-container">
+              <ul class="lb-list" id="lb-list">
+                <!-- Rows injected via JS -->
+                <div style="text-align:center; padding: 40px; color: var(--text-muted);">Loading ranking...</div>
+              </ul>
+            </div>
+
+          </main>
+        </div>
+
+        <!-- Fixed Bottom Bar for Current User (hidden by default, shown by JS when not top 3) -->
+        <div class="user-sticky-bar hidden" id="user-sticky-bar">
+          <div class="usb-left">
+            <div class="usb-rank" id="usb-rank">--</div>
+            <div class="usb-avatar" id="usb-avatar">IM</div>
+            <div class="usb-info">
+              <div class="usb-name" id="usb-name">You</div>
+              <div class="usb-sub" id="usb-sub">Your Rank</div>
+            </div>
+          </div>
+          <div class="usb-right">
+            <div class="usb-score" id="usb-score">0 pts</div>
+          </div>
+        </div>
+      </section>
+
+
+    </main>
+  </div>
+
+  <!-- Logout confirm modal -->
+  <div class="modal-overlay" id="logout-modal">
+    <div class="modal-box">
+      <div class="modal-icon">👋</div>
+      <h3 class="modal-title">Leaving so soon?</h3>
+      <p class="modal-sub">Are you sure you want to log out of Elite Tutorial?</p>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" id="modal-cancel">Stay</button>
+        <button class="modal-btn confirm" id="modal-confirm">Yes, Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../js/supabase-config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="../../js/auth.js"></script>
+  <script src="../leaderboard/leaderboard.js?v=2"></script>
+  <script src="dashboard.js?v=2"></script>
+</body>
+
+</html>
