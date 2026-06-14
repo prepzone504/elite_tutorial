@@ -33,9 +33,9 @@ async function fetchAndRenderAnalytics(client, userId) {
         // Fetch User Exam Attempts
         const { data: attempts, error } = await client
             .from('user_exam_attempts')
-            .select('score, total_q, exam_title, subject, created_at')
+            .select('score, total_q, exam_title, subject, completed_at')
             .eq('user_id', userId)
-            .order('created_at', { ascending: true }); // Chronological for charts
+            .order('completed_at', { ascending: true }); // Chronological for charts
 
         if (error) throw error;
 
@@ -62,7 +62,7 @@ async function fetchAndRenderAnalytics(client, userId) {
             if (pct > highestScorePct) highestScorePct = pct;
 
             // Prepare Line Chart Data
-            const dateStr = new Date(attempt.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            const dateStr = new Date(attempt.completed_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
             dates.push(`Exam ${index + 1} (${dateStr})`);
             scoreHistory.push(pct);
 
@@ -79,7 +79,7 @@ async function fetchAndRenderAnalytics(client, userId) {
 
             const rowHTML = `
                 <tr>
-                    <td>${new Date(attempt.created_at).toLocaleDateString()}</td>
+                    <td>${new Date(attempt.completed_at).toLocaleDateString()}</td>
                     <td>${attempt.exam_title || 'Untitled Exam'}</td>
                     <td>${subj}</td>
                     <td>${attempt.score} / ${attempt.total_q}</td>

@@ -639,7 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!assignmentsRes.error && assignmentsRes.data && assignmentsRes.data.length > 0) {
         const assignedIds = assignmentsRes.data.map(a => a.exam_batch_id);
         examsRes = await client.from('exam_questions')
-          .select('exam_batch_id, exam_title, subject, duration_mins, pass_mark, created_at')
+          .select('*')
           .in('exam_batch_id', assignedIds)
           .order('created_at', { ascending: false });
       }
