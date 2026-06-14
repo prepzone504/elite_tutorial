@@ -66,22 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
      SIDEBAR & NAVIGATION
   ───────────────────────────────────────── */
   const sidebar = document.getElementById('sidebar');
-  const menuToggle = document.getElementById('menu-toggle');
-  const sidebarOverlay = document.getElementById('sidebar-overlay');
   const navLinks = document.querySelectorAll('.nav-link');
   const breadcrumb = document.getElementById('breadcrumb-title');
 
-  // Toggle sidebar (mobile)
-  menuToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-    sidebarOverlay.classList.toggle('visible');
-  });
-
-  sidebarOverlay.addEventListener('click', closeSidebar);
-
   function closeSidebar() {
-    sidebar.classList.remove('open');
-    sidebarOverlay.classList.remove('visible');
+    if (sidebar) sidebar.classList.remove('open');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (overlay) overlay.classList.remove('visible');
   }
 
   /* ─────────────────────────────────────────
