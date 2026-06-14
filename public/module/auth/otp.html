@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Enter your verification code to complete sign in to Elite Tutorial." />
+    <title>Verify Email | Elite Tutorial</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap"
+        rel="stylesheet" />
+
+    <style>
+        :root {
+            --red-primary: #e01c1c;
+            --red-bright: #ff2d2d;
+            --red-glow: rgba(224, 28, 28, 0.35);
+            --red-subtle: rgba(224, 28, 28, 0.10);
+            --dark-900: #080808;
+            --dark-800: #0f0f0f;
+            --dark-700: #161616;
+            --dark-600: #1e1e1e;
+            --dark-500: #272727;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-white: #ffffff;
+            --text-silver: #c8c8c8;
+            --text-muted: #6a6a6a;
+            --font-main: 'Outfit', sans-serif;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--dark-900);
+            color: var(--text-white);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* ── Background ── */
+        .bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-canvas::before {
+            content: '';
+            position: absolute;
+            top: -15%;
+            right: -5%;
+            width: 55vw;
+            height: 55vw;
+            background: radial-gradient(ellipse, rgba(224, 28, 28, 0.12) 0%, transparent 70%);
+            animation: driftA 20s ease-in-out infinite alternate;
+            border-radius: 50%;
+        }
+
+        .bg-canvas::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            left: -5%;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(ellipse, rgba(160, 0, 0, 0.08) 0%, transparent 70%);
+            animation: driftB 25s ease-in-out infinite alternate;
+            border-radius: 50%;
+        }
+
+        @keyframes driftA {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(-5%, 8%) scale(1.1);
+            }
+        }
+
+        @keyframes driftB {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(6%, -5%) scale(1.15);
+            }
+        }
+
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        .particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.5;
+            }
+
+            90% {
+                opacity: 0.2;
+            }
+
+            100% {
+                transform: translateY(-10vh) scale(1.4);
+                opacity: 0;
+            }
+        }
+
+        /* ── Card ── */
+        .verify-card {
+            position: relative;
+            z-index: 1;
+            background: var(--dark-700);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 460px;
+            text-align: center;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.5);
+            animation: cardIn 0.6s ease both;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            text-decoration: none;
+        }
+
+        .card-logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--red-primary), #7a0000);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 900;
+            color: #fff;
+            box-shadow: 0 6px 20px var(--red-glow);
+        }
+
+        .card-logo-text {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .card-logo-text span {
+            color: var(--red-bright);
+        }
+
+        .lock-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            background: var(--red-subtle);
+            border: 1px solid rgba(224, 28, 28, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 24px;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .card-email {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-silver);
+            margin-bottom: 8px;
+        }
+
+        .timer-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #ff7070;
+            margin-bottom: 28px;
+        }
+
+        /* ── Message ── */
+        .form-message {
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-message.error {
+            display: flex;
+            background: rgba(224, 28, 28, 0.1);
+            border: 1px solid rgba(224, 28, 28, 0.3);
+            color: #ff7070;
+        }
+
+        .form-message.success {
+            display: flex;
+            background: rgba(28, 200, 100, 0.1);
+            border: 1px solid rgba(28, 200, 100, 0.3);
+            color: #50e89a;
+        }
+
+        /* ── OTP Boxes ── */
+        .otp-boxes {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .otp-box {
+            width: 56px;
+            height: 64px;
+            background: var(--dark-600);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            color: #fff;
+            font-family: var(--font-main);
+            font-size: 1.7rem;
+            font-weight: 800;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+            caret-color: var(--red-bright);
+        }
+
+        .otp-box:focus {
+            border-color: rgba(224, 28, 28, 0.7);
+            background: var(--dark-700);
+            box-shadow: 0 0 0 4px rgba(224, 28, 28, 0.10), 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .otp-box.filled {
+            border-color: rgba(224, 28, 28, 0.5);
+        }
+
+        .otp-box.error-field {
+            border-color: rgba(224, 28, 28, 0.8);
+            background: rgba(224, 28, 28, 0.06);
+            animation: shake 0.35s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-6px);
+            }
+
+            75% {
+                transform: translateX(6px);
+            }
+        }
+
+        .field-error {
+            font-size: 0.78rem;
+            color: #ff7070;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        .field-error.visible {
+            display: block;
+        }
+
+        /* ── Submit ── */
+        .btn-submit {
+            width: 100%;
+            padding: 15px 24px;
+            background: linear-gradient(135deg, var(--red-primary), #8a0000);
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 28px var(--red-glow);
+            position: relative;
+            overflow: hidden;
+            transition: transform var(--transition), box-shadow var(--transition);
+            letter-spacing: 0.02em;
+            margin-top: 8px;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-submit:hover::before {
+            left: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 40px var(--red-glow);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-submit.loading .btn-text {
+            display: none;
+        }
+
+        .btn-submit.loading .spinner {
+            display: block;
+        }
+
+        .resend-row {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .resend-row a {
+            color: var(--red-bright);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .resend-row a:hover {
+            opacity: 0.75;
+        }
+
+        /* ── Modal ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: var(--dark-700);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 36px 32px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+            transform: translateY(20px) scale(0.95);
+            opacity: 0;
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.visible .modal-box {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .modal-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: var(--dark-600);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 24px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .modal-sub {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.confirm {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+        }
+
+        .modal-btn.confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+        }
+
+        @media (max-width: 500px) {
+            .verify-card {
+                padding: 36px 20px;
+            }
+
+            .otp-box {
+                width: 44px;
+                height: 54px;
+                font-size: 1.4rem;
+            }
+
+            .otp-boxes {
+                gap: 8px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-800);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--dark-500);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--red-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-canvas">
+        <div class="bg-grid"></div>
+    </div>
+    <div class="particles" id="particles"></div>
+
+    <div class="verify-card">
+        <a href="../../index.html" class="card-logo">
+            <div class="card-logo-icon">E</div>
+            <span class="card-logo-text">Elite <span>Tutorial</span></span>
+        </a>
+
+        <div class="lock-icon">🔐</div>
+        <h1 class="card-title">Check Your Email</h1>
+        <p class="card-desc">We sent a 6-digit code to</p>
+        <p class="card-email" id="display-email">—</p>
+
+        <div class="timer-wrap">
+            ⏱ Expires in <strong id="otp-timer">10:00</strong>
+        </div>
+
+        <div class="form-message" id="form-message">
+            <span id="form-message-text"></span>
+        </div>
+
+        <form id="otp-verify-form" novalidate>
+            <div class="otp-boxes">
+                <input class="otp-box" type="text" inputmode="numeric" maxlength="1" id="otp-d1"
+                    autocomplete="one-time-code" />
+                <input class="otp-box" type="text" inputmode="numeric" maxlength="1" id="otp-d2" />
+                <input class="otp-box" type="text" inputmode="numeric" maxlength="1" id="otp-d3" />
+                <input class="otp-box" type="text" inputmode="numeric" maxlength="1" id="otp-d4" />
+                <input class="otp-box" type="text" inputmode="numeric" maxlength="1" id="otp-d5" />
+                <input class="otp-box" type="text" inputmode="numeric" maxlength="1" id="otp-d6" />
+            </div>
+            <div class="field-error" id="token-error">Please enter the full 6-digit code.</div>
+
+            <button type="submit" class="btn-submit" id="submit-btn">
+                <span class="btn-text">Verify &amp; Sign In</span>
+                <div class="spinner"></div>
+            </button>
+        </form>
+
+        <div class="resend-row">
+            Didn't get a code? <a id="resend-link">Resend</a>
+        </div>
+    </div>
+
+    <!-- Matric Number Modal -->
+    <div class="modal-overlay" id="matric-modal">
+        <div class="modal-box">
+            <div class="modal-icon" style="background: linear-gradient(135deg, #10b981, #059669);">🎓</div>
+            <h3 class="modal-title">Welcome to Elite Tutorial!</h3>
+            <p class="modal-sub">To get your unique Matric Number, please enter your real full name.</p>
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label
+                    style="display:block; font-size: 0.85rem; color: #c8c8c8; margin-bottom: 8px; font-weight: 600;">Full
+                    Real Name</label>
+                <input type="text" id="matric-real-name" placeholder="e.g. John Doe"
+                    style="width: 100%; padding: 14px 16px; background: var(--dark-600); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-family: inherit; font-size: 1rem; outline: none;" />
+                <p id="matric-error-msg" style="color: #ff7070; font-size: 0.85rem; margin-top: 8px; display: none;">
+                    Please enter your full name to proceed.</p>
+            </div>
+            <button class="modal-btn confirm" id="matric-submit-btn">Generate Matric Number</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/supabase-config.js"></script>
+    <script src="../../js/supabase-client.js"></script>
+    <script src="../../js/auth.js"></script>
+
+    <script>
+        // ── Particles
+        (function () {
+            const c = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                const size = Math.random() * 3 + 1;
+                p.style.cssText = `left:${Math.random() * 100}vw;width:${size}px;height:${size}px;background:#e01c1c;animation-duration:${Math.random() * 16 + 10}s;animation-delay:${Math.random() * 14}s;`;
+                c.appendChild(p);
+            }
+        })();
+
+        // ── Helpers
+        function showMessage(msg, type) {
+            const el = document.getElementById('form-message');
+            const txt = document.getElementById('form-message-text');
+            el.className = 'form-message ' + type;
+            txt.textContent = (type === 'error' ? '⚠️  ' : '✅  ') + msg;
+            el.style.display = 'flex';
+        }
+
+        // ── Countdown Timer
+        let countdownInterval = null;
+        function startTimer(seconds) {
+            clearInterval(countdownInterval);
+            const el = document.getElementById('otp-timer');
+            let t = seconds;
+            countdownInterval = setInterval(() => {
+                const m = String(Math.floor(t / 60)).padStart(2, '0');
+                const s = String(t % 60).padStart(2, '0');
+                el.textContent = m + ':' + s;
+                if (--t < 0) { clearInterval(countdownInterval); el.textContent = '00:00'; }
+            }, 1000);
+        }
+
+        // ── OTP Box Behaviour
+        const boxes = Array.from(document.querySelectorAll('.otp-box'));
+        boxes.forEach((box, i) => {
+            box.addEventListener('input', (e) => {
+                const val = e.target.value.replace(/[^0-9]/g, '');
+                box.value = val.slice(-1);
+                box.classList.toggle('filled', !!box.value);
+                if (box.value && i < 5) boxes[i + 1].focus();
+                if (boxes.every(b => b.value)) {
+                    document.getElementById('otp-verify-form').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                }
+            });
+            box.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !box.value && i > 0) {
+                    boxes[i - 1].value = '';
+                    boxes[i - 1].classList.remove('filled');
+                    boxes[i - 1].focus();
+                }
+            });
+            box.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '').slice(0, 6);
+                pasted.split('').forEach((ch, idx) => {
+                    if (boxes[idx]) { boxes[idx].value = ch; boxes[idx].classList.add('filled'); }
+                });
+                const nextEmpty = boxes.findIndex(b => !b.value);
+                if (nextEmpty !== -1) boxes[nextEmpty].focus(); else boxes[5].focus();
+                if (pasted.length === 6) {
+                    document.getElementById('otp-verify-form').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                }
+            });
+            box.addEventListener('focus', () => box.select());
+        });
+
+        // ── Verify Submit
+        let currentEmail = '';
+
+        document.getElementById('otp-verify-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const tokenVal = boxes.map(b => b.value).join('');
+            boxes.forEach(b => b.classList.remove('error-field'));
+            document.getElementById('token-error').classList.remove('visible');
+
+            if (tokenVal.length < 6) {
+                boxes.forEach(b => b.classList.add('error-field'));
+                document.getElementById('token-error').classList.add('visible');
+                return;
+            }
+
+            const btn = document.getElementById('submit-btn');
+            btn.classList.add('loading'); btn.disabled = true;
+
+            try {
+                const data = await window.EliteAuth.verifyOtp(currentEmail, tokenVal);
+                const client = window.getSupabaseClient();
+                const { data: profile } = await client.from('profiles').select('matric_number').eq('id', data.user.id).single();
+
+                if (!profile || !profile.matric_number) {
+                    // Show matric dialog before going to dashboard
+                    const modal = document.getElementById('matric-modal');
+                    modal.classList.add('visible');
+                    btn.classList.remove('loading'); btn.disabled = false;
+
+                    document.getElementById('matric-submit-btn').addEventListener('click', async () => {
+                        const realName = document.getElementById('matric-real-name').value.trim();
+                        const errEl = document.getElementById('matric-error-msg');
+                        const sbtn = document.getElementById('matric-submit-btn');
+                        if (!realName) { errEl.style.display = 'block'; return; }
+                        errEl.style.display = 'none';
+                        sbtn.textContent = 'Generating...'; sbtn.disabled = true;
+                        try {
+                            const { error } = await client.rpc('assign_matric_number', { p_real_name: realName });
+                            if (error) throw error;
+                            window.location.href = '../dashboard/dashboard.html';
+                        } catch (err) {
+                            errEl.textContent = 'Error. Please try again.';
+                            errEl.style.display = 'block';
+                            sbtn.textContent = 'Generate Matric Number'; sbtn.disabled = false;
+                        }
+                    });
+                } else {
+                    window.location.href = '../dashboard/dashboard.html';
+                }
+            } catch (err) {
+                showMessage('Invalid or expired code. Please try again.', 'error');
+                boxes.forEach(b => { b.value = ''; b.classList.remove('filled'); });
+                boxes[0].focus();
+                btn.classList.remove('loading'); btn.disabled = false;
+            }
+        });
+
+        // ── Resend
+        document.getElementById('resend-link').addEventListener('click', async () => {
+            if (!currentEmail) return;
+            try {
+                await window.EliteAuth.sendOtp(currentEmail);
+                showMessage('New code sent! Check your email.', 'success');
+                boxes.forEach(b => { b.value = ''; b.classList.remove('filled'); });
+                boxes[0].focus();
+                startTimer(600);
+            } catch (err) {
+                showMessage(err.message || 'Failed to resend.', 'error');
+            }
+        });
+
+        // ── Init: read ?email= from URL and send OTP immediately
+        (function () {
+            const email = new URLSearchParams(window.location.search).get('email');
+            if (!email) {
+                // No email param — redirect to login
+                window.location.href = 'login.html';
+                return;
+            }
+            currentEmail = email;
+            document.getElementById('display-email').textContent = email;
+            showMessage('Sending verification code to your email...', 'success');
+
+            window.EliteAuth.sendOtp(email)
+                .then(() => {
+                    showMessage('Code sent! Check your email.', 'success');
+                    startTimer(600);
+                    boxes[0].focus();
+                })
+                .catch((err) => {
+                    showMessage(err.message || 'Failed to send code.', 'error');
+                });
+        })();
+    </script>
+</body>
+
+</html>

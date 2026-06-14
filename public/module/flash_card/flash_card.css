@@ -212,11 +212,19 @@ body {
 
 .flashcard-front, .flashcard-back {
   position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  border-radius: 32px; padding: 48px; display: flex; flex-direction: column;
+  border-radius: 32px; padding: 32px; display: flex; flex-direction: column;
   align-items: center; justify-content: center; text-align: center;
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 24px 64px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
-  overflow: hidden;
+  overflow-y: auto;
+  gap: 16px;
+}
+.flashcard-front::-webkit-scrollbar, .flashcard-back::-webkit-scrollbar {
+  width: 6px;
+}
+.flashcard-front::-webkit-scrollbar-thumb, .flashcard-back::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
 }
 .flashcard-front::before, .flashcard-back::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%;
@@ -232,12 +240,25 @@ body {
   transform: rotateY(180deg);
 }
 
+.fc-front-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-shrink: 0;
+}
 .fc-subject-tag {
   font-size: 0.8rem; font-weight: 800; letter-spacing: 0.15em;
-  text-transform: uppercase; color: var(--red-bright); margin-bottom: 24px;
+  text-transform: uppercase; color: var(--red-bright);
   background: rgba(224,28,28,0.1); padding: 6px 16px; border-radius: 50px;
   border: 1px solid rgba(224,28,28,0.2);
 }
+.fc-view-count {
+  font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 6px;
+}
+.fc-view-icon { font-size: 0.9rem; }
 .fc-question { font-size: 1.8rem; font-weight: 800; line-height: 1.35; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,0.5); }
 .fc-answer { font-size: 2rem; font-weight: 900; color: #fff; margin-bottom: 16px; text-shadow: 0 2px 12px rgba(0,0,0,0.5); }
 .fc-explanation { font-size: 1rem; color: rgba(255,255,255,0.7); line-height: 1.6; }
@@ -570,7 +591,7 @@ body.game-mode-active .fc-topbar {
   
   .cv-bottom-nav { padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
   .fc-controls-inner { gap: 12px; }
-  .nav-label { display: none; }
+  .fc-nav-label { display: none; }
   .fc-nav-btn { padding: 14px; border-radius: 14px; }
   
   .fc-rate-row { gap: 8px; width: 100%; justify-content: center; }

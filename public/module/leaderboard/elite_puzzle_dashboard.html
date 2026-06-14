@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Leaderboard | Elite Tutorial</title>
+  <title>Elite Puzzle Leaderboard | Elite Tutorial</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -25,9 +25,9 @@
     </div>
 
     <div class="login-card" id="login-card">
-      <div class="login-shield">🏆</div>
+      <div class="login-shield">🧩</div>
       <h1 class="login-title">Admin Access</h1>
-      <p class="login-subtitle">Enter your credentials to access the leaderboard.</p>
+      <p class="login-subtitle">Enter your credentials to access the puzzle leaderboard.</p>
 
       <form id="admin-login-form" autocomplete="off">
         <div class="login-field">
@@ -66,7 +66,7 @@
           <line x1="3" y1="18" x2="21" y2="18" />
         </svg>
       </button>
-      <h1 class="lb-topbar-title">🏆 Leaderboard</h1>
+      <h1 class="lb-topbar-title">🧩 Elite Puzzle Leaderboard</h1>
       <div class="lb-avatar" id="lb-user-avatar">IM</div>
     </header>
 
@@ -75,20 +75,13 @@
         
         <!-- Tabs -->
         <div class="lb-tabs-container">
-          <button class="lb-tab active" data-tab="exam">Exam for Today</button>
-          <button class="lb-tab" data-tab="puzzle">Elite Puzzle</button>
+          <button class="lb-tab" data-tab="exam">Exam for Today</button>
+          <button class="lb-tab active" data-tab="puzzle">Elite Puzzle</button>
         </div>
 
         <!-- Filters -->
         <div class="lb-filters" id="lb-filters-container">
-          <div class="custom-select-wrapper" id="exam-select-wrapper">
-            <select class="lb-subject-select" id="lb-subject-select">
-              <option value="all">All Subjects</option>
-              <!-- Injected via JS -->
-            </select>
-            <svg class="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-          <div class="custom-select-wrapper" id="puzzle-select-wrapper" style="display: none;">
+          <div class="custom-select-wrapper" id="puzzle-select-wrapper">
             <select class="lb-subject-select" id="lb-puzzle-select">
               <option value="all">All Puzzles</option>
               <!-- Injected via JS -->
@@ -166,6 +159,6 @@
       initSharedSidebar({ activePage: 'leaderboard', rootPath: '../../' });
     });
   </script>
-  <script src="leaderboard.js"></script>
+  <script src="elite_puzzle_dashboard.js"></script>
 </body>
 </html>

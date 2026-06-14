@@ -141,43 +141,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     deckGrid.innerHTML = uniqueDecks.map(deck => {
       const isReviewed = reviewedDecks.has(deck.deck_name);
       const reviewData = isReviewed ? reviewedDecks.get(deck.deck_name) : null;
+      
+      let pCount = parseInt(localStorage.getItem('fc_part_' + deck.deck_name) || '0', 10);
+      if (isReviewed && pCount === 0) pCount = 1; // Fallback if they played before we added this
 
-      // Format the reviewed date nicely
-      let reviewDateStr = '';
-      if (reviewData && reviewData.reviewed_at) {
-        const d = new Date(reviewData.reviewed_at);
-        reviewDateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      }
-
-      // Badge: "Reviewed ✓" or "New Deck"
-      const badgeHtml = isReviewed
-        ? `<span class="card-badge reviewed-badge">✅ Reviewed</span>`
-        : `<span class="card-badge new-badge" style="background:rgba(56,189,248,0.15);color:#38bdf8;">New Deck</span>`;
+      // Badge
+      const badgeHtml = `<span class="card-badge new-badge" style="background:rgba(56,189,248,0.15);color:#38bdf8;">${pCount > 0 ? 'Studied' : 'New Deck'}</span>`;
 
       // Button text: "Study Again" or "Study Now"
-      const btnText = isReviewed ? 'Study Again' : 'Study Now';
-      const btnIcon = isReviewed
-        ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>`
-        : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+      const btnText = pCount > 0 ? 'Study Again' : 'Study Now';
+      const btnIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
 
-      // Stats row for reviewed decks
-      const statsHtml = isReviewed
-        ? `<div class="ecf-meta-row">
+      const statsHtml = `<div class="ecf-meta-row">
              <div class="ecf-meta-item"><span class="ecf-meta-icon">📝</span><span>${deck.cards.length} Cards</span></div>
-             <div class="ecf-meta-item" style="background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.2);color:#34d399;"><span class="ecf-meta-icon">😊</span><span>${reviewData.got_it_count} Got It</span></div>
-             <div class="ecf-meta-item" style="background:rgba(255,112,112,0.1);border-color:rgba(255,112,112,0.2);color:#ff7070;"><span class="ecf-meta-icon">😕</span><span>${reviewData.hard_count} Hard</span></div>
-           </div>`
-        : `<div class="ecf-meta-row">
-             <div class="ecf-meta-item"><span class="ecf-meta-icon">📝</span><span>${deck.cards.length} Cards</span></div>
+             ${pCount > 0 ? `<div class="ecf-meta-item" style="background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.2);color:#34d399;"><span class="ecf-meta-icon">🔄</span><span>Participated: ${pCount} times</span></div>` : ''}
            </div>`;
 
-      // Add reviewed date subtitle
-      const reviewSubHtml = isReviewed
-        ? `<p class="fc-review-date">Last studied ${reviewDateStr}</p>`
-        : '';
-
       return `
-        <div class="exam-card-full fc-theme ${isReviewed ? 'fc-reviewed' : ''}" style="margin:0; padding:0; width:100%;">
+        <div class="exam-card-full fc-theme" style="margin:0; padding:0; width:100%;">
           <div style="padding: 24px;">
             <div class="ecf-top">
               <div class="ecf-subject-badge">🧬 ${deck.course}</div>
@@ -185,10 +166,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
             <h3 class="ecf-title">${deck.deck_name}</h3>
             <p class="ecf-desc">${deck.description}</p>
-            ${reviewSubHtml}
             ${statsHtml}
           </div>
-          <button class="btn-begin-exam btn-open-deck ${isReviewed ? 'btn-reviewed' : ''}" data-deck="${escapeHtml(deck.deck_name)}" style="display: block; width: calc(100% - 48px); margin: 0 24px 24px;">
+          <button class="btn-begin-exam btn-open-deck" data-deck="${escapeHtml(deck.deck_name)}" style="display: block; width: calc(100% - 48px); margin: 0 24px 24px;">
             ${btnText} ${btnIcon}
           </button>
         </div>
@@ -259,9 +239,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           selectedDeckName = deckName;
           const deckInfo = decksMap.get(deckName);
           flashcards = deckInfo.cards.map(c => ({
+            id: c.id,
             q: c.question,
             a: c.answer,
-            exp: c.explanation || ''
+            exp: c.explanation || '',
+            viewCount: c.view_count || 0
           }));
           currentCardIdx = parseInt(sessionStorage.getItem('fc_card_idx') || '0', 10);
           gotItCount = parseInt(sessionStorage.getItem('fc_got_it') || '0', 10);
@@ -339,9 +321,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Set global flashcards array to just this deck
     flashcards = deckInfo.cards.map(c => ({
+      id: c.id,
       q: c.question,
       a: c.answer,
-      exp: c.explanation || ''
+      exp: c.explanation || '',
+      viewCount: c.view_count || 0
     }));
     
     document.getElementById('cv-deck-badge').textContent = `🧬 ${deckInfo.course}`;
@@ -430,6 +414,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       txtExplanation.textContent = card.exp;
       txtQuestion.style.opacity = 1;
       txtAnswer.style.opacity = 1;
+      
+      const vcEl = document.getElementById('fc-view-count');
+      const vcElBack = document.getElementById('fc-view-count-back');
+      if (vcEl) {
+        vcEl.innerHTML = `<span class="fc-view-icon">👀</span> Viewed (${card.viewCount} times)`;
+      }
+      if (vcElBack) {
+        vcElBack.innerHTML = `<span class="fc-view-icon">👀</span> Viewed (${card.viewCount} times)`;
+      }
+
+      // Increment view count in background
+      incrementCardViewCount(card);
     }, 150);
 
     // Update Progress
@@ -492,7 +488,50 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // ── SAVE REVIEW TO SUPABASE ──
     if (selectedDeckName) {
+      let currentPCount = parseInt(localStorage.getItem('fc_part_' + selectedDeckName) || '0', 10);
+      if (currentPCount === 0 && reviewedDecks.has(selectedDeckName)) currentPCount = 1; // Fallback
+      localStorage.setItem('fc_part_' + selectedDeckName, currentPCount + 1);
+      
       await saveReviewToSupabase(selectedDeckName, gotItCount, hardCount);
+    }
+  }
+
+  // ── VIEW TRACKING ──
+  async function incrementCardViewCount(card) {
+    if (!card || !card.id) return;
+    try {
+      const client = window.getSupabaseClient();
+      if (!client) return;
+
+      // Increment locally
+      card.viewCount++;
+      const vcEl = document.getElementById('fc-view-count');
+      const vcElBack = document.getElementById('fc-view-count-back');
+      if (vcEl) {
+        vcEl.innerHTML = `<span class="fc-view-icon">👀</span> Viewed (${card.viewCount} times)`;
+      }
+      if (vcElBack) {
+        vcElBack.innerHTML = `<span class="fc-view-icon">👀</span> Viewed (${card.viewCount} times)`;
+      }
+
+      // Update the original object in allDecksMap so the count persists when returning to library
+      for (const deck of allDecksMap.values()) {
+        const origCard = deck.cards.find(orig => orig.id === card.id);
+        if (origCard) {
+          origCard.view_count = card.viewCount;
+        }
+      }
+
+      // Update in Supabase
+      const { error } = await client.from('flash_cards')
+        .update({ view_count: card.viewCount })
+        .eq('id', card.id);
+        
+      if (error) {
+        console.warn('[FlashCard] Supabase view update failed (did you run the SQL command?):', error.message);
+      }
+    } catch (err) {
+      console.warn('[FlashCard] Could not increment view count', err);
     }
   }
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,32 +9,43 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap"
+    rel="stylesheet" />
 
   <style>
     :root {
-      --red-primary:  #e01c1c;
-      --red-bright:   #ff2d2d;
-      --red-glow:     rgba(224, 28, 28, 0.35);
-      --red-subtle:   rgba(224, 28, 28, 0.10);
-      --dark-900:     #080808;
-      --dark-800:     #0f0f0f;
-      --dark-700:     #161616;
-      --dark-600:     #1e1e1e;
-      --dark-500:     #272727;
-      --glass-bg:     rgba(255,255,255,0.035);
-      --glass-border: rgba(255,255,255,0.08);
-      --text-white:   #ffffff;
-      --text-silver:  #c8c8c8;
-      --text-muted:   #6a6a6a;
-      --font-main:    'Outfit', sans-serif;
-      --font-serif:   'Playfair Display', serif;
-      --radius:       18px;
-      --transition:   0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --red-primary: #e01c1c;
+      --red-bright: #ff2d2d;
+      --red-glow: rgba(224, 28, 28, 0.35);
+      --red-subtle: rgba(224, 28, 28, 0.10);
+      --dark-900: #080808;
+      --dark-800: #0f0f0f;
+      --dark-700: #161616;
+      --dark-600: #1e1e1e;
+      --dark-500: #272727;
+      --glass-bg: rgba(255, 255, 255, 0.035);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --text-white: #ffffff;
+      --text-silver: #c8c8c8;
+      --text-muted: #6a6a6a;
+      --font-main: 'Outfit', sans-serif;
+      --font-serif: 'Playfair Display', serif;
+      --radius: 18px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       font-family: var(--font-main);
@@ -59,7 +71,7 @@
       right: -5%;
       width: 55vw;
       height: 55vw;
-      background: radial-gradient(ellipse, rgba(224,28,28,0.12) 0%, transparent 70%);
+      background: radial-gradient(ellipse, rgba(224, 28, 28, 0.12) 0%, transparent 70%);
       animation: driftA 20s ease-in-out infinite alternate;
       border-radius: 50%;
     }
@@ -71,36 +83,73 @@
       left: -5%;
       width: 40vw;
       height: 40vw;
-      background: radial-gradient(ellipse, rgba(160,0,0,0.08) 0%, transparent 70%);
+      background: radial-gradient(ellipse, rgba(160, 0, 0, 0.08) 0%, transparent 70%);
       animation: driftB 25s ease-in-out infinite alternate;
       border-radius: 50%;
     }
 
-    @keyframes driftA { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(-5%, 8%) scale(1.1); } }
-    @keyframes driftB { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(6%, -5%) scale(1.15); } }
+    @keyframes driftA {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      100% {
+        transform: translate(-5%, 8%) scale(1.1);
+      }
+    }
+
+    @keyframes driftB {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      100% {
+        transform: translate(6%, -5%) scale(1.15);
+      }
+    }
 
     .bg-grid {
       position: absolute;
       inset: 0;
       background-image:
-        linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+        linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
       background-size: 60px 60px;
     }
 
     /* ── PARTICLES ──────────────────────── */
-    .particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
     .particle {
       position: absolute;
       border-radius: 50%;
       opacity: 0;
       animation: floatUp linear infinite;
     }
+
     @keyframes floatUp {
-      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
-      10%  { opacity: 0.5; }
-      90%  { opacity: 0.2; }
-      100% { transform: translateY(-10vh) scale(1.4); opacity: 0; }
+      0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.5;
+      }
+
+      90% {
+        opacity: 0.2;
+      }
+
+      100% {
+        transform: translateY(-10vh) scale(1.4);
+        opacity: 0;
+      }
     }
 
     /* ── BRAND PANEL (LEFT) ─────────────── */
@@ -113,13 +162,14 @@
       flex-direction: column;
       justify-content: center;
       padding: 60px 8%;
-      background: linear-gradient(160deg, rgba(224,28,28,0.08) 0%, transparent 60%);
+      background: linear-gradient(160deg, rgba(224, 28, 28, 0.08) 0%, transparent 60%);
       border-right: 1px solid var(--glass-border);
     }
 
     .back-link {
       position: absolute;
-      top: 36px; left: 5%;
+      top: 36px;
+      left: 5%;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -130,8 +180,13 @@
       transition: color var(--transition);
     }
 
-    .back-link:hover { color: var(--text-silver); }
-    .back-link .arrow { font-size: 1rem; }
+    .back-link:hover {
+      color: var(--text-silver);
+    }
+
+    .back-link .arrow {
+      font-size: 1rem;
+    }
 
     .bp-logo {
       display: flex;
@@ -161,7 +216,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent);
     }
 
     .bp-logo-text {
@@ -171,7 +226,9 @@
       color: #fff;
     }
 
-    .bp-logo-text span { color: var(--red-bright); }
+    .bp-logo-text span {
+      color: var(--red-bright);
+    }
 
     .bp-headline {
       font-size: clamp(2rem, 3.5vw, 3rem);
@@ -185,7 +242,7 @@
       font-family: var(--font-serif);
       font-style: italic;
       color: var(--red-bright);
-      text-shadow: 0 0 40px rgba(255,45,45,0.35);
+      text-shadow: 0 0 40px rgba(255, 45, 45, 0.35);
     }
 
     .bp-sub {
@@ -213,7 +270,7 @@
       height: 40px;
       border-radius: 10px;
       background: var(--red-subtle);
-      border: 1px solid rgba(224,28,28,0.2);
+      border: 1px solid rgba(224, 28, 28, 0.2);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -252,8 +309,15 @@
     }
 
     @keyframes cardIn {
-      from { opacity: 0; transform: translateY(28px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(28px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .form-title {
@@ -277,7 +341,9 @@
       transition: opacity var(--transition);
     }
 
-    .form-subtitle a:hover { opacity: 0.75; }
+    .form-subtitle a:hover {
+      opacity: 0.75;
+    }
 
     /* Google Button */
     .btn-google {
@@ -288,7 +354,7 @@
       width: 100%;
       padding: 14px 20px;
       background: var(--dark-600);
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 14px;
       color: var(--text-silver);
       font-family: var(--font-main);
@@ -301,9 +367,9 @@
 
     .btn-google:hover {
       background: var(--dark-500);
-      border-color: rgba(255,255,255,0.18);
+      border-color: rgba(255, 255, 255, 0.18);
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     }
 
     .google-icon {
@@ -325,7 +391,7 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: rgba(255,255,255,0.07);
+      background: rgba(255, 255, 255, 0.07);
     }
 
     .divider span {
@@ -369,7 +435,7 @@
       width: 100%;
       padding: 14px 16px 14px 46px;
       background: var(--dark-600);
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px;
       color: var(--text-white);
       font-family: var(--font-main);
@@ -378,15 +444,17 @@
       transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
     }
 
-    .form-input::placeholder { color: var(--text-muted); }
-
-    .form-input:focus {
-      border-color: rgba(224,28,28,0.6);
-      background: var(--dark-700);
-      box-shadow: 0 0 0 4px rgba(224,28,28,0.08), 0 4px 16px rgba(0,0,0,0.3);
+    .form-input::placeholder {
+      color: var(--text-muted);
     }
 
-    .form-input:focus + .input-icon,
+    .form-input:focus {
+      border-color: rgba(224, 28, 28, 0.6);
+      background: var(--dark-700);
+      box-shadow: 0 0 0 4px rgba(224, 28, 28, 0.08), 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-input:focus+.input-icon,
     .input-wrap:focus-within .input-icon {
       color: var(--red-bright);
     }
@@ -405,7 +473,9 @@
       transition: color var(--transition);
     }
 
-    .eye-toggle:hover { color: var(--text-silver); }
+    .eye-toggle:hover {
+      color: var(--text-silver);
+    }
 
     /* Forgot password */
     .forgot-wrap {
@@ -423,7 +493,9 @@
       transition: color var(--transition);
     }
 
-    .forgot-link:hover { color: var(--red-bright); }
+    .forgot-link:hover {
+      color: var(--red-bright);
+    }
 
     /* Submit button */
     .btn-submit {
@@ -447,36 +519,51 @@
     .btn-submit::before {
       content: '';
       position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
       transition: left 0.6s ease;
     }
 
-    .btn-submit:hover::before { left: 100%; }
+    .btn-submit:hover::before {
+      left: 100%;
+    }
 
     .btn-submit:hover {
       transform: translateY(-2px);
       box-shadow: 0 14px 40px var(--red-glow);
     }
 
-    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:active {
+      transform: translateY(0);
+    }
 
     .btn-submit .spinner {
       display: none;
       width: 18px;
       height: 18px;
-      border: 2px solid rgba(255,255,255,0.3);
+      border: 2px solid rgba(255, 255, 255, 0.3);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
       margin: 0 auto;
     }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
-    .btn-submit.loading .btn-text { display: none; }
-    .btn-submit.loading .spinner { display: block; }
+    .btn-submit.loading .btn-text {
+      display: none;
+    }
+
+    .btn-submit.loading .spinner {
+      display: block;
+    }
 
     /* Error / Success messages */
     .form-message {
@@ -492,22 +579,22 @@
 
     .form-message.error {
       display: flex;
-      background: rgba(224,28,28,0.1);
-      border: 1px solid rgba(224,28,28,0.3);
+      background: rgba(224, 28, 28, 0.1);
+      border: 1px solid rgba(224, 28, 28, 0.3);
       color: #ff7070;
     }
 
     .form-message.success {
       display: flex;
-      background: rgba(28,200,100,0.1);
-      border: 1px solid rgba(28,200,100,0.3);
+      background: rgba(28, 200, 100, 0.1);
+      border: 1px solid rgba(28, 200, 100, 0.3);
       color: #50e89a;
     }
 
     /* Input error state */
     .form-input.error-field {
-      border-color: rgba(224,28,28,0.5);
-      background: rgba(224,28,28,0.04);
+      border-color: rgba(224, 28, 28, 0.5);
+      background: rgba(224, 28, 28, 0.04);
     }
 
     .field-error {
@@ -517,11 +604,17 @@
       display: none;
     }
 
-    .field-error.visible { display: block; }
+    .field-error.visible {
+      display: block;
+    }
 
     /* ── RESPONSIVE ──────────────────────── */
     @media (max-width: 860px) {
-      body { flex-direction: column; overflow: auto; }
+      body {
+        flex-direction: column;
+        overflow: auto;
+      }
+
       .brand-panel {
         width: 100%;
         min-height: auto;
@@ -529,23 +622,46 @@
         border-right: none;
         border-bottom: 1px solid var(--glass-border);
       }
-      .bp-features { display: none; }
-      .bp-headline { font-size: 1.7rem; }
-      .form-panel { padding: 40px 6% 60px; }
+
+      .bp-features {
+        display: none;
+      }
+
+      .bp-headline {
+        font-size: 1.7rem;
+      }
+
+      .form-panel {
+        padding: 40px 6% 60px;
+      }
     }
 
     /* Scrollbar */
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: var(--dark-800); }
-    ::-webkit-scrollbar-thumb { background: var(--dark-500); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--red-primary); }
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--dark-800);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--dark-500);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--red-primary);
+    }
   </style>
 </head>
 
 <body>
 
   <!-- Background -->
-  <div class="bg-canvas"><div class="bg-grid"></div></div>
+  <div class="bg-canvas">
+    <div class="bg-grid"></div>
+  </div>
   <div class="particles" id="particles"></div>
 
   <!-- ═══ LEFT BRAND PANEL ═══ -->
@@ -555,7 +671,7 @@
     </a>
 
     <a href="../../index.html" class="bp-logo">
-      <div class="bp-logo-icon">Z</div>
+      <div class="bp-logo-icon">E</div>
       <span class="bp-logo-text">Elite <span>Tutorial</span></span>
     </a>
 
@@ -609,11 +725,15 @@
       <!-- Google -->
       <button type="button" class="btn-google" id="google-btn">
         <svg class="google-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-          <path fill="none" d="M0 0h48v48H0z"/>
+          <path fill="#EA4335"
+            d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+          <path fill="#4285F4"
+            d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+          <path fill="#FBBC05"
+            d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+          <path fill="#34A853"
+            d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+          <path fill="none" d="M0 0h48v48H0z" />
         </svg>
         Continue with Google
       </button>
@@ -627,15 +747,8 @@
         <div class="form-group">
           <label class="form-label" for="email">Email Address</label>
           <div class="input-wrap">
-            <input
-              class="form-input"
-              type="email"
-              id="email"
-              name="email"
-              placeholder="you@example.com"
-              autocomplete="email"
-              required
-            />
+            <input class="form-input" type="email" id="email" name="email" placeholder="you@example.com"
+              autocomplete="email" required />
             <span class="input-icon">✉️</span>
           </div>
           <div class="field-error" id="email-error">Please enter a valid email address.</div>
@@ -645,17 +758,11 @@
         <div class="form-group">
           <label class="form-label" for="password">Password</label>
           <div class="input-wrap">
-            <input
-              class="form-input"
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              autocomplete="current-password"
-              required
-            />
+            <input class="form-input" type="password" id="password" name="password" placeholder="Enter your password"
+              autocomplete="current-password" required />
             <span class="input-icon">🔒</span>
-            <button type="button" class="eye-toggle" id="eye-toggle" aria-label="Toggle password visibility">👁️</button>
+            <button type="button" class="eye-toggle" id="eye-toggle"
+              aria-label="Toggle password visibility">👁️</button>
           </div>
           <div class="field-error" id="password-error">Password is required.</div>
         </div>
@@ -689,7 +796,7 @@
         const p = document.createElement('div');
         p.classList.add('particle');
         const size = Math.random() * 3 + 1;
-        p.style.cssText = `left:${Math.random()*100}vw;width:${size}px;height:${size}px;background:#e01c1c;animation-duration:${Math.random()*16+10}s;animation-delay:${Math.random()*14}s;`;
+        p.style.cssText = `left:${Math.random() * 100}vw;width:${size}px;height:${size}px;background:#e01c1c;animation-duration:${Math.random() * 16 + 10}s;animation-delay:${Math.random() * 14}s;`;
         c.appendChild(p);
       }
     })();
@@ -721,7 +828,7 @@
     document.getElementById('login-form').addEventListener('submit', async function (e) {
       e.preventDefault();
       const emailVal = document.getElementById('email').value.trim();
-      const pwdVal   = document.getElementById('password').value;
+      const pwdVal = document.getElementById('password').value;
       let valid = true;
 
       ['email', 'password'].forEach(id => {
@@ -764,8 +871,9 @@
       }
     });
 
-    window.EliteAuth.redirectIfAuthenticated().catch(() => {});
+    window.EliteAuth.redirectIfAuthenticated().catch(() => { });
   </script>
 
 </body>
+
 </html>

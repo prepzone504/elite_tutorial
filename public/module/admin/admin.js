@@ -180,16 +180,48 @@ document.addEventListener('DOMContentLoaded', () => {
               document.getElementById('stat-active-exams').textContent = uniqueBatches.size;
           }
 
-          // 4. Fetch Recent Submissions
-          const { data: attempts, error: attErr } = await client
+          // 4. Fetch Recent Submissions (Exams & Puzzles)
+          const { data: examAttempts, error: attErr } = await client
               .from('user_exam_attempts')
               .select('*')
               .order('completed_at', { ascending: false });
               
           if (attErr) {
               console.error('Attempts RLS Error:', attErr);
-              showToast('❌ Database Error: RLS Policies blocking admin. Please run admin_rls_migration.sql', 'error');
+              showToast('❌ Database Error: RLS Policies blocking admin.', 'error');
           }
+
+          const { data: puzzleAttempts, error: puzzErr } = await client
+              .from('puzzle_attempts')
+              .select('*')
+              .order('completed_at', { ascending: false });
+
+          if (puzzErr) {
+              console.error('Puzzle Attempts Error:', puzzErr);
+          }
+
+          // 5. Fetch Elite Puzzles for titles
+          const { data: puzzles, error: pErr } = await client
+              .from('elite_puzzles')
+              .select('id, title');
+              
+          const puzzleTitleMap = {};
+          if (puzzles) {
+              puzzles.forEach(p => {
+                  puzzleTitleMap[String(p.id)] = p.title;
+              });
+          }
+
+          // Merge and sort
+          let attempts = [];
+          if (examAttempts) {
+              attempts = attempts.concat(examAttempts.map(a => ({...a, type: 'exam'})));
+          }
+          if (puzzleAttempts) {
+              attempts = attempts.concat(puzzleAttempts.map(a => ({...a, type: 'puzzle'})));
+          }
+          
+          attempts.sort((a, b) => new Date(b.completed_at) - new Date(a.completed_at));
 
           const subList = document.getElementById('admin-submissions-list');
           if (subList && attempts) {
@@ -197,11 +229,29 @@ document.addEventListener('DOMContentLoaded', () => {
                   subList.innerHTML = '<tr><td colspan="5" style="text-align:center;">No submissions yet.</td></tr>';
               } else {
                   subList.innerHTML = attempts.map(att => {
-                      const pct = Math.round((att.score / att.total_q) * 100);
-                      const isPass = pct >= 60; // Assuming 60% is pass mark
-                      const scoreClass = pct >= 80 ? 'good' : (pct >= 50 ? 'mid' : 'poor');
+                      // Calculate percentage depending on type
+                      let pct = 0;
+                      let isPass = false;
+                      let scoreClass = 'poor';
+                      let subjectName = '';
+                      
+                      if (att.type === 'exam') {
+                          pct = Math.round((att.score / att.total_q) * 100);
+                          isPass = pct >= 60;
+                          scoreClass = pct >= 80 ? 'good' : (pct >= 50 ? 'mid' : 'poor');
+                          subjectName = att.subject || att.exam_title || 'Unknown Exam';
+                      } else {
+                          // Puzzle score
+                          pct = att.score; // puzzles use raw score or points
+                          isPass = att.score > 0;
+                          scoreClass = att.score >= 50 ? 'good' : (att.score >= 20 ? 'mid' : 'poor');
+                          const pTitle = puzzleTitleMap[String(att.puzzle_id)] || 'Unknown Puzzle';
+                          subjectName = `Elite Puzzle: ${pTitle}`;
+                      }
+                      
                       const badgeClass = isPass ? 'pass' : 'fail';
                       const badgeText = isPass ? 'Passed' : 'Failed';
+                      const scoreText = att.type === 'exam' ? `${pct}%` : `${pct} pts`;
                       
                       // Format time nicely
                       const dateObj = new Date(att.completed_at);
@@ -210,8 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
                       return `
                           <tr class="submission-row" data-userid="${att.user_id}" data-username="${att.student_name || 'Unknown Student'}" style="cursor: pointer;">
                               <td data-label="Student" style="color: #3b82f6; font-weight: 500;">${att.student_name || 'Unknown Student'}</td>
-                              <td data-label="Exam / Module">${att.exam_title || 'Unknown Exam'}</td>
-                              <td data-label="Score" class="tbl-score ${scoreClass}">${pct}%</td>
+                              <td data-label="Exam / Module">${subjectName}</td>
+                              <td data-label="Score" class="tbl-score ${scoreClass}">${scoreText}</td>
                               <td data-label="Time" class="tbl-time">${timeStr}</td>
                               <td data-label="Status"><span class="tbl-badge ${badgeClass}">${badgeText}</span></td>
                           </tr>
@@ -223,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
                       row.addEventListener('click', () => {
                           const uid = row.dataset.userid;
                           const uname = row.dataset.username;
-                          openUserDetailModal(uid, uname, attempts);
+                          openUserDetailModal(uid, uname, attempts, puzzleTitleMap);
                       });
                   });
               }
@@ -233,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   }
 
-  function openUserDetailModal(userId, userName, allAttempts) {
+  function openUserDetailModal(userId, userName, allAttempts, puzzleTitleMap = {}) {
       if (!userDetailModal) return;
 
       document.getElementById('ud-student-name').textContent = userName + "'s Details";
@@ -255,8 +305,39 @@ document.addEventListener('DOMContentLoaded', () => {
           historyList.innerHTML = '<tr><td colspan="5" style="text-align:center;">No history found.</td></tr>';
       } else {
           historyList.innerHTML = userAttempts.map(att => {
-              const pct = Math.round((att.score / att.total_q) * 100);
-              const isPass = pct >= 60;
+              let pct = 0;
+              let isPass = false;
+              let subjectName = '';
+              let scoreDisplay = '';
+              let btnHtml = '';
+              
+              if (att.type === 'exam') {
+                  pct = Math.round((att.score / att.total_q) * 100);
+                  isPass = pct >= 60;
+                  subjectName = att.subject || att.exam_title || 'Unknown Exam';
+                  scoreDisplay = `${pct}% (${att.score}/${att.total_q})`;
+                  btnHtml = `
+                      <button class="review-btn"
+                          data-type="exam"
+                          data-batch="${att.exam_batch_id}"
+                          data-userid="${userId}"
+                          style="background:#3b82f6;color:white;border:none;padding:5px 12px;border-radius:4px;font-size:13px;cursor:pointer;">
+                          Review Exam
+                      </button>`;
+              } else {
+                  pct = att.score;
+                  isPass = att.score > 0;
+                  const pTitle = puzzleTitleMap[String(att.puzzle_id)] || 'Unknown Puzzle';
+                  subjectName = `Elite Puzzle: ${pTitle}`;
+                  scoreDisplay = `${pct} pts`;
+                  btnHtml = `
+                      <button class="review-btn"
+                          data-type="puzzle"
+                          style="background:#10b981;color:white;border:none;padding:5px 12px;border-radius:4px;font-size:13px;cursor:pointer;">
+                          View Leaderboard
+                      </button>`;
+              }
+
               const badgeClass = isPass ? 'pass' : 'fail';
               const badgeText = isPass ? 'Passed' : 'Failed';
               const dateObj = new Date(att.completed_at);
@@ -264,17 +345,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
               return `
                   <tr>
-                      <td data-label="Exam Title">${att.exam_title || 'Unknown Exam'}</td>
-                      <td data-label="Score">${pct}% (${att.score}/${att.total_q})</td>
+                      <td data-label="Exam Title">${subjectName}</td>
+                      <td data-label="Score">${scoreDisplay}</td>
                       <td data-label="Date">${timeStr}</td>
                       <td data-label="Status"><span class="tbl-badge ${badgeClass}">${badgeText}</span></td>
                       <td data-label="Action">
-                          <button class="review-btn"
-                              data-batch="${att.exam_batch_id}"
-                              data-userid="${userId}"
-                              style="background:#3b82f6;color:white;border:none;padding:5px 12px;border-radius:4px;font-size:13px;cursor:pointer;">
-                              Review Exam
-                          </button>
+                          ${btnHtml}
                       </td>
                   </tr>
               `;
@@ -283,11 +359,15 @@ document.addEventListener('DOMContentLoaded', () => {
           // Attach click handlers AFTER setting innerHTML to avoid & HTML-entity corruption
           historyList.querySelectorAll('.review-btn').forEach(btn => {
               btn.addEventListener('click', () => {
-                  const url = new URL('../exam_for_today/exam_for_today.html', window.location.href);
-                  url.searchParams.set('batch', btn.dataset.batch);
-                  url.searchParams.set('userId', btn.dataset.userid);
-                  url.searchParams.set('admin', 'true');
-                  window.location.href = url.toString();
+                  if (btn.dataset.type === 'exam') {
+                      const url = new URL('../exam_for_today/exam_for_today.html', window.location.href);
+                      url.searchParams.set('batch', btn.dataset.batch);
+                      url.searchParams.set('userId', btn.dataset.userid);
+                      url.searchParams.set('admin', 'true');
+                      window.location.href = url.toString();
+                  } else if (btn.dataset.type === 'puzzle') {
+                      window.location.href = '../dashboard/dashboard.html#leaderboard';
+                  }
               });
           });
       }

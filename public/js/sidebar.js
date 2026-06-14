@@ -54,6 +54,15 @@
         badge: ''
       },
       {
+        key: 'exam-discussion',
+        label: 'Exam Discussion',
+        href: root + 'module/exam_discussion/list_of_exam_discusion.html',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                 <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+               </svg>`,
+        badge: ''
+      },
+      {
         key: 'puzzle',
         label: 'Elite Puzzle',
         href: root + 'module/elite_puzzle/elite_puzzle.html',
@@ -124,7 +133,7 @@
 
     return `
       <a href="${root}module/dashboard/dashboard.html" class="sidebar-logo">
-        <div class="logo-icon">Z</div>
+        <div class="logo-icon" style="background: linear-gradient(135deg, var(--red-primary, #e01c1c), #8a0000);">E</div>
         <span class="logo-text">Elite <span>Tutorial</span></span>
       </a>
       <nav class="sidebar-nav" aria-label="Main navigation">
@@ -370,18 +379,18 @@
 
       const userId = session.user.id;
 
-      const [examQRes, attemptsRes, puzzleCountRes] = await Promise.all([
-        client.from('exam_questions').select('exam_batch_id'),
+      const [assignmentsRes, attemptsRes, puzzleCountRes] = await Promise.all([
+        client.from('exam_assignments').select('exam_batch_id').eq('user_id', userId),
         client.from('user_exam_attempts').select('exam_batch_id').eq('user_id', userId),
         client.from('elite_puzzles').select('id', { count: 'exact', head: true })
       ]);
 
       /* Exam badge */
       const examBadge = document.getElementById('sidebar-exam-badge');
-      if (examBadge && examQRes.data) {
-        const allBatches = new Set(examQRes.data.map(q => q.exam_batch_id)).size;
+      if (examBadge && assignmentsRes.data) {
+        const assignedBatches = new Set(assignmentsRes.data.map(q => q.exam_batch_id)).size;
         const takenBatches = new Set((attemptsRes.data || []).map(a => a.exam_batch_id)).size;
-        const pending = Math.max(0, allBatches - takenBatches);
+        const pending = Math.max(0, assignedBatches - takenBatches);
         if (pending > 0) {
           examBadge.textContent = pending;
           examBadge.style.display = 'inline-flex';

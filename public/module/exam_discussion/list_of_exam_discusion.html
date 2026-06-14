@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exam Discussion | Elite Tutorial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <link rel="stylesheet" href="../elite_puzzle/elite_puzzle.css" />
+    <style>
+      .time-badge {
+        background: rgba(251, 191, 36, 0.15);
+        color: var(--accent-gold, #fbbf24);
+        border: 1px solid rgba(251, 191, 36, 0.3);
+      }
+      /* Hamburger button adjustments for mobile */
+      .pzl-topbar {
+        display: none;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 24px;
+        background: rgba(15, 15, 15, 0.9);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .hamburger-btn {
+        background: none;
+        border: none;
+        color: var(--text-main);
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+      }
+      .hamburger-btn svg {
+        width: 24px;
+        height: 24px;
+      }
+      .pzl-topbar-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+      @media (max-width: 768px) {
+        .pzl-topbar {
+          display: flex;
+        }
+      }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main-wrapper">
+        <header class="pzl-topbar" id="pzl-topbar">
+            <button class="hamburger-btn" id="sidebar-menu-toggle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+            <span class="pzl-topbar-title">💬 Exam Discussion</span>
+        </header>
+
+        <main class="page-content" id="page-content">
+            <div class="puzzle-list-view">
+                <div class="pl-content">
+                    <h1 class="pl-title-main">💬 Exam Discussion</h1>
+                    <p class="pl-sub-main">Join the discussion to review and prepare for upcoming exams</p>
+                    
+                    <div class="pl-grid" id="discussions-grid">
+                        <!-- Populated by JS -->
+                        <div style="color:var(--text-muted); padding:20px;">Loading discussions...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/supabase-config.js"></script>
+    <script src="../../js/supabase-client.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initSharedSidebar({ activePage: 'exam-discussion', rootPath: '../../' });
+            
+            const client = window.getSupabaseClient();
+            
+            async function syncServerTime() {
+                try {
+                    const res = await fetch(client.supabaseUrl + '/rest/v1/', {
+                        method: 'HEAD',
+                        headers: { 'apikey': client.supabaseKey }
+                    });
+                    const dateStr = res.headers.get('Date');
+                    if (dateStr) {
+                        return new Date(dateStr).getTime() - Date.now();
+                    }
+                } catch(e) {}
+                return 0;
+            }
+
+            async function loadDiscussions() {
+                const { data: { user } } = await client.auth.getUser();
+                if (!user) return;
+                
+                const serverTimeOffset = await syncServerTime();
+                
+                const grid = document.getElementById('discussions-grid');
+
+                // Fetch assignments for user
+                const { data: assignments, error: assignError } = await client.from('exam_discussion_assignments')
+                    .select('batch_id')
+                    .eq('user_id', user.id);
+                    
+                if (assignError || !assignments || assignments.length === 0) {
+                    grid.innerHTML = '<div style="color:var(--text-muted); padding:20px;">No discussions assigned to you yet.</div>';
+                    return;
+                }
+
+                const batchIds = assignments.map(a => a.batch_id);
+
+                // Fetch unique discussions details
+                const { data: discussions, error: discError } = await client.from('exam_discussions')
+                    .select('exam_batch_id, exam_title, subject, start_time')
+                    .in('exam_batch_id', batchIds);
+
+                if (discError || !discussions || discussions.length === 0) {
+                    grid.innerHTML = '<div style="color:var(--text-muted); padding:20px;">Failed to load discussions.</div>';
+                    return;
+                }
+
+                // Fetch completed discussions from discussion_messages instead of user_exam_attempts to avoid schema constraint errors
+                const { data: attempts } = await client.from('discussion_messages')
+                    .select('batch_id')
+                    .eq('user_id', user.id)
+                    .eq('message_type', 'USER_COMPLETED');
+                const completedBatchIds = new Set((attempts || []).map(a => a.batch_id));
+
+                const uniqueBatches = {};
+                discussions.forEach(d => {
+                    if (!uniqueBatches[d.exam_batch_id]) {
+                        uniqueBatches[d.exam_batch_id] = { ...d, totalQuestions: 0 };
+                    }
+                    uniqueBatches[d.exam_batch_id].totalQuestions++;
+                });
+
+                grid.innerHTML = '';
+                const now = new Date(Date.now() + serverTimeOffset);
+                
+                const sortedBatches = Object.values(uniqueBatches).sort((a, b) => {
+                    const isDoneA = completedBatchIds.has(a.exam_batch_id);
+                    const isDoneB = completedBatchIds.has(b.exam_batch_id);
+                    if (isDoneA && !isDoneB) return 1;
+                    if (!isDoneA && isDoneB) return -1;
+                    
+                    const timeA = a.start_time ? new Date(a.start_time).getTime() : 0;
+                    const timeB = b.start_time ? new Date(b.start_time).getTime() : 0;
+                    return timeB - timeA; // Newest first for tie-breaker
+                });
+
+                sortedBatches.forEach(disc => {
+                    const isDone = completedBatchIds.has(disc.exam_batch_id);
+                    let startText = "Starts: Now";
+                    let canJoin = true;
+                    let badgeStyle = '';
+
+                    if (disc.start_time) {
+                        const startTime = new Date(disc.start_time);
+                        if (startTime > now) {
+                            startText = "Starts: " + startTime.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+                            canJoin = false;
+                            badgeStyle = 'style="color: var(--text-muted); border-color: var(--text-muted); background: transparent;"';
+                        } else {
+                            const totalDurationSecs = disc.totalQuestions * 90;
+                            const endTime = startTime.getTime() + (totalDurationSecs * 1000);
+                            if (now.getTime() < endTime) {
+                                startText = `Time Left: <span class="live-countdown" data-endtime="${endTime}">--:--</span>`;
+                                badgeStyle = 'style="color: #34d399; border-color: #34d399; background: rgba(52, 211, 153, 0.1);"';
+                            } else {
+                                startText = isDone ? "✅ Completed" : "Ended";
+                                badgeStyle = 'style="color: var(--text-muted); border-color: var(--text-muted); background: transparent;"';
+                            }
+                        }
+                    } else if (isDone) {
+                        startText = '✅ Completed';
+                    }
+
+                    const cardHtml = `
+                        <div class="pzl-card" ${canJoin ? `onclick="location.href='guildlines.html?batch_id=${disc.exam_batch_id}'"` : `style="opacity: 0.7; cursor: not-allowed;" onclick="alert('This discussion has not started yet! Please wait until ${startText.replace('Starts: ', '')}.')"`}>
+                            <div class="pzl-card-top">
+                                <div class="pzl-emoji">💬</div>
+                                <div class="pzl-badge time-badge" ${badgeStyle}>${startText}</div>
+                            </div>
+                            <div class="pzl-card-body">
+                                <h3 class="pzl-name">${disc.exam_title}</h3>
+                                <p class="pzl-desc">Subject: ${disc.subject}</p>
+                                <div class="pzl-meta-row">
+                                    <div class="pzl-meta-item">Interactive Voice & Chat</div>
+                                    <div class="pzl-meta-item">Mentor Dopamine</div>
+                                </div>
+                            </div>
+                            <button class="pzl-play-btn" ${canJoin ? (isDone ? 'style="background:rgba(5,150,105,0.1); color:#34d399; border: 1px solid #34d399;"' : '') : 'disabled style="background: var(--border-light); color: var(--text-muted);"'} >
+                                ${isDone ? 'Review Discussion' : (canJoin ? 'Join Discussion' : 'Waiting...')}
+                            </button>
+                        </div>
+                    `;
+                    grid.innerHTML += cardHtml;
+                });
+                
+                setInterval(() => {
+                    const currentNow = Date.now() + serverTimeOffset;
+                    document.querySelectorAll('.live-countdown').forEach(el => {
+                        const end = parseInt(el.getAttribute('data-endtime'));
+                        const left = Math.max(0, Math.floor((end - currentNow) / 1000));
+                        if (left === 0) {
+                            el.parentElement.innerHTML = "Ended";
+                        } else {
+                            const m = Math.floor(left / 60);
+                            const s = left % 60;
+                            el.textContent = `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+                        }
+                    });
+                }, 1000);
+            }
+            
+            loadDiscussions();
+        });
+    </script>
+</body>
+</html>

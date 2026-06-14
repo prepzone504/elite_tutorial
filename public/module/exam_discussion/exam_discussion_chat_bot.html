@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Room | Elite Tutorial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <style>
+      :root {
+        --bg-dark: #050505;
+        --chat-bg: rgba(15, 15, 15, 0.7);
+        --border-light: rgba(255, 255, 255, 0.08);
+        --accent-primary: #e01c1c;
+        --text-main: #f3f4f6;
+        --text-muted: #9ca3af;
+        --bot-bubble: rgba(255, 255, 255, 0.05);
+        --user-bubble: linear-gradient(135deg, #e01c1c, #990000);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Outfit', sans-serif;
+        background: #000 url('data:image/svg+xml;utf8,<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg"><path d="M20 20c-1-1-2-1-3 0l-2 2c-2-2-4-2-6 0-1 1-1 2 0 3l2-2c2 2 4 2 6 0l3 3z" fill="rgba(255,255,255,0.02)"/></svg>') repeat;
+        color: var(--text-main);
+        margin: 0;
+        height: 100dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      /* Optional subtle background glow behind the chat */
+      body::before {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80vw; height: 80vh;
+        background: radial-gradient(circle, rgba(224, 28, 28, 0.15) 0%, transparent 60%);
+        filter: blur(80px);
+        z-index: -1;
+        pointer-events: none;
+      }
+      .chat-wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 1000px;
+        height: 90dvh;
+        background: var(--chat-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid var(--border-light);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+        overflow: hidden;
+        position: relative;
+      }
+      .chat-header {
+        height: 76px;
+        border-bottom: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        background: rgba(10, 10, 10, 0.6);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        z-index: 10;
+        flex-shrink: 0;
+      }
+      .chat-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        letter-spacing: -0.3px;
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .chat-title span { color: var(--accent-primary); font-size: 1.4rem; }
+      .chat-area {
+        flex: 1;
+        padding: 24px 32px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        z-index: 1;
+        scroll-behavior: smooth;
+      }
+      /* Custom Scrollbar for chat area */
+      .chat-area::-webkit-scrollbar { width: 6px; }
+      .chat-area::-webkit-scrollbar-track { background: transparent; }
+      .chat-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+      .chat-area::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+      
+      .msg {
+        display: flex;
+        gap: 12px;
+        max-width: 80%;
+        align-items: flex-end;
+      }
+      .msg.bot {
+        align-self: flex-start;
+      }
+      .msg.bot .msg-bubble {
+        background: var(--bot-bubble);
+        border: 1px solid var(--border-light);
+        border-radius: 18px 18px 18px 4px; /* Tail on bottom left */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      }
+      .msg.user {
+        align-self: flex-end;
+        flex-direction: row-reverse;
+      }
+      .msg.user .msg-bubble {
+        background: var(--user-bubble);
+        border-radius: 18px 18px 4px 18px; /* Tail on bottom right */
+        box-shadow: 0 8px 20px rgba(224, 28, 28, 0.25);
+      }
+      .msg-avatar {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.1);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 14px; font-weight: 700;
+        flex-shrink: 0;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      }
+      .msg.user .msg-avatar { display: none; }
+      .msg-bubble {
+        padding: 14px 18px;
+        font-size: 1rem;
+        line-height: 1.5;
+        position: relative;
+      }
+      
+      .chat-input-area {
+        padding: 20px 24px;
+        border-top: 1px solid var(--border-light);
+        background: rgba(10, 10, 10, 0.6);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        display: flex;
+        gap: 12px;
+        z-index: 10;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .chat-input {
+        flex: 1;
+        min-width: 0;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-light);
+        border-radius: 50px;
+        padding: 0 24px;
+        color: #fff;
+        font-family: inherit;
+        font-size: 1.05rem;
+        outline: none;
+        height: 52px;
+        transition: border-color 0.2s, background 0.2s;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+      }
+      .chat-input:focus {
+        border-color: var(--accent-primary);
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .chat-send-btn {
+        width: 52px; height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent-primary), #b30000);
+        border: 1px solid rgba(255, 100, 100, 0.2);
+        color: #fff;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+        flex-shrink: 0;
+        box-shadow: 0 8px 20px rgba(224, 28, 28, 0.3);
+      }
+      .chat-send-btn:hover {
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 12px 25px rgba(224, 28, 28, 0.4);
+      }
+      .chat-mic-btn {
+        width: 52px; height: 52px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-light);
+        color: #fff;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: background 0.2s, transform 0.2s;
+        padding: 0;
+        flex-shrink: 0;
+      }
+      .chat-mic-btn:hover { 
+        background: rgba(255,255,255,0.1); 
+        transform: scale(1.05);
+      }
+      
+      .chat-timer-badge {
+        margin-right: 0;
+        color: var(--accent-gold, #fbbf24);
+        font-weight: 800;
+        font-size: 1.05rem;
+        border: 1px solid rgba(251, 191, 36, 0.3);
+        padding: 6px 16px;
+        border-radius: 50px;
+        white-space: nowrap;
+        background: rgba(251, 191, 36, 0.1);
+        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.1);
+      }
+      
+      @media (max-width: 768px) {
+        body { background: var(--bg-dark); align-items: flex-start; justify-content: flex-start; }
+        body::before { display: none; }
+        .chat-wrapper { height: 100dvh; border-radius: 0; border: none; max-width: 100%; box-shadow: none; background: #080808; }
+        .chat-header { padding: 0 16px; height: 64px; }
+        .chat-title { font-size: 1.1rem; gap: 8px; }
+        .chat-title span { display: none; }
+        #header-right { gap: 8px !important; flex-shrink: 0; }
+        #leave-btn { font-size: 0.9rem; padding: 6px 12px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid var(--border-light); }
+        #leaderboard-btn { width: 36px; height: 36px; }
+        .chat-timer-badge { font-size: 0.95rem; padding: 4px 12px; }
+        .chat-area { padding: 16px 12px; gap: 16px; }
+        .msg { max-width: 92%; }
+        .msg-bubble { padding: 12px 16px; font-size: 0.95rem; }
+        .chat-input-area { padding: 12px 16px; gap: 10px; }
+        .chat-input { padding: 0 16px; height: 48px; font-size: 1rem; }
+        .chat-send-btn, .chat-mic-btn { width: 48px; height: 48px; }
+      }
+      .vote-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      .vote-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #fff;
+        padding: 12px 16px;
+        border-radius: 12px;
+        text-align: left;
+        font-family: inherit;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .vote-btn:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--accent-primary);
+        transform: translateX(4px);
+      }
+      .vote-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(8px);
+      }
+      .modal-content {
+        background: rgba(20,20,20,0.9);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 32px;
+        border-radius: 24px;
+        width: 90%; max-width: 400px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+        text-align: center;
+      }
+      .modal-content h3 { margin-top: 0; margin-bottom: 12px; font-size: 1.5rem; }
+      .modal-content p { margin: 0 0 24px 0; color: #d1d5db; line-height: 1.5; }
+      .modal-content .vote-btn { justify-content: center; text-align: center; font-weight: 600; padding: 14px; }
+      @keyframes pulseRed {
+        0% { background: rgba(224, 28, 28, 0.2); box-shadow: 0 0 0 0 rgba(224, 28, 28, 0.7); }
+        70% { background: rgba(224, 28, 28, 0.6); box-shadow: 0 0 0 10px rgba(224, 28, 28, 0); }
+        100% { background: rgba(224, 28, 28, 0.2); box-shadow: 0 0 0 0 rgba(224, 28, 28, 0); }
+      }
+      .recording {
+        animation: pulseRed 1.5s infinite;
+        border-color: var(--accent-primary) !important;
+        color: #fff !important;
+      }
+    </style>
+</head>
+<body>
+    <div id="vote-confirm-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Confirm Vote</h3>
+            <p>Are you sure you want to lock your vote for Option <strong id="confirm-opt-display" style="color:var(--accent-primary);"></strong>?</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Votes cannot be changed once locked.</p>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button id="btn-cancel-vote" class="vote-btn" style="background: transparent; flex: 1; text-align: center;">No, Cancel</button>
+                <button id="btn-confirm-vote" class="vote-btn" style="background: var(--accent-primary); border-color: var(--accent-primary); flex: 1; text-align: center;">Yes, Lock Vote</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="chat-wrapper">
+        <header class="chat-header">
+            <div class="chat-title">
+               <span>💬</span> Loading Discussion...
+            </div>
+            <div id="header-right" style="margin-left: auto; display: flex; align-items: center; gap: 16px;">
+                <button id="leaderboard-btn" style="background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); color: var(--accent-gold, #fbbf24); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;" title="All-Time Leaderboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0V4z" />
+                    </svg>
+                </button>
+                <button id="leave-btn" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: 600; font-family: inherit;" onclick="location.href='list_of_exam_discusion.html'">
+                    Leave Room
+                </button>
+            </div>
+        </header>
+
+        <main class="chat-area" id="chat-area">
+            <!-- MODAL -->
+    <div id="confirm-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: var(--surface); border: 1px solid var(--border-light); padding: 24px; border-radius: 16px; text-align: center; max-width: 300px; width: 90%;">
+            <h3 style="margin: 0 0 16px 0; color: #fff;">Confirm Vote</h3>
+            <p style="margin: 0 0 24px 0; color: var(--text-muted); font-size: 0.95rem;">Are you sure? You cannot change your vote once submitted.</p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button id="cancel-vote-btn" style="padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border-light); background: transparent; color: #fff; cursor: pointer; font-weight: 600;">Cancel</button>
+                <button id="confirm-vote-btn" style="padding: 10px 20px; border-radius: 8px; border: none; background: var(--accent-primary); color: #fff; cursor: pointer; font-weight: 600;">Confirm</button>
+            </div>
+        </div>
+    </div>
+    <!-- NATIVE LEADERBOARD MODAL -->
+    <div id="leaderboard-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(12px);">
+        <div style="background: var(--surface, #141414); border: 1px solid var(--border-light); border-radius: 24px; width: 95%; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; animation: lbFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 24px 60px rgba(0,0,0,0.6);">
+            
+            <!-- Header -->
+            <div style="padding: 24px; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="background: rgba(251, 191, 36, 0.15); width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(251, 191, 36, 0.3);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold, #fbbf24)" stroke-width="2" width="24" height="24">
+                            <path d="M8 21h8M12 17v4M7 4h10v6a5 5 0 0 1-10 0V4z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; font-size: 1.4rem; color: #fff; font-weight: 800;">Discussion Leaderboard</h2>
+                        <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 4px;">Top performers across all rounds</div>
+                    </div>
+                </div>
+                <button id="close-lb-btn" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: var(--text-muted); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div id="lb-native-body" style="padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 12px;">
+                <div style="text-align: center; color: var(--text-muted); padding: 40px;">Loading ranks...</div>
+            </div>
+
+        </div>
+    </div>
+    
+    <style>
+        @keyframes lbFadeIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        #close-lb-btn:hover { background: rgba(255,255,255,0.1); color: #fff; transform: scale(1.05); }
+        .native-lb-item {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.05);
+            padding: 16px; border-radius: 16px; transition: transform 0.2s, background 0.2s;
+        }
+        .native-lb-item:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.06); }
+        .native-lb-rank-1 { background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.02)); border-color: rgba(251, 191, 36, 0.3); }
+        .native-lb-rank-2 { background: linear-gradient(90deg, rgba(148, 163, 184, 0.1), rgba(148, 163, 184, 0.02)); border-color: rgba(148, 163, 184, 0.3); }
+        .native-lb-rank-3 { background: linear-gradient(90deg, rgba(180, 83, 9, 0.1), rgba(180, 83, 9, 0.02)); border-color: rgba(180, 83, 9, 0.3); }
+        .native-lb-you { border-color: var(--accent-primary); background: rgba(224, 28, 28, 0.08); }
+    </style>
+
+    <!-- MAIN CHAT INTERFACE -->
+        </main>
+
+        <div class="chat-input-area" style="position: relative;">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Type your message..." style="transition: opacity 0.2s;" />
+            
+            <div id="recording-ui" style="display: none; position: absolute; left: 16px; right: 130px; top: 16px; bottom: 16px; align-items: center; justify-content: space-between; background: rgba(10, 10, 10, 0.95); z-index: 10; border-radius: 24px; padding: 0 20px; border: 1px solid rgba(224, 28, 28, 0.3);">
+                <div style="display: flex; align-items: center; gap: 12px; color: #fff; font-size: 1.1rem; font-weight: 500;">
+                    <div style="width: 12px; height: 12px; background: #ef4444; border-radius: 50%; animation: pulseRed 1.5s infinite;"></div>
+                    <span id="recording-timer">0:00</span>
+                    <div id="audio-visualizer" style="display: flex; align-items: center; gap: 2px; height: 20px; margin-left: 12px;"></div>
+                </div>
+                <button id="cancel-record-btn" style="background: none; border: none; color: #ef4444; cursor: pointer; display: flex; align-items: center; font-size: 0.95rem; font-weight: 600; gap: 6px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    Cancel
+                </button>
+            </div>
+
+            <button class="chat-send-btn" id="chat-send-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+            </button>
+            <button class="chat-mic-btn" id="chat-mic-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" y1="19" x2="12" y2="22" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/supabase-config.js"></script>
+    <script src="../../js/supabase-client.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatArea = document.getElementById('chat-area');
+            const chatInput = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('chat-send-btn');
+            const chatMicBtn = document.getElementById('chat-mic-btn');
+            
+            function updateVoteStats() {
+                const statsEl = document.getElementById(`vote-stats-${currentRound}`);
+                if(statsEl) {
+                    const countdownDiv = document.getElementById(`q-countdown-disp-${currentRound}`);
+                    const countdownHtml = countdownDiv ? countdownDiv.outerHTML : '';
+                    statsEl.innerHTML = `Total Voted: ${totalVotes} | Correct Votes: ${correctVotes}/5 ${countdownHtml}`;
+                }
+            }
+
+            // Cleaned up variables
+            
+            const timerEl = document.createElement('div');
+            timerEl.className = 'chat-timer-badge';
+            
+            const headerRight = document.getElementById('header-right');
+            const leaveBtn = document.getElementById('leave-btn');
+            headerRight.insertBefore(timerEl, leaveBtn);
+
+            let phase = 'waiting'; 
+            let timeLeft = 0;
+            let currentRound = 0;
+            let correctVotes = 0;
+            let totalVotes = 0;
+            let winners = [];
+            let userCurrentVote = null;
+            let questions = [];
+            let serverTimeOffset = 0;
+            let discussionStartTimeStr = null;
+            let discussionStartTime = 0;
+            let gameTimer = null;
+            let localProcessedStateIds = new Set();
+            let roundVotes = new Set(); // tracks who voted this round to prevent duplicate counting
+            
+            const confirmModal = document.getElementById('confirm-modal');
+            let pendingVote = null;
+            let pendingVoteBtns = null;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const batchId = urlParams.get('batch_id');
+            const client = window.getSupabaseClient();
+            let currentUser = null;
+            let roomChannel = null;
+
+            function currentServerTime() {
+                return Date.now() + serverTimeOffset;
+            }
+
+            async function syncServerTime() {
+                try {
+                    // Query discussion_messages limit 1 with auth headers to avoid 401
+                    const res = await fetch(client.supabaseUrl + '/rest/v1/discussion_messages?limit=1', {
+                        method: 'HEAD',
+                        headers: { 
+                            'apikey': client.supabaseKey,
+                            'Authorization': 'Bearer ' + client.supabaseKey
+                        }
+                    });
+                    const dateStr = res.headers.get('Date');
+                    if (dateStr) {
+                        const sTime = new Date(dateStr).getTime();
+                        serverTimeOffset = sTime - Date.now();
+                        console.log("Server time offset:", serverTimeOffset, "ms");
+                    }
+                } catch(e) {
+                    console.warn("Failed to sync server time, using local clock.", e);
+                }
+            }
+
+            function scrollToBottom() {
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }
+
+            function addMessage(text, sender, name = '', prepend = false) {
+                const msg = document.createElement('div');
+                msg.className = `msg ${sender}`;
+                
+                let avatarContent = sender === 'bot' ? '🤖' : 'U';
+                if(name === 'Mentor Dopamine') avatarContent = '👨‍🏫';
+                if(sender === 'other') { msg.className = 'msg bot'; avatarContent = '👤'; }
+
+                msg.innerHTML = `
+                    <div class="msg-avatar">${avatarContent}</div>
+                    <div class="msg-bubble">${name ? `<strong style="color:var(--text-silver); font-size:0.85rem; display:block; margin-bottom:4px;">${name}</strong>` : ''}${text}</div>
+                `;
+                
+                if (prepend) {
+                    chatArea.insertBefore(msg, chatArea.firstChild);
+                } else {
+                    chatArea.appendChild(msg);
+                    scrollToBottom();
+                }
+
+                // Audio listener setup (kept from original)
+                const audio = msg.querySelector('audio');
+                if (audio) {
+                    const progressBar = msg.querySelector('.progress-bar');
+                    const playBtn = msg.querySelector('.play-pause-btn');
+                    const timeEl = msg.querySelector('.audio-time');
+                    const trackContainer = msg.querySelector('.audio-track-container');
+
+                    const formatTime = (secs) => {
+                        const m = Math.floor(secs / 60);
+                        const s = Math.floor(secs % 60);
+                        return `${m}:${s < 10 ? '0' : ''}${s}`;
+                    };
+
+                    if(progressBar && playBtn) {
+                        audio.addEventListener('loadedmetadata', () => {
+                            if (audio.duration && audio.duration !== Infinity && timeEl) {
+                                timeEl.textContent = formatTime(audio.duration);
+                            }
+                        });
+                        audio.addEventListener('timeupdate', () => {
+                            if(audio.duration && audio.duration !== Infinity) {
+                                const perc = (audio.currentTime / audio.duration) * 100;
+                                progressBar.style.width = perc + '%';
+                                if (timeEl) timeEl.textContent = formatTime(audio.currentTime);
+                            }
+                        });
+                        audio.addEventListener('ended', () => {
+                            playBtn.textContent = '▶';
+                            progressBar.style.width = '0%';
+                            if (timeEl && audio.duration && audio.duration !== Infinity) timeEl.textContent = formatTime(audio.duration);
+                        });
+                        playBtn.addEventListener('click', () => {
+                            if(audio.paused) {
+                                document.querySelectorAll('.custom-audio-player audio').forEach(a => {
+                                    if(a !== audio) { a.pause(); a.parentElement.querySelector('.play-pause-btn').textContent = '▶'; }
+                                });
+                                audio.play();
+                                playBtn.textContent = '⏸';
+                            } else {
+                                audio.pause();
+                                playBtn.textContent = '▶';
+                            }
+                        });
+                        if (trackContainer) {
+                            trackContainer.addEventListener('click', (e) => {
+                                if (audio.duration && audio.duration !== Infinity) {
+                                    const rect = trackContainer.getBoundingClientRect();
+                                    const clickX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+                                    const perc = clickX / rect.width;
+                                    audio.currentTime = perc * audio.duration;
+                                    progressBar.style.width = (perc * 100) + '%';
+                                }
+                            });
+                        }
+                    }
+                }
+                return msg;
+            }
+
+            function getAudioHtml(src, isYou = false) {
+                const bg = isYou ? 'var(--accent-primary, #34d399)' : 'var(--surface, #1e1e1e)';
+                const btnColor = isYou ? '#fff' : 'var(--accent-primary, #34d399)';
+                const trackBg = isYou ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.1)';
+                const barBg = isYou ? '#fff' : 'var(--accent-primary, #34d399)';
+                const shadowColor = isYou ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.5)';
+                const textColor = isYou ? '#fff' : 'var(--text-muted, #9ca3af)';
+
+                return `
+                    <div class="custom-audio-player" style="display: flex; align-items: center; gap: 12px; background: ${bg}; padding: 8px 16px; border-radius: 20px; min-width: 240px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                        <div style="width: 44px; height: 44px; border-radius: 50%; background: ${isYou ? 'rgba(0,0,0,0.1)' : 'var(--border-light)'}; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; overflow: hidden; border: 2px solid ${isYou ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.05)'};">
+                            👤
+                        </div>
+                        <button class="play-pause-btn" style="width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none; color: ${btnColor}; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; outline: none; padding: 0;">▶</button>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                            <div class="audio-track-container" style="height: 6px; background: ${trackBg}; border-radius: 3px; position: relative; cursor: pointer;">
+                                <div class="progress-bar" style="width: 0%; height: 100%; background: ${barBg}; border-radius: 3px; position: relative; transition: width 0.1s linear;">
+                                    <div style="position: absolute; right: -6px; top: -3px; width: 12px; height: 12px; background: #fff; border-radius: 50%; box-shadow: 0 1px 3px ${shadowColor};"></div>
+                                </div>
+                            </div>
+                            <div class="audio-time" style="font-size: 0.75rem; color: ${textColor}; font-weight: 500; font-variant-numeric: tabular-nums;">0:00</div>
+                        </div>
+                        <audio src="${src}" style="display: none;" preload="metadata"></audio>
+                    </div>
+                `;
+            }
+
+            async function fetchChatHistory() {
+                if(!batchId) return;
+                const { data, error } = await client.from('discussion_messages')
+                    .select('*')
+                    .eq('batch_id', batchId)
+                    .order('created_at', { ascending: true });
+                    
+                const safeData = data || [];
+                const messages = safeData.filter(m => m.message_type !== 'SYSTEM_STATE'); // Ignore legacy state messages
+                
+                if (!discussionStartTimeStr) {
+                    phase = 'waiting';
+                    messages.forEach(processMessage);
+                    return;
+                }
+
+                // Deterministic Replay
+                const now = Date.now() + serverTimeOffset;
+                const elapsedSecs = Math.floor((now - discussionStartTime) / 1000);
+                
+                const totalRounds = questions.length;
+                const targetRound = Math.min(totalRounds - 1, Math.floor(Math.max(0, elapsedSecs) / 90));
+                const targetPhase = elapsedSecs >= totalRounds * 90 ? 'ended' : ((elapsedSecs % 90) < 30 ? 'question' : 'discussion');
+
+                let msgIdx = 0;
+
+                for (let r = 0; r <= targetRound; r++) {
+                    phase = 'question';
+                    currentRound = r;
+                    correctVotes = 0; totalVotes = 0; winners = []; userCurrentVote = null; roundVotes.clear();
+                    
+                    if (elapsedSecs >= 0) updateUIToCurrentPhase();
+
+                    const qEnd = discussionStartTime + (r * 90 + 30) * 1000;
+                    while(msgIdx < messages.length && new Date(messages[msgIdx].created_at).getTime() < qEnd) {
+                        processMessage(messages[msgIdx]);
+                        msgIdx++;
+                    }
+
+                    if (r < targetRound || (r === targetRound && targetPhase === 'discussion') || targetPhase === 'ended') {
+                        phase = 'discussion';
+                        updateUIToCurrentPhase();
+                        
+                        const dEnd = discussionStartTime + (r * 90 + 90) * 1000;
+                        while(msgIdx < messages.length && new Date(messages[msgIdx].created_at).getTime() < dEnd) {
+                            processMessage(messages[msgIdx]);
+                            msgIdx++;
+                        }
+                    }
+                }
+
+                while(msgIdx < messages.length) {
+                    processMessage(messages[msgIdx]);
+                    msgIdx++;
+                }
+
+                if (targetPhase === 'ended') {
+                    phase = 'ended';
+                    updateUIToCurrentPhase();
+                } else {
+                    phase = targetPhase;
+                    currentRound = targetRound;
+                }
+            }
+
+            function processMessage(msg) {
+                if (localProcessedStateIds.has(msg.id)) return;
+                localProcessedStateIds.add(msg.id);
+
+                if (msg.message_type === 'USER_COMPLETED' || msg.message_type === 'SYSTEM_STATE') return;
+
+                if (msg.message_type === 'VOTE') {
+                    const payload = JSON.parse(msg.content);
+                    if (payload.round === currentRound && phase === 'question' && !roundVotes.has(msg.user_id)) {
+                        roundVotes.add(msg.user_id);
+                        totalVotes++;
+                        if (payload.isCorrect) {
+                            correctVotes++;
+                            if (!winners.some(w => w.name === msg.user_name)) {
+                                winners.push({ name: msg.user_name, time: payload.timeElapsed });
+                            }
+                        }
+                        updateVoteStats();
+                    }
+                }
+                else {
+                    const senderClass = msg.user_id === currentUser?.id ? 'self' : 'other';
+                    const name = msg.user_name || 'Student';
+                    if (msg.message_type === 'audio') {
+                        addMessage(getAudioHtml(msg.content, senderClass === 'self'), senderClass, name);
+                    } else {
+                        addMessage(msg.content, senderClass, name);
+                    }
+                }
+            }
+
+            function subscribeToMessages() {
+                if(!batchId) return;
+                roomChannel = client.channel('discussion_room_' + batchId);
+                roomChannel
+                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'discussion_messages', filter: `batch_id=eq.${batchId}` }, payload => {
+                        processMessage(payload.new);
+                    })
+                    .subscribe();
+
+                clearInterval(gameTimer);
+                gameTimer = setInterval(gameLoop, 1000);
+            }
+
+            function gameLoop() {
+                if (!discussionStartTimeStr) {
+                    timerEl.textContent = `Waiting for Admin...`;
+                    return;
+                }
+                if (phase === 'ended') return;
+                
+                const now = Date.now() + serverTimeOffset;
+                const elapsedSecs = Math.floor((now - discussionStartTime) / 1000);
+                
+                if (elapsedSecs < 0) {
+                    const absSecs = Math.abs(elapsedSecs);
+                    timerEl.textContent = `Starts in 0${Math.floor(absSecs/60)}:${absSecs%60 < 10 ? '0'+(absSecs%60) : absSecs%60}`;
+                    return;
+                }
+
+                const totalRounds = questions.length;
+                if (elapsedSecs >= totalRounds * 90) {
+                    if (phase !== 'ended') {
+                        phase = 'ended';
+                        updateUIToCurrentPhase();
+                    }
+                    return;
+                }
+
+                const currentR = Math.floor(elapsedSecs / 90);
+                const roundElapsed = elapsedSecs % 90;
+                const currentP = roundElapsed < 30 ? 'question' : 'discussion';
+
+                if (currentR !== currentRound || currentP !== phase) {
+                    phase = currentP;
+                    currentRound = currentR;
+                    if (phase === 'question') {
+                        correctVotes = 0; totalVotes = 0; winners = []; userCurrentVote = null; roundVotes.clear();
+                    }
+                    updateUIToCurrentPhase();
+                }
+
+                timeLeft = phase === 'question' ? 30 - roundElapsed : 90 - roundElapsed;
+                
+                let mins = Math.floor(timeLeft / 60);
+                let secs = timeLeft % 60;
+                
+                if (phase === 'question') {
+                    timerEl.textContent = `00:${secs < 10 ? '0' + secs : secs}`;
+                    timerEl.style.color = 'var(--accent-gold, #fbbf24)';
+                    timerEl.style.borderColor = 'var(--accent-gold, #fbbf24)';
+                    sendBtn.innerHTML = `<span style="font-weight: 700; font-size: 0.95rem;">${secs}s</span>`;
+                    const qCountdown = document.getElementById(`q-countdown-disp-${currentRound}`);
+                    if (qCountdown) qCountdown.textContent = `Revealing answer and winners in: ${timeLeft}s`;
+                } else if (phase === 'discussion') {
+                    timerEl.textContent = `0${mins}:${secs < 10 ? '0' + secs : secs}`;
+                    timerEl.style.color = '#34d399';
+                    timerEl.style.borderColor = '#34d399';
+                    const chatInputArea = document.querySelector('.chat-input-area');
+                    if (chatInputArea) chatInputArea.style.opacity = '1';
+                    if (chatInput) {
+                        chatInput.disabled = false;
+                        chatInput.placeholder = "Discuss with the group...";
+                    }
+                    chatMicBtn.disabled = false;
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = `➤`;
+                }
+            }
+
+            async function saveDiscussionComplete() {
+                if (!currentUser || !batchId || window.hasSavedComplete) return;
+                window.hasSavedComplete = true;
+                try {
+                    const { data: existing } = await client.from('discussion_messages')
+                        .select('id')
+                        .eq('user_id', currentUser.id)
+                        .eq('batch_id', batchId)
+                        .eq('message_type', 'USER_COMPLETED')
+                        .single();
+                        
+                    if (!existing) {
+                        await client.from('discussion_messages').insert([{
+                            batch_id: batchId,
+                            user_id: currentUser.id,
+                            user_name: currentUser.user_metadata?.full_name || 'Student',
+                            message_type: 'USER_COMPLETED',
+                            content: JSON.stringify({ score: correctVotes, total_q: questions.length })
+                        }]);
+                    }
+                } catch(e) { console.error("Save complete error:", e); }
+            }
+
+            function updateUIToCurrentPhase() {
+                if (phase === 'ended') {
+                    timerEl.textContent = `Ended`;
+                    timerEl.style.color = 'var(--text-muted)';
+                    timerEl.style.borderColor = 'var(--text-muted)';
+                    chatInput.disabled = true;
+                    sendBtn.disabled = true;
+                    chatMicBtn.disabled = true;
+                    addMessage(`All ${questions.length} rounds are complete! Thank you for participating.`, 'bot', 'Mentor Dopamine');
+                    saveDiscussionComplete();
+                    return;
+                }
+
+                if (phase === 'question') {
+                    const chatInputArea = document.querySelector('.chat-input-area');
+                    if (chatInputArea) chatInputArea.style.opacity = '0.5';
+                    if (chatInput) {
+                        chatInput.disabled = true;
+                        chatInput.placeholder = "Voting in progress...";
+                    }
+                    chatMicBtn.disabled = true;
+                    sendBtn.disabled = true;
+
+                    if (!document.getElementById(`vote-stats-${currentRound}`)) {
+                        const currentQ = questions[currentRound];
+                        if (!currentQ) return;
+                        const questionHtml = `
+                            ${currentQ.intro}
+                            <div class="vote-options">
+                                <button class="vote-btn" data-opt="A" ${userCurrentVote ? 'disabled' : ''}>A) ${currentQ.options.A}</button>
+                                <button class="vote-btn" data-opt="B" ${userCurrentVote ? 'disabled' : ''}>B) ${currentQ.options.B}</button>
+                                <button class="vote-btn" data-opt="C" ${userCurrentVote ? 'disabled' : ''}>C) ${currentQ.options.C}</button>
+                                <button class="vote-btn" data-opt="D" ${userCurrentVote ? 'disabled' : ''}>D) ${currentQ.options.D}</button>
+                            </div>
+                            <div id="vote-stats-${currentRound}" style="margin-top: 12px; font-size: 0.85rem; color: var(--accent-gold); font-weight: 600;">
+                                Total Voted: ${totalVotes} | Correct Votes: ${correctVotes}
+                                <div id="q-countdown-disp-${currentRound}" style="margin-top: 4px; color: var(--accent-primary);">Revealing answer and winners in: --s</div>
+                            </div>
+                        `;
+                        addMessage(questionHtml, 'bot', 'Mentor Dopamine');
+                    }
+                } 
+                else if (phase === 'discussion') {
+                    // Disable vote buttons from previous phase
+                    document.querySelectorAll('.vote-options .vote-btn').forEach(b => {
+                        b.disabled = true; b.style.opacity = '0.5'; b.style.cursor = 'not-allowed';
+                    });
+                    if (pendingVote) { pendingVote = null; pendingVoteBtns = null; confirmModal.style.display = 'none'; }
+                    
+                    // Announce winners & answer if we haven't already
+                    if (!document.getElementById(`ans-rev-${currentRound}`)) {
+                        let endReason = 'Time is up!';
+                        addMessage(`The question phase is over! ${endReason}`, 'bot', 'Mentor Dopamine');
+                        renderPremiumResults();
+                        addMessage("You now have 1 minute to discuss the exam.", 'bot', 'Mentor Dopamine');
+                    }
+
+                    const chatInputArea = document.querySelector('.chat-input-area');
+                    if (chatInputArea) chatInputArea.style.opacity = '1';
+                    if (chatInput) {
+                        chatInput.disabled = false;
+                        chatInput.placeholder = "Type your message...";
+                    }
+                    chatMicBtn.disabled = false;
+                    chatMicBtn.style.opacity = '1';
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <line x1="22" y1="2" x2="11" y2="13" />
+                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg>
+                    `;
+                }
+            }
+
+            function updateVoteStats() {
+                const statsEl = document.getElementById(`vote-stats-${currentRound}`);
+                if (statsEl) {
+                    const qCountdown = document.getElementById(`q-countdown-disp-${currentRound}`)?.outerHTML || '';
+                    statsEl.innerHTML = `Total Voted: ${totalVotes} | Correct Votes: ${correctVotes}${qCountdown}`;
+                }
+            }
+
+            function renderPremiumResults() {
+                const currentQ = questions[currentRound];
+                if(!currentQ) return;
+                
+                // 1. Personal Feedback
+                let feedbackHtml = '';
+                if (userCurrentVote && userCurrentVote !== currentQ.correct) {
+                    feedbackHtml = `
+                        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 12px; border-radius: 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.2rem;">❌</span>
+                            <span style="color: #ef4444; font-weight: 600; font-size: 0.95rem;">You missed it. You chose ${userCurrentVote}.</span>
+                        </div>
+                    `;
+                } else if (userCurrentVote === currentQ.correct) {
+                    feedbackHtml = `
+                        <div style="background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.3); padding: 12px; border-radius: 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 1.2rem;">✅</span>
+                            <span style="color: #34d399; font-weight: 600; font-size: 0.95rem;">You got it right! +1 Point!</span>
+                        </div>
+                    `;
+                }
+
+                // 2. Correct Answer Card
+                let answerHtml = `
+                    <div id="ans-rev-${currentRound}" style="background: linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(16, 185, 129, 0.05)); border: 1px solid rgba(52, 211, 153, 0.4); padding: 20px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(52, 211, 153, 0.1);">
+                        <div style="font-size: 0.8rem; color: #34d399; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Correct Answer
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 14px;">
+                            <div style="background: #34d399; color: #000; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(52, 211, 153, 0.3);">${currentQ.correct}</div>
+                            <div style="font-size: 1.15rem; color: #fff; font-weight: 600; line-height: 1.3;">${currentQ.options[currentQ.correct]}</div>
+                        </div>
+                        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(52, 211, 153, 0.2);">
+                            <div style="font-size: 0.75rem; color: #a7f3d0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Explanation</div>
+                            <p style="margin: 0; font-size: 0.95rem; color: #e5e7eb; line-height: 1.6;">${currentQ.explanation}</p>
+                        </div>
+                    </div>
+                `;
+
+                // 3. Winners List
+                let winnersHtml = '';
+                if (winners.length > 0) {
+                    winnersHtml = `
+                        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-light); border-radius: 16px; overflow: hidden; margin-top: 8px;">
+                            <div style="background: rgba(251, 191, 36, 0.1); padding: 12px 16px; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #fbbf24; font-size: 0.95rem;">
+                                    🏆 Winners (${winners.length})
+                                </div>
+                                <div style="font-size: 0.75rem; color: #fbbf24; font-weight: 600; padding: 4px 8px; background: rgba(251, 191, 36, 0.2); border-radius: 100px;">
+                                    +1 Point each
+                                </div>
+                            </div>
+                            <div style="max-height: 240px; overflow-y: auto; padding: 8px;">
+                    `;
+                    
+                    const sortedWinners = [...winners].sort((a, b) => a.time - b.time);
+                    sortedWinners.forEach((winnerObj, idx) => {
+                        let medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `<span style="display:inline-block; width:20px; text-align:center; color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">#${idx+1}</span>`));
+                        let isYouStyle = winnerObj.name === currentUser?.user_metadata?.full_name ? 'background: rgba(224, 28, 28, 0.08); border-color: rgba(224, 28, 28, 0.3);' : 'background: rgba(0,0,0,0.2); border-color: transparent;';
+                        let nameColor = winnerObj.name === currentUser?.user_metadata?.full_name ? 'var(--accent-primary)' : '#fff';
+                        
+                        winnersHtml += `
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; margin-bottom: 6px; border-radius: 10px; border: 1px solid transparent; ${isYouStyle}">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <span style="font-size: 1.1rem; width: 24px; text-align: center;">${medal}</span>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--dark-600); display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 800; color: var(--text-muted); border: 1px solid var(--border-light);">
+                                            ${winnerObj.name.substring(0, 2).toUpperCase()}
+                                        </div>
+                                        <span style="font-weight: 600; color: ${nameColor}; font-size: 0.9rem;">${winnerObj.name}</span>
+                                    </div>
+                                </div>
+                                <span style="color: #fbbf24; font-family: monospace; font-size: 0.85rem; font-weight: 600; background: rgba(251, 191, 36, 0.1); padding: 4px 8px; border-radius: 6px;">${winnerObj.time}s</span>
+                            </div>
+                        `;
+                    });
+                    
+                    winnersHtml += `
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    winnersHtml = `
+                        <div style="background: rgba(255,255,255,0.03); border: 1px dashed var(--border-light); border-radius: 12px; padding: 16px; text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 8px;">
+                            No one got the correct answer this round. 😔
+                        </div>
+                    `;
+                }
+
+                addMessage(`
+                    ${feedbackHtml}
+                    ${answerHtml}
+                    ${winnersHtml}
+                `, 'bot', 'Mentor Dopamine');
+            }
+
+            async function handleUserSend() {
+                const text = chatInput.value.trim();
+                if (!text || chatInput.disabled) return;
+                
+                chatInput.value = '';
+                
+                if (batchId && currentUser) {
+                    const { error } = await client.from('discussion_messages').insert([{
+                        batch_id: batchId,
+                        user_id: currentUser.id,
+                        user_name: currentUser.user_metadata?.full_name || 'Student',
+                        message_type: 'text',
+                        content: text
+                    }]);
+                    
+                    if (error) {
+                        console.error("Message send error:", error);
+                    }
+                }
+                
+                if (phase === 'discussion') {
+                    if (text.toLowerCase().includes('why') || text.toLowerCase().includes('how')) {
+                        setTimeout(() => addMessage(questions[currentRound].explanation, 'bot', 'Mentor Dopamine'), 1000);
+                    }
+                }
+            }
+
+            sendBtn.addEventListener('click', handleUserSend);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleUserSend();
+            });
+            
+            document.getElementById('cancel-vote-btn').addEventListener('click', () => {
+                pendingVote = null;
+                pendingVoteBtns = null;
+                confirmModal.style.display = 'none';
+            });
+
+            // Vote button delegation
+            chatArea.addEventListener('click', (e) => {
+                if (e.target.classList.contains('vote-btn')) {
+                    if (e.target.disabled) return;
+                    pendingVote = e.target.dataset.opt;
+                    pendingVoteBtns = e.target.parentElement.querySelectorAll('.vote-btn');
+                    confirmModal.style.display = 'flex';
+                }
+            });
+
+            // Vote Modal Confirmation
+            document.getElementById('confirm-vote-btn').addEventListener('click', async () => {
+                if(pendingVote && pendingVoteBtns) {
+                    userCurrentVote = pendingVote;
+                    pendingVoteBtns.forEach(b => {
+                        b.disabled = true;
+                        if(b.dataset.opt === pendingVote) {
+                            b.style.background = 'var(--accent-primary)';
+                            b.style.borderColor = 'var(--accent-primary)';
+                        }
+                    });
+                    
+                    const isCorrect = pendingVote === questions[currentRound].correct;
+                    const elapsed = Math.max(0, 30 - timeLeft); // since phase is 30s
+                    
+                    // Insert vote into discussion_messages so everyone receives it reliably!
+                    await client.from('discussion_messages').insert([{
+                        batch_id: batchId,
+                        user_id: currentUser?.id || 'unknown',
+                        user_name: currentUser?.user_metadata?.full_name || 'Student',
+                        message_type: 'VOTE',
+                        content: JSON.stringify({
+                            round: currentRound,
+                            opt: pendingVote,
+                            isCorrect: isCorrect,
+                            timeElapsed: elapsed
+                        })
+                    }]);
+                    
+                    // Award 1 point in the new discussion_points table if the vote is correct
+                    if (isCorrect && currentUser && batchId) {
+                        try {
+                            await client.from('discussion_points').insert([{
+                                user_id: currentUser.id,
+                                user_name: currentUser.user_metadata?.full_name || 'Student',
+                                batch_id: batchId,
+                                round_index: currentRound
+                            }]);
+                        } catch (err) {
+                            console.error("Failed to insert point:", err);
+                        }
+                    }
+                    
+                    pendingVote = null;
+                    pendingVoteBtns = null;
+                    confirmModal.style.display = 'none';
+                }
+            });
+
+            // Media Recording
+            let mediaRecorder;
+            let audioChunks = [];
+            let isRecording = false;
+            let recordTimeout;
+            let recordInterval;
+            let recordSeconds = 0;
+            let isCancelled = false;
+            
+            // Visualizer variables
+            let audioContext;
+            let analyser;
+            let visualizerInterval;
+            const numBars = 15;
+            const visualizerEl = document.getElementById('audio-visualizer');
+            
+            const recordingUi = document.getElementById('recording-ui');
+            const recordingTimer = document.getElementById('recording-timer');
+            const cancelRecordBtn = document.getElementById('cancel-record-btn');
+
+            cancelRecordBtn.addEventListener('click', () => { isCancelled = true; stopRecording(); });
+
+            chatMicBtn.addEventListener('click', async () => {
+                if (chatInput.disabled && !isRecording) return; 
+                if (!isRecording) {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        // Use default MediaRecorder to prevent silent audio issues on some devices
+                        mediaRecorder = new MediaRecorder(stream);
+                        audioChunks = [];
+                        isCancelled = false;
+                        recordSeconds = 0;
+                        
+                        mediaRecorder.ondataavailable = e => { if(e.data.size > 0) audioChunks.push(e.data); };
+                        mediaRecorder.onstop = async () => {
+                            if (!isCancelled && batchId && currentUser) {
+                                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                                const fileName = `${batchId}/${currentUser.id}_${Date.now()}.webm`;
+                                const { data, error } = await client.storage.from('discussion_audio').upload(fileName, audioBlob, { contentType: 'audio/webm' });
+                                if (!error && data) {
+                                    const { data: publicUrlData } = client.storage.from('discussion_audio').getPublicUrl(fileName);
+                                    const publicUrl = publicUrlData.publicUrl;
+
+                                    const { error: insertErr } = await client.from('discussion_messages').insert([{
+                                        batch_id: batchId,
+                                        user_id: currentUser.id,
+                                        user_name: currentUser.user_metadata?.full_name || 'Student',
+                                        message_type: 'audio',
+                                        content: publicUrl
+                                    }]);
+                                    
+                                    if (insertErr) {
+                                        console.error("Audio message insert error:", insertErr);
+                                    }
+                                } else {
+                                    console.error("Audio upload error:", error);
+                                    alert("Failed to upload voice note. Please ensure the 'discussion_audio' bucket exists and has the correct permissions.");
+                                }
+                            }
+                            stream.getTracks().forEach(track => track.stop());
+                        };
+                        
+                        mediaRecorder.start();
+                        isRecording = true;
+                        chatInput.style.opacity = '0';
+                        recordingUi.style.display = 'flex';
+                        chatInput.disabled = true;
+                        recordingTimer.textContent = '0:00';
+                        chatMicBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>`;
+                        chatMicBtn.style.background = 'var(--accent-primary)';
+                        chatMicBtn.style.borderColor = 'var(--accent-primary)';
+                        
+                        recordInterval = setInterval(() => {
+                            recordSeconds++;
+                            let secs = recordSeconds % 60;
+                            recordingTimer.textContent = `0:${secs < 10 ? '0' + secs : secs}`;
+                        }, 1000);
+                        
+                        // Initialize visualizer
+                        try {
+                            visualizerEl.innerHTML = Array.from({length: numBars}).map(() => `<div style="width: 3px; height: 4px; background: var(--accent-primary, #34d399); border-radius: 2px; transition: height 0.05s;"></div>`).join('');
+                            const bars = visualizerEl.children;
+                            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                            analyser = audioContext.createAnalyser();
+                            analyser.fftSize = 64;
+                            const source = audioContext.createMediaStreamSource(stream);
+                            source.connect(analyser);
+                            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                            
+                            visualizerInterval = setInterval(() => {
+                                analyser.getByteFrequencyData(dataArray);
+                                for (let i = 0; i < numBars; i++) {
+                                    const val = dataArray[i * 2] || 0;
+                                    const height = Math.max(4, (val / 255) * 20);
+                                    if (bars[i]) {
+                                        bars[i].style.height = `${height}px`;
+                                        bars[i].style.opacity = val > 10 ? '1' : '0.4';
+                                    }
+                                }
+                            }, 50);
+                        } catch (err) { console.warn('Audio visualizer not supported', err); }
+                        
+                        recordTimeout = setTimeout(() => { if(isRecording) stopRecording(); }, 30000);
+                    } catch(err) { alert("Microphone access denied or not available. Please check permissions."); }
+                } else { stopRecording(); }
+            });
+            
+            function stopRecording() {
+                if(mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+                clearTimeout(recordTimeout); clearInterval(recordInterval);
+                clearInterval(visualizerInterval);
+                if (audioContext && audioContext.state !== 'closed') {
+                    audioContext.close().catch(console.error);
+                }
+                audioContext = null;
+                
+                isRecording = false;
+                recordingUi.style.display = 'none';
+                chatInput.style.opacity = '1'; chatInput.disabled = false; chatInput.focus();
+                chatMicBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" y1="19" x2="12" y2="22" /></svg>`;
+                chatMicBtn.style.background = 'rgba(255, 255, 255, 0.05)'; chatMicBtn.style.borderColor = 'var(--border-light)';
+            }
+
+            async function initChat() {
+                await syncServerTime();
+
+                const { data: { user } } = await client.auth.getUser();
+                if (user) currentUser = user;
+
+                if (batchId) {
+                    const { data, error } = await client.from('exam_discussions')
+                        .select('*')
+                        .eq('exam_batch_id', batchId)
+                        .order('order_id', { ascending: true });
+                        
+                    if (!error && data && data.length > 0) {
+                        discussionStartTimeStr = data[0].start_time;
+                        if (discussionStartTimeStr) {
+                            discussionStartTime = new Date(discussionStartTimeStr).getTime();
+                        }
+                        
+                        const examTitle = data[0].exam_title || 'Exam Discussion';
+                        const titleEl = document.querySelector('.chat-title');
+                        if (titleEl) {
+                            titleEl.innerHTML = `<span>💬</span> ${examTitle}`;
+                        }
+
+                        questions = data.map((q, idx) => ({
+                            intro: idx === 0 ? `Welcome! Let's start the discussion. ${q.question_text}` : `Round ${idx + 1}! ${q.question_text}`,
+                            options: {
+                                A: q.options[0]?.text || '', B: q.options[1]?.text || '',
+                                C: q.options[2]?.text || '', D: q.options[3]?.text || ''
+                            },
+                            correct: ['A','B','C','D'][q.options.findIndex(o => o.correct)] || 'A',
+                            explanation: q.explanation || 'No explanation provided.'
+                        }));
+                    } else {
+                        addMessage("No questions found for this discussion.", 'bot', 'System');
+                        return;
+                    }
+                } else {
+                    addMessage("No batch ID provided. Cannot load questions.", 'bot', 'System');
+                    return;
+                }
+
+                await fetchChatHistory();
+                subscribeToMessages();
+            }
+            
+            // Native Leaderboard Modal Logic
+            const lbModal = document.getElementById('leaderboard-modal');
+            const lbBtn = document.getElementById('leaderboard-btn');
+            const closeLbBtn = document.getElementById('close-lb-btn');
+            const lbBody = document.getElementById('lb-native-body');
+
+            if (closeLbBtn && lbModal) {
+                closeLbBtn.addEventListener('click', () => {
+                    lbModal.style.display = 'none';
+                });
+            }
+
+            if (lbBtn && lbModal) {
+                lbBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    lbModal.style.display = 'flex';
+                    await loadNativeLeaderboard();
+                });
+            }
+
+            async function loadNativeLeaderboard() {
+                if (!lbBody) return;
+                lbBody.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 40px;">Loading ranks...</div>';
+                
+                try {
+                    const { data, error } = await client.from('discussion_points').select('user_id, user_name');
+                    if (error) throw error;
+
+                    const scoresMap = {};
+                    (data || []).forEach(row => {
+                        if (!scoresMap[row.user_id]) scoresMap[row.user_id] = { id: row.user_id, name: row.user_name, score: 0 };
+                        scoresMap[row.user_id].score += 1;
+                    });
+
+                    const sortedUsers = Object.values(scoresMap).sort((a, b) => b.score - a.score);
+
+                    if (sortedUsers.length === 0) {
+                        lbBody.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 40px;">No points recorded yet. Be the first to answer correctly!</div>';
+                        return;
+                    }
+
+                    lbBody.innerHTML = '';
+                    sortedUsers.forEach((user, idx) => {
+                        const rank = idx + 1;
+                        let rankClass = rank === 1 ? 'native-lb-rank-1' : (rank === 2 ? 'native-lb-rank-2' : (rank === 3 ? 'native-lb-rank-3' : ''));
+                        let isYou = currentUser && currentUser.id === user.id;
+                        let youClass = isYou ? 'native-lb-you' : '';
+                        let medal = rank === 1 ? '🥇' : (rank === 2 ? '🥈' : (rank === 3 ? '🥉' : rank));
+                        let avatarInitials = (user.name || 'S').substring(0, 2).toUpperCase();
+
+                        lbBody.innerHTML += `
+                            <div class="native-lb-item ${rankClass} ${youClass}">
+                                <div style="display: flex; align-items: center; gap: 16px;">
+                                    <div style="font-size: 1.2rem; font-weight: 800; width: 30px; text-align: center; color: ${rank <= 3 ? 'var(--accent-gold)' : 'var(--text-muted)'};">${medal}</div>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: ${isYou ? 'rgba(224, 28, 28, 0.2)' : 'rgba(255,255,255,0.05)'}; display: flex; align-items: center; justify-content: center; font-weight: 700; color: ${isYou ? 'var(--accent-primary)' : '#fff'}; border: 1px solid rgba(255,255,255,0.1);">${avatarInitials}</div>
+                                        <div style="display: flex; flex-direction: column;">
+                                            <span style="font-weight: 600; font-size: 1.05rem; color: ${isYou ? 'var(--accent-primary)' : '#fff'};">${isYou ? 'You' : user.name}</span>
+                                            <span style="font-size: 0.8rem; color: var(--text-muted);">Participant</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                                    <span style="font-size: 1.3rem; font-weight: 800; font-family: monospace; color: ${isYou ? 'var(--accent-primary)' : (rank <= 3 ? '#fbbf24' : '#fff')};">${user.score}</span>
+                                    <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">Points</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                } catch(e) {
+                    console.error(e);
+                    lbBody.innerHTML = '<div style="text-align: center; color: #ef4444; padding: 40px;">Failed to load leaderboard.</div>';
+                }
+            }
+
+            initChat();
+        });
+</script>
+</body>
+</html>

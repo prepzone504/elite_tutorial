@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sharing of Questions | Elite Tutorial Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="generation.css" />
+  <style>
+    /* Specific styles for the sharing interface */
+    .sharing-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      margin-top: 20px;
+    }
+    
+    .exam-select-box {
+      background: var(--dark-700);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .exam-dropdown {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--dark-500);
+      border: 1px solid var(--glass-border);
+      color: #fff;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .lists-wrapper {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .student-list-box {
+      background: var(--dark-700);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 250px;
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 12px;
+      margin-bottom: 8px;
+    }
+
+    .list-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .list-count {
+      background: var(--dark-500);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--text-silver);
+      font-weight: 600;
+    }
+
+    .student-items {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      max-height: 400px;
+      padding-right: 8px;
+    }
+
+    .student-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--dark-600);
+      border: 1px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .student-item:hover {
+      background: var(--dark-500);
+      border-color: var(--primary-glow);
+      transform: translateX(4px);
+    }
+
+    .student-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .student-name {
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .student-matric {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .action-icon {
+      font-size: 1.2rem;
+      opacity: 0.5;
+    }
+
+    .student-item:hover .action-icon {
+      opacity: 1;
+    }
+
+    #unassigned-list .student-item:hover .action-icon { color: #10b981; }
+    #assigned-list .student-item:hover .action-icon { color: #ef4444; }
+
+    .save-bar {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+    }
+  </style>
+</head>
+
+<body class="page-exam">
+
+  <div id="auth-gate" class="auth-gate" style="display:none">
+    <div class="auth-gate-card">
+      <h2>🔒 Admin Required</h2>
+      <p>Sign in to the admin panel to access the Content Studio.</p>
+      <a href="admin.html">Go to Admin Login</a>
+    </div>
+  </div>
+
+  <div class="studio-bg">
+    <div class="studio-grid"></div>
+  </div>
+
+  <div class="studio-shell">
+    <header class="studio-topbar">
+      <div class="studio-topbar-left">
+        <a href="admin.html" class="studio-back" title="Back to Admin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </a>
+        <div class="studio-brand">
+          <div class="studio-brand-icon">🔗</div>
+          <div class="studio-brand-text">
+            <h1>Sharing of Questions</h1>
+            <p>Assign Exams, Puzzles, and Flash Cards</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="studio-main" style="max-width: 900px; margin: 0 auto; padding-top: 40px;">
+      
+      <div class="exam-select-box">
+        <label for="exam-dropdown" style="display:block; margin-bottom: 12px; font-weight: 600; color: var(--text-silver);">Select Content to Share</label>
+        <select id="exam-dropdown" class="exam-dropdown">
+          <option value="" data-type="">-- Select Content --</option>
+        </select>
+      </div>
+
+      <div class="sharing-container" id="sharing-container" style="display: none;">
+        
+        <div id="discussion-schedule-box" style="display: none; background: rgba(30, 30, 30, 0.8); padding: 16px; border-radius: 12px; margin-bottom: 24px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <h3 style="margin-top:0; margin-bottom:12px; font-size:1.05rem; color: #fbbf24;">Discussion Start Time</h3>
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+             <select id="discussion-start-mode" class="exam-dropdown" style="width: auto; min-width: 150px; margin: 0;">
+                 <option value="now">Start Now (Immediate)</option>
+                 <option value="scheduled">Schedule Time...</option>
+             </select>
+             <input type="datetime-local" id="discussion-start-time" class="exam-dropdown" style="width: auto; min-width: 200px; display: none; margin: 0;">
+             <button type="button" id="btn-save-schedule" class="btn-send" style="display: flex; justify-content: center; align-items: center; padding: 10px 20px; min-height: 0; min-width: 120px; background: #10b981; border-color: #10b981; color: white;">Activate</button>
+          </div>
+          <p style="margin: 8px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">This sets when students can access this specific discussion room.</p>
+        </div>
+
+        <div class="student-list-box">
+          <div class="list-header">
+            <span class="list-title">Non-Selected Students (Hidden)</span>
+            <span class="list-count" id="unassigned-count">0</span>
+          </div>
+          <input type="text" id="search-unassigned" placeholder="Search by matric number (e.g., 0090) or name..." class="exam-dropdown" style="margin-bottom: 8px; padding: 10px; font-size: 0.95rem;" autocomplete="off">
+          <div class="student-items" id="unassigned-list">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <div class="student-list-box" style="border-color: rgba(16, 185, 129, 0.3);">
+          <div class="list-header">
+            <span class="list-title" style="color: #10b981;">Selected Students (Visible)</span>
+            <span class="list-count" id="assigned-count" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">0</span>
+          </div>
+          <div class="student-items" id="assigned-list">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <div id="discussion-time-settings" style="display: none; flex-direction: column; gap: 12px; background: var(--dark-700); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 16px; padding: 20px;">
+          <div style="color: #fbbf24; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Discussion Start Time
+          </div>
+          <div style="display: flex; gap: 24px; align-items: center;">
+            <label style="color: #fff; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="radio" name="disc_start_mode" value="now" checked style="accent-color: #fbbf24; transform: scale(1.2);"> Start Now
+            </label>
+            <label style="color: #fff; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="radio" name="disc_start_mode" value="scheduled" style="accent-color: #fbbf24; transform: scale(1.2);"> Scheduled Time:
+            </label>
+            <input type="time" id="disc-start-time" class="exam-dropdown" style="width: auto; padding: 8px 12px; background: rgba(0,0,0,0.2);" disabled>
+          </div>
+        </div>
+
+        <div class="save-bar" style="display: none;">
+          <button type="button" class="btn-send" id="btn-save-sharing" style="display: flex; justify-content: center; align-items: center; min-width: 200px;">
+            <span>💾</span> Save Sharing Settings
+          </button>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../js/supabase-config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="generation.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!checkAdminAuth()) return;
+
+      const client = window.getSupabaseClient();
+      const examDropdown = document.getElementById('exam-dropdown');
+      const sharingContainer = document.getElementById('sharing-container');
+      const unassignedList = document.getElementById('unassigned-list');
+      const assignedList = document.getElementById('assigned-list');
+      const unassignedCount = document.getElementById('unassigned-count');
+      const assignedCount = document.getElementById('assigned-count');
+      const btnSave = document.getElementById('btn-save-sharing');
+      const searchUnassigned = document.getElementById('search-unassigned');
+      
+      const discStartRadios = document.querySelectorAll('input[name="disc_start_mode"]');
+      const discStartTime = document.getElementById('disc-start-time');
+      const discussionTimeSettings = document.getElementById('discussion-time-settings');
+
+      discStartRadios.forEach(r => {
+        r.addEventListener('change', (e) => {
+          discStartTime.disabled = e.target.value !== 'scheduled';
+        });
+      });
+
+      let allStudents = [];
+      let currentAssignments = new Set();
+      let selectedItemId = null;
+      let selectedItemType = null;
+
+      // Fetch distinct items by fetching all questions and extracting unique batches
+      async function loadItems() {
+        try {
+          const items = [];
+
+          // 1. Fetch Exams
+          const { data: examData, error: examError } = await client.from('exam_questions').select('exam_batch_id, exam_title, created_at').order('created_at', { ascending: false });
+          if (!examError && examData) {
+            const seen = new Set();
+            for (const row of examData) {
+              if (!seen.has(row.exam_batch_id)) {
+                seen.add(row.exam_batch_id);
+                items.push({ id: row.exam_batch_id, title: `[Exam] ${row.exam_title}`, type: 'exam', date: row.created_at });
+              }
+            }
+          }
+
+          // 2. Fetch Puzzles
+          const { data: puzzleData, error: puzzleError } = await client.from('elite_puzzles').select('id, title, created_at').order('created_at', { ascending: false });
+          if (!puzzleError && puzzleData) {
+            for (const row of puzzleData) {
+              items.push({ id: row.id, title: `[Puzzle] ${row.title}`, type: 'puzzle', date: row.created_at });
+            }
+          }
+
+          // 3. Fetch Flash Cards
+          const { data: flashData, error: flashError } = await client.from('flash_cards').select('batch_id, subject, created_at').order('created_at', { ascending: false });
+          if (!flashError && flashData) {
+            const seen = new Set();
+            for (const row of flashData) {
+              if (row.batch_id && !seen.has(row.batch_id)) {
+                seen.add(row.batch_id);
+                try {
+                  const meta = JSON.parse(row.subject);
+                  items.push({ id: row.batch_id, title: `[Flash Card] ${meta.deck_name}`, type: 'flashcard', date: row.created_at });
+                } catch(e) {
+                  items.push({ id: row.batch_id, title: `[Flash Card] Unknown Deck`, type: 'flashcard', date: row.created_at });
+                }
+              }
+            }
+          }
+
+          // 4. Fetch Exam Discussions
+          const { data: discData, error: discError } = await client.from('exam_discussions').select('exam_batch_id, exam_title, created_at').order('created_at', { ascending: false });
+          if (!discError && discData) {
+            const seen = new Set();
+            for (const row of discData) {
+              if (!seen.has(row.exam_batch_id)) {
+                seen.add(row.exam_batch_id);
+                items.push({ id: row.exam_batch_id, title: `[Discussion] ${row.exam_title}`, type: 'discussion', date: row.created_at });
+              }
+            }
+          }
+
+          // Sort combined items
+          items.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+          items.forEach(item => {
+            const dateStr = new Date(item.date).toLocaleDateString();
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.dataset.type = item.type;
+            option.textContent = `${item.title} (${dateStr})`;
+            examDropdown.appendChild(option);
+          });
+        } catch (err) {
+          console.error("Error loading items:", err);
+          showToast("Failed to load items", "error");
+        }
+      }
+
+      async function loadStudents() {
+        try {
+          // Fetch profiles. Only students with a matric number or real name might be relevant, but let's fetch all
+          const { data, error } = await client.from('profiles').select('id, real_name, full_name, matric_number');
+          if (error) throw error;
+          allStudents = data.filter(s => s.real_name || s.full_name); // exclude empty profiles
+        } catch (err) {
+          console.error("Error loading students:", err);
+          showToast("Failed to load students", "error");
+        }
+      }
+
+      async function loadAssignments(batchId, type) {
+        try {
+          let table = 'exam_assignments';
+          let col = 'exam_batch_id';
+          if (type === 'puzzle') { table = 'puzzle_assignments'; col = 'puzzle_id'; }
+          else if (type === 'flashcard') { table = 'flashcard_assignments'; col = 'batch_id'; }
+          else if (type === 'discussion') { table = 'exam_discussion_assignments'; col = 'batch_id'; }
+
+          const { data, error } = await client.from(table).select('user_id').eq(col, batchId);
+          if (error) throw error;
+          currentAssignments = new Set(data.map(a => a.user_id));
+          renderLists();
+        } catch (err) {
+          console.error("Error loading assignments:", err);
+          showToast(`Failed to load assignments. You may need to create the ${type === 'puzzle' ? 'puzzle_assignments' : 'flashcard_assignments'} table in Supabase.`, "error");
+        }
+      }
+
+      function renderLists() {
+        unassignedList.innerHTML = '';
+        assignedList.innerHTML = '';
+
+        let uCount = 0;
+        let aCount = 0;
+
+        allStudents.forEach(student => {
+          const isAssigned = currentAssignments.has(student.id);
+          
+          const el = document.createElement('div');
+          el.className = 'student-item';
+          const name = student.real_name || student.full_name || 'Unknown Student';
+          const matric = student.matric_number || 'No Matric Number';
+          
+          el.innerHTML = `
+            <div class="student-info">
+              <span class="student-name">${name}</span>
+              <span class="student-matric">${matric}</span>
+            </div>
+            <div class="action-icon" style="font-weight:bold; font-size: 0.9rem; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,0.05);">${isAssigned ? '❌ Remove' : '🚀 Send'}</div>
+          `;
+
+          el.addEventListener('click', async () => {
+            if (!selectedItemId || !selectedItemType) return;
+            
+            // Show loading state on the item
+            el.style.pointerEvents = 'none';
+            el.style.opacity = '0.5';
+
+            let table = 'exam_assignments';
+            let col = 'exam_batch_id';
+            if (selectedItemType === 'puzzle') { table = 'puzzle_assignments'; col = 'puzzle_id'; }
+            else if (selectedItemType === 'flashcard') { table = 'flashcard_assignments'; col = 'batch_id'; }
+            else if (selectedItemType === 'discussion') { table = 'exam_discussion_assignments'; col = 'batch_id'; }
+
+            try {
+              if (isAssigned) {
+                // Remove assignment immediately
+                const { error } = await client.from(table)
+                  .delete()
+                  .eq(col, selectedItemId)
+                  .eq('user_id', student.id);
+                
+                if (error) throw error;
+                
+                currentAssignments.delete(student.id);
+                showToast(`Removed access for ${name}`, "info");
+              } else {
+                // Insert assignment immediately
+                const { error } = await client.from(table)
+                  .insert([{ [col]: selectedItemId, user_id: student.id }]);
+                
+                if (error) throw error;
+                
+                currentAssignments.add(student.id);
+                showToast(`Sent to ${name} successfully!`, "success");
+              }
+              renderLists();
+            } catch (err) {
+              console.error("Auto-save error:", err);
+              showToast("Failed to update database", "error");
+              el.style.pointerEvents = 'auto';
+              el.style.opacity = '1';
+            }
+          });
+
+          if (isAssigned) {
+            assignedList.appendChild(el);
+            aCount++;
+          } else {
+            unassignedList.appendChild(el);
+            uCount++;
+          }
+        });
+
+        if (uCount === 0) unassignedList.innerHTML = '<div style="padding: 10px; color: var(--text-muted);">No unassigned students.</div>';
+        if (aCount === 0) assignedList.innerHTML = '<div style="padding: 10px; color: var(--text-muted);">No assigned students yet.</div>';
+
+        unassignedCount.textContent = uCount;
+        assignedCount.textContent = aCount;
+
+        // Re-apply search filter if there is active text
+        if (searchUnassigned.value) {
+          searchUnassigned.dispatchEvent(new Event('input'));
+        }
+      }
+
+      searchUnassigned.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const items = unassignedList.querySelectorAll('.student-item');
+        items.forEach(item => {
+          const text = item.textContent.toLowerCase();
+          if (text.includes(term)) {
+            item.style.display = 'flex';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+
+      examDropdown.addEventListener('change', async (e) => {
+        selectedItemId = e.target.value;
+        const selectedOption = e.target.options[e.target.selectedIndex];
+        selectedItemType = selectedOption.dataset.type;
+        
+        const scheduleBox = document.getElementById('discussion-schedule-box');
+        if (selectedItemType === 'discussion') {
+            scheduleBox.style.display = 'block';
+            const { data } = await client.from('exam_discussions').select('start_time').eq('exam_batch_id', selectedItemId).limit(1).single();
+            if (data && data.start_time) {
+                document.getElementById('discussion-start-mode').value = 'scheduled';
+                document.getElementById('discussion-start-time').style.display = 'block';
+                const dt = new Date(data.start_time);
+                dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
+                document.getElementById('discussion-start-time').value = dt.toISOString().slice(0, 16);
+            } else {
+                document.getElementById('discussion-start-mode').value = 'now';
+                document.getElementById('discussion-start-time').style.display = 'none';
+                document.getElementById('discussion-start-time').value = '';
+            }
+        } else {
+            scheduleBox.style.display = 'none';
+        }
+
+        if (!selectedItemId) {
+          sharingContainer.style.display = 'none';
+          discussionTimeSettings.style.display = 'none';
+          return;
+        }
+        sharingContainer.style.display = 'flex';
+        
+        if (selectedItemType === 'discussion') {
+          discussionTimeSettings.style.display = 'flex';
+        } else {
+          discussionTimeSettings.style.display = 'none';
+        }
+        
+        loadAssignments(selectedItemId, selectedItemType);
+      });
+
+      document.getElementById('discussion-start-mode').addEventListener('change', (e) => {
+          document.getElementById('discussion-start-time').style.display = e.target.value === 'scheduled' ? 'block' : 'none';
+      });
+
+      document.getElementById('btn-save-schedule').addEventListener('click', async () => {
+          const mode = document.getElementById('discussion-start-mode').value;
+          let startTime = null;
+          if (mode === 'scheduled') {
+              const val = document.getElementById('discussion-start-time').value;
+              if (!val) return showToast("Please select a time", "error");
+              startTime = new Date(val).toISOString();
+          } else {
+              // mode === 'now'
+              startTime = new Date().toISOString();
+          }
+
+          const { error } = await client.from('exam_discussions')
+              .update({ start_time: startTime })
+              .eq('exam_batch_id', selectedItemId);
+              
+          if (error) {
+              showToast("Failed to activate discussion", "error");
+          } else {
+              showToast("Discussion activated successfully!", "success");
+          }
+      });
+
+      btnSave.addEventListener('click', async () => {
+        if (!selectedItemId || !selectedItemType) return;
+        
+        btnSave.disabled = true;
+        btnSave.innerHTML = `<span>💾</span> Saving...`;
+
+        let table = 'exam_assignments';
+        let col = 'exam_batch_id';
+        if (selectedItemType === 'puzzle') { table = 'puzzle_assignments'; col = 'puzzle_id'; }
+        else if (selectedItemType === 'flashcard') { table = 'flashcard_assignments'; col = 'batch_id'; }
+
+        try {
+          // 1. Delete existing assignments for this batch
+          const { error: delErr } = await client.from(table).delete().eq(col, selectedItemId);
+          if (delErr) throw delErr;
+
+          // 2. Insert new assignments
+          if (currentAssignments.size > 0) {
+            const inserts = Array.from(currentAssignments).map(userId => {
+              const row = {
+                [col]: selectedItemId,
+                user_id: userId
+              };
+              if (selectedItemType === 'discussion') {
+                row.start_mode = document.querySelector('input[name="disc_start_mode"]:checked').value;
+                row.start_time = document.getElementById('disc-start-time').value;
+              }
+              return row;
+            });
+            const { error: insErr } = await client.from(table).insert(inserts);
+            if (insErr) throw insErr;
+          }
+
+          // 3. Auto-update start time in exam_discussions if it is a discussion
+          if (selectedItemType === 'discussion') {
+              const mode = document.querySelector('input[name="disc_start_mode"]:checked').value;
+              let startTime = null;
+              if (mode === 'scheduled') {
+                  const val = document.getElementById('disc-start-time').value;
+                  if (val) startTime = new Date(val).toISOString();
+              } else {
+                  startTime = new Date().toISOString();
+              }
+              if (startTime) {
+                  await client.from('exam_discussions')
+                      .update({ start_time: startTime })
+                      .eq('exam_batch_id', selectedItemId);
+              }
+          }
+
+          showToast("Assignments saved successfully!", "success");
+        } catch (err) {
+          console.error("Save error:", err);
+          showToast("Failed to save assignments", "error");
+        } finally {
+          btnSave.disabled = false;
+          btnSave.innerHTML = `<span>💾</span> Save Sharing Settings`;
+        }
+      });
+
+      // Init
+      await Promise.all([loadItems(), loadStudents()]);
+    });
+  </script>
+</body>
+</html>

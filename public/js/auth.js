@@ -161,6 +161,21 @@
       return data;
     },
 
+    async sendOtp(email) {
+      const client = window.getSupabaseClient();
+      const { error } = await client.auth.signInWithOtp({ email });
+      if (error) throw error;
+    },
+
+    async verifyOtp(email, token, type = 'email') {
+      const client = window.getSupabaseClient();
+      const { data, error } = await client.auth.verifyOtp({ email, token, type });
+      if (error) throw error;
+      if (data.user) await ensureProfile(client, data.user);
+      return data;
+    },
+
+
     async signUpWithEmail({ email, password, firstName, lastName }) {
       const client = window.getSupabaseClient();
       const fullName = `${firstName} ${lastName}`.trim();

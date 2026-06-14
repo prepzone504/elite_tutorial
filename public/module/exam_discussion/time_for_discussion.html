@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Waiting Room | Elite Tutorial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../css/sidebar.css" />
+    <style>
+        body {
+            background: #080808;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            flex-direction: column;
+            text-align: center;
+        }
+        .waiting-container {
+            background: rgba(15, 15, 15, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 10;
+        }
+        .waiting-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        .title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            color: var(--text-main);
+        }
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+        .countdown-box {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .time-block {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            min-width: 80px;
+        }
+        .time-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #fbbf24;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .time-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .btn-back {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-back:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        /* Background decorative elements */
+        .bg-glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="waiting-container">
+        <div class="waiting-icon">⏳</div>
+        <h1 class="title">Waiting Room</h1>
+        <p class="subtitle">The exam discussion will begin shortly. Hang tight!</p>
+        
+        <div class="countdown-box">
+            <div class="time-block">
+                <div class="time-value" id="hours">00</div>
+                <div class="time-label">Hours</div>
+            </div>
+            <div class="time-block">
+                <div class="time-value" id="minutes">00</div>
+                <div class="time-label">Minutes</div>
+            </div>
+            <div class="time-block">
+                <div class="time-value" id="seconds">00</div>
+                <div class="time-label">Seconds</div>
+            </div>
+        </div>
+
+        <button class="btn-back" onclick="location.href='list_of_exam_discusion.html'">← Leave Waiting Room</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const batchId = urlParams.get('batch_id');
+            const timeStr = urlParams.get('time');
+
+            if (!batchId || !timeStr) {
+                location.href = 'list_of_exam_discusion.html';
+                return;
+            }
+
+            const [hours, mins] = timeStr.split(':').map(Number);
+            
+            function updateCountdown() {
+                const now = new Date();
+                const scheduledTime = new Date();
+                scheduledTime.setHours(hours, mins, 0, 0);
+
+                // If scheduled time is earlier today, assume it means tomorrow
+                if (scheduledTime < now) {
+                    // Check if it's within a few seconds (started just now)
+                    const diffSeconds = (now - scheduledTime) / 1000;
+                    if (diffSeconds < 5) {
+                        location.href = 'exam_discussion_chat_bot.html?batch_id=' + batchId;
+                        return;
+                    }
+                    scheduledTime.setDate(scheduledTime.getDate() + 1);
+                }
+
+                const diff = scheduledTime - now;
+
+                if (diff <= 0) {
+                    location.href = 'exam_discussion_chat_bot.html?batch_id=' + batchId;
+                    return;
+                }
+
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('hours').textContent = h < 10 ? '0' + h : h;
+                document.getElementById('minutes').textContent = m < 10 ? '0' + m : m;
+                document.getElementById('seconds').textContent = s < 10 ? '0' + s : s;
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        });
+    </script>
+</body>
+</html>

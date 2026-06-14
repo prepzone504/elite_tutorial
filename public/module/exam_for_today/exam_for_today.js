@@ -5,6 +5,110 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // ── ADVANCED OFFLINE SYNC ──
+    async function syncPendingExams() {
+        const client = window.getSupabaseClient && window.getSupabaseClient();
+        if (!client) return;
+
+        let pendingStr = localStorage.getItem('elite_pending_exam_submissions');
+        if (!pendingStr) return;
+
+        let pending = [];
+        try { pending = JSON.parse(pendingStr); } catch (e) { return; }
+        if (pending.length === 0) return;
+
+        console.log('[Exam Sync] Found pending exams, attempting sync...', pending);
+        let remaining = [];
+
+        for (let attemptData of pending) {
+            try {
+                const { data: existing } = await client
+                    .from('user_exam_attempts')
+                    .select('id')
+                    .eq('user_id', attemptData.user_id)
+                    .eq('exam_batch_id', attemptData.exam_batch_id)
+                    .single();
+
+                if (!existing) {
+                    const { error: insertErr } = await client.from('user_exam_attempts').insert([{
+                        user_id: attemptData.user_id,
+                        exam_batch_id: attemptData.exam_batch_id,
+                        score: attemptData.score,
+                        total_q: attemptData.total_q,
+                        student_name: attemptData.student_name,
+                        exam_title: attemptData.exam_title,
+                        subject: attemptData.subject,
+                        answers: attemptData.answers
+                    }]);
+                    if (insertErr) throw insertErr;
+                }
+
+                const { data: stats, error: statsErr } = await client.from('user_stats').select('*').eq('user_id', attemptData.user_id).single();
+                if (stats) {
+                    const newExams = (stats.exams_taken || 0) + 1;
+                    const oldAvg = stats.average_score || 0;
+                    const currentScorePct = Math.round((attemptData.score / attemptData.total_q) * 100);
+                    const newAvg = Math.round(((oldAvg * (newExams - 1)) + currentScorePct) / newExams);
+                    await client.from('user_stats').update({
+                        exams_taken: newExams,
+                        average_score: newAvg,
+                        last_active: new Date().toISOString()
+                    }).eq('user_id', attemptData.user_id);
+                } else if (!statsErr || statsErr.code === 'PGRST116') {
+                    const currentScorePct = Math.round((attemptData.score / attemptData.total_q) * 100);
+                    await client.from('user_stats').insert([{
+                        user_id: attemptData.user_id,
+                        exams_taken: 1,
+                        average_score: currentScorePct,
+                        streak_days: 1
+                    }]);
+                }
+            } catch (err) {
+                console.error('[Exam Sync] Failed to sync attempt:', err);
+                remaining.push(attemptData);
+            }
+        }
+
+        if (remaining.length > 0) {
+            localStorage.setItem('elite_pending_exam_submissions', JSON.stringify(remaining));
+        } else {
+            localStorage.removeItem('elite_pending_exam_submissions');
+            console.log('[Exam Sync] All offline attempts successfully synchronized.');
+        }
+    }
+    
+    setTimeout(syncPendingExams, 2000); // Try syncing shortly after load
+
+    // ── NETWORK INDICATOR ──
+    const netIndicator = document.getElementById('network-indicator');
+    
+    function updateNetworkStatus() {
+        if (!netIndicator) return;
+        if (navigator.onLine) {
+            netIndicator.className = 'network-indicator online strength-4';
+            netIndicator.title = "Online - Connected";
+        } else {
+            netIndicator.className = 'network-indicator offline';
+            netIndicator.title = "Offline - No Network";
+        }
+    }
+
+    setInterval(() => {
+        if (!netIndicator || !navigator.onLine) return;
+        const rand = Math.random();
+        if (rand > 0.9) {
+            netIndicator.className = 'network-indicator online strength-2';
+        } else if (rand > 0.7) {
+            netIndicator.className = 'network-indicator online strength-3';
+        } else {
+            netIndicator.className = 'network-indicator online strength-4';
+        }
+    }, 2000);
+
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+    updateNetworkStatus();
+
     // ── STATE ──
     let questionsData = [];
     let totalQ = 0;
@@ -73,6 +177,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const batchId = urlParams.get('batch');
         const client = window.getSupabaseClient();
+
+        let user = null;
+        try {
+            if (window.EliteAuth && window.EliteAuth.getSession) {
+                const session = await window.EliteAuth.getSession();
+                if (session && session.user) user = session.user;
+            }
+        } catch(e) {
+            console.warn('[Exam] Could not get session for attempt check:', e);
+        }
+
+        const isAdminParam = urlParams.get('admin') === 'true';
+        const isAdmin = isAdminParam || sessionStorage.getItem('elite_admin_auth') === '1';
         
         // Show loading state
         const startDesc = document.getElementById('start-desc-text') || document.querySelector('.start-desc');
@@ -86,7 +203,19 @@ document.addEventListener('DOMContentLoaded', () => {
             finalBatchId = sessionStorage.getItem('exam_active_batch') || batchId;
         }
 
-        if (!finalBatchId) {
+        // Only allow students to see exams they are assigned to
+        if (!finalBatchId && user && !isAdmin) {
+            const { data: latestAssign } = await client
+                .from('exam_assignments')
+                .select('exam_batch_id')
+                .eq('user_id', user.id)
+                .order('assigned_at', { ascending: false })
+                .limit(1)
+                .single();
+            if (latestAssign) {
+                finalBatchId = latestAssign.exam_batch_id;
+            }
+        } else if (!finalBatchId && isAdmin) {
             const { data: latestQ } = await client
                 .from('exam_questions')
                 .select('exam_batch_id')
@@ -96,6 +225,27 @@ document.addEventListener('DOMContentLoaded', () => {
             if (latestQ) {
                 finalBatchId = latestQ.exam_batch_id;
             }
+        }
+
+        if (!finalBatchId) {
+            qText.textContent = "No exams available for you at this time.";
+            if (startDesc) startDesc.textContent = "No assigned exams.";
+            return;
+        }
+
+        // Verify assignment if they provided a batch ID manually
+        if (finalBatchId && user && !isAdmin) {
+             const { data: verifyAssign, error: verifyErr } = await client
+                .from('exam_assignments')
+                .select('exam_batch_id')
+                .eq('user_id', user.id)
+                .eq('exam_batch_id', finalBatchId)
+                .single();
+             if (verifyErr || !verifyAssign) {
+                 qText.textContent = "Error: You do not have permission to view this exam.";
+                 if (startDesc) startDesc.textContent = "Access Denied.";
+                 return;
+             }
         }
 
         // Get total count first to show progress
@@ -125,6 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .from('exam_questions')
                 .select('*')
                 .eq('exam_batch_id', finalBatchId)
+                .order('order_id', { ascending: true, nullsFirst: false })
                 .order('created_at', { ascending: true })
                 .range(i, i + PAGE_SIZE - 1);
             
@@ -146,21 +297,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data[0] && data[0].subject) {
             currentExamSubject = data[0].subject;
         }
-
-        let user = null;
-        try {
-            if (window.EliteAuth && window.EliteAuth.getSession) {
-                const session = await window.EliteAuth.getSession();
-                if (session && session.user) user = session.user;
-            }
-        } catch(e) {
-            console.warn('[Exam] Could not get session for attempt check:', e);
-        }
         
         // Admin override for Review Mode
         const targetUserId = urlParams.get('userId');
-        const isAdminParam = urlParams.get('admin') === 'true';
-        const isAdmin = isAdminParam || sessionStorage.getItem('elite_admin_auth') === '1';
         const queryUserId = (isAdmin && targetUserId) ? targetUserId : (user ? user.id : null);
 
         console.log('[Exam] TargetUserId:', queryUserId, 'BatchId:', finalBatchId);
@@ -558,7 +697,6 @@ document.addEventListener('DOMContentLoaded', () => {
     async function submitExam(auto = false) {
         examSubmitted = true;
         clearInterval(examTimer);
-        clearExamState();
 
         // Calculate score
         let correct = 0;
@@ -573,7 +711,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const pct = correct / totalQ;
 
-        // Save attempt to Supabase
+        // Try to save attempt to Supabase with Exponential Backoff
         let user = null;
         try {
             if (window.EliteAuth && window.EliteAuth.getSession) {
@@ -582,30 +720,53 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch(e) { console.warn('[Exam] Could not get session for saving:', e); }
 
-        if (user && window.getSupabaseClient) {
+        if (user && window.getSupabaseClient && activeBatchId) {
             const client = window.getSupabaseClient();
-            const batchId = activeBatchId;
+            const meta = user.user_metadata || {};
+            const fullName = meta.full_name || meta.name || 'Student';
+            const titleEl = document.querySelector('.start-title');
+            let examTitle = titleEl ? titleEl.textContent : 'Exam';
+            if (examTitle === 'Ready to Begin?') {
+                examTitle = currentExamSubject ? currentExamSubject + ' Exam' : 'Exam';
+            }
+            
+            const attemptPayload = {
+                user_id: user.id,
+                exam_batch_id: activeBatchId,
+                score: correct,
+                total_q: totalQ,
+                student_name: fullName,
+                exam_title: examTitle,
+                subject: currentExamSubject,
+                answers: answers
+            };
 
-            if (batchId) {
+            // Exponential Backoff implementation
+            let success = false;
+            const maxRetries = 3;
+            let delayMs = 1000; // 1s, 2s, 4s
+
+            // Show a submitting status
+            const msgObj = document.getElementById('result-message');
+            if (msgObj) msgObj.textContent = "Submitting exam, please wait...";
+
+            for (let i = 0; i < maxRetries; i++) {
                 try {
-                    const meta = user.user_metadata || {};
-                    const fullName = meta.full_name || meta.name || 'Student';
-                    const examTitle = document.querySelector('.start-title').textContent || 'Exam';
+                    // Check if attempt already exists to prevent duplicates on retry
+                    const { data: existing } = await client
+                        .from('user_exam_attempts')
+                        .select('id')
+                        .eq('user_id', user.id)
+                        .eq('exam_batch_id', activeBatchId)
+                        .single();
 
-                    // Insert attempt
-                    await client.from('user_exam_attempts').insert([{
-                        user_id: user.id,
-                        exam_batch_id: batchId,
-                        score: correct,
-                        total_q: totalQ,
-                        student_name: fullName,
-                        exam_title: examTitle,
-                        subject: currentExamSubject,
-                        answers: answers
-                    }]);
+                    if (!existing) {
+                        const { error: insertErr } = await client.from('user_exam_attempts').insert([attemptPayload]);
+                        if (insertErr) throw insertErr;
+                    }
 
                     // Update user stats
-                    const { data: stats } = await client.from('user_stats').select('*').eq('user_id', user.id).single();
+                    const { data: stats, error: statsErr } = await client.from('user_stats').select('*').eq('user_id', user.id).single();
                     if (stats) {
                         const newExams = (stats.exams_taken || 0) + 1;
                         const oldAvg = stats.average_score || 0;
@@ -617,7 +778,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             average_score: newAvg,
                             last_active: new Date().toISOString()
                         }).eq('user_id', user.id);
-                    } else {
+                    } else if (!statsErr || statsErr.code === 'PGRST116') {
                         // First exam
                         const currentScorePct = Math.round((correct / totalQ) * 100);
                         await client.from('user_stats').insert([{
@@ -627,40 +788,89 @@ document.addEventListener('DOMContentLoaded', () => {
                             streak_days: 1
                         }]);
                     }
+
+                    success = true;
+                    break; // break retry loop
                 } catch (err) {
-                    console.error('[Exam] Failed to save exam attempt:', err);
+                    console.warn(`[Exam] Submission attempt ${i+1} failed:`, err);
+                    if (i < maxRetries - 1) {
+                        await new Promise(res => setTimeout(res, delayMs));
+                        delayMs *= 2; // exponential backoff
+                    }
+                }
+            }
+
+            if (!success) {
+                // Offline fallback queuing
+                console.error('[Exam] All submission retries failed. Queuing offline.');
+                let pendingStr = localStorage.getItem('elite_pending_exam_submissions');
+                let pending = pendingStr ? JSON.parse(pendingStr) : [];
+                
+                // Add to queue if not already there for this batch
+                if (!pending.some(p => p.exam_batch_id === activeBatchId)) {
+                    pending.push(attemptPayload);
+                    localStorage.setItem('elite_pending_exam_submissions', JSON.stringify(pending));
                 }
             }
         }
 
+        // Now safe to clear exam state since we've either saved or queued it locally
+        clearExamState();
+
         // Populate result screen
-        document.getElementById('result-score-num').textContent = correct;
-        document.getElementById('result-score-total').textContent = `/ ${totalQ}`;
-        document.getElementById('rs-correct').textContent = correct;
-        document.getElementById('rs-wrong').textContent = wrong;
-        document.getElementById('rs-skipped').textContent = skipped;
+        const resultScoreNum = document.getElementById('result-score-num');
+        if (resultScoreNum) resultScoreNum.textContent = correct;
+        
+        const resultScoreTotal = document.getElementById('result-score-total');
+        if (resultScoreTotal) resultScoreTotal.textContent = `/ ${totalQ}`;
+        
+        const rsCorrect = document.getElementById('rs-correct');
+        if (rsCorrect) rsCorrect.textContent = correct;
+        
+        const rsWrong = document.getElementById('rs-wrong');
+        if (rsWrong) rsWrong.textContent = wrong;
+        
+        const rsSkipped = document.getElementById('rs-skipped');
+        if (rsSkipped) rsSkipped.textContent = skipped;
 
         const ring = document.getElementById('score-ring-circle');
-        // stroke-dasharray is 314
-        setTimeout(() => {
-            ring.style.strokeDashoffset = 314 - (314 * pct);
-        }, 100);
+        if (ring) {
+            setTimeout(() => {
+                ring.style.strokeDashoffset = 314 - (314 * pct);
+            }, 100);
+        }
 
         const msg = document.getElementById('result-message');
         const emoji = document.getElementById('result-emoji');
-        if (pct >= 0.8) {
-            msg.textContent = "Excellent work!"; emoji.textContent = "🏆";
-        } else if (pct >= 0.6) {
-            msg.textContent = "Good job!"; emoji.textContent = "👏";
-        } else {
-            msg.textContent = "Keep practicing!"; emoji.textContent = "📚";
+        
+        // Show offline warning if failed to save
+        const isOffline = (user && window.getSupabaseClient && activeBatchId) ? 
+            (localStorage.getItem('elite_pending_exam_submissions') && JSON.parse(localStorage.getItem('elite_pending_exam_submissions')).some(p => p.exam_batch_id === activeBatchId)) : false;
+
+        if (msg && emoji) {
+            if (isOffline) {
+                msg.textContent = "Offline Mode: Score saved locally. It will sync automatically when you regain connection.";
+                msg.style.color = "#ffa500"; // Orange warning color
+                emoji.textContent = "📶";
+            } else {
+                msg.style.color = ""; // Reset color
+                if (pct >= 0.8) {
+                    msg.textContent = "Excellent work!"; emoji.textContent = "🏆";
+                } else if (pct >= 0.6) {
+                    msg.textContent = "Good job!"; emoji.textContent = "👏";
+                } else {
+                    msg.textContent = "Keep practicing!"; emoji.textContent = "📚";
+                }
+            }
         }
 
-        if (auto) {
-            document.getElementById('result-title').textContent = "Time's Up!";
+        const resultTitle = document.getElementById('result-title');
+        if (auto && resultTitle) {
+            resultTitle.textContent = "Time's Up!";
         }
 
-        document.getElementById('result-screen').classList.add('visible');
+        const resultScreen = document.getElementById('result-screen');
+        if (resultScreen) resultScreen.classList.add('visible');
         updateGrids();
     }
 

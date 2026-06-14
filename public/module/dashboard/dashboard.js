@@ -217,6 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '../admin/admin.html?v=2';
         return;
       }
+      
+      if (page === 'exam-discussion') {
+        window.location.href = link.href;
+        return;
+      }
 
       // Leaderboard requires admin auth popup
       if (page === 'leaderboard') {
@@ -361,21 +366,14 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ─────────────────────────────────────────
      ANALYTICS CHARTS
   ───────────────────────────────────────── */
-  const chartData = [
-    { day: 'Mon', score: 72 },
-    { day: 'Tue', score: 80 },
-    { day: 'Wed', score: 65 },
-    { day: 'Thu', score: 88 },
-    { day: 'Fri', score: 91 },
-    { day: 'Sat', score: 78 },
-    { day: 'Sun', score: 87 },
-  ];
-
   let chartsInit = false;
 
   function initCharts() {
+    if (!window.userExamAttempts) return; // Wait until data is loaded
     if (chartsInit) return;
     chartsInit = true;
+
+    const attempts = window.userExamAttempts;
 
     const barChart = document.getElementById('bar-chart');
     const chartLabels = document.getElementById('chart-labels');
@@ -384,10 +382,49 @@ document.addEventListener('DOMContentLoaded', () => {
     barChart.innerHTML = '';
     chartLabels.innerHTML = '';
 
-    const maxScore = Math.max(...chartData.map(d => d.score));
+    if (attempts.length === 0) {
+      barChart.innerHTML = '<div style="width:100%; text-align:center; color:#888; padding-top: 40px;">No exams taken yet.</div>';
+      document.getElementById('subject-scores-list').innerHTML = '<div style="text-align:center; padding: 20px; color: #888;">No subjects to display.</div>';
+      document.getElementById('summ-exams-taken').textContent = '0';
+      document.getElementById('summ-avg-score').textContent = '0%';
+      document.getElementById('summ-study-time').textContent = '0';
+      document.getElementById('summ-highest').textContent = '0%';
+      return;
+    }
+
+    // Process data
+    const chartData = [];
+    let totalScorePct = 0;
+    let highestScorePct = 0;
+    let totalQuestions = 0;
+    const subjectPerformance = {};
+
+    // Get last 7 attempts for the bar chart
+    const recentAttempts = [...attempts].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    const last7 = recentAttempts.slice(-7);
+
+    last7.forEach(att => {
+        const pct = Math.round((att.score / att.total_q) * 100);
+        const day = new Date(att.created_at).toLocaleDateString(undefined, { weekday: 'short' });
+        chartData.push({ day, score: pct });
+    });
+
+    attempts.forEach(attempt => {
+        const pct = Math.round((attempt.score / attempt.total_q) * 100);
+        totalScorePct += pct;
+        if (pct > highestScorePct) highestScorePct = pct;
+        totalQuestions += attempt.total_q;
+
+        const subj = attempt.subject || 'General';
+        if (!subjectPerformance[subj]) subjectPerformance[subj] = { totalPct: 0, count: 0 };
+        subjectPerformance[subj].totalPct += pct;
+        subjectPerformance[subj].count += 1;
+    });
+
+    // Render Bar Chart
+    const maxScore = 100;
 
     chartData.forEach((d, i) => {
-      // Bar column
       const col = document.createElement('div');
       col.className = 'bar-col';
 
@@ -403,28 +440,49 @@ document.addEventListener('DOMContentLoaded', () => {
       col.appendChild(fill);
       barChart.appendChild(col);
 
-      // Animate height after paint
       requestAnimationFrame(() => {
         setTimeout(() => {
           fill.style.height = ((d.score / maxScore) * 100) + '%';
         }, 80 + i * 80);
       });
 
-      // Label
       const label = document.createElement('div');
       label.className = 'chart-label';
       label.textContent = d.day;
       chartLabels.appendChild(label);
     });
 
-    // Animate subject bars (reset then grow)
-    document.querySelectorAll('.subj-bar').forEach(bar => {
-      const target = bar.style.width;
-      bar.style.width = '0%';
-      requestAnimationFrame(() => {
-        setTimeout(() => { bar.style.width = target; }, 200);
-      });
+    // Render Subjects
+    const subjList = document.getElementById('subject-scores-list');
+    subjList.innerHTML = '';
+    const colors = ['#e01c1c', '#9d6aff', '#fbbf24', '#34d399', '#60a5fa'];
+    
+    Object.keys(subjectPerformance).forEach((subj, idx) => {
+        const avg = Math.round(subjectPerformance[subj].totalPct / subjectPerformance[subj].count);
+        const color = colors[idx % colors.length];
+
+        const li = document.createElement('li');
+        li.className = 'subj-row';
+        li.innerHTML = `
+            <span class="subj-name">${subj}</span>
+            <div class="subj-bar-wrap">
+              <div class="subj-bar" style="width:0%;background:${color};"></div>
+            </div>
+            <span class="subj-pct">${avg}%</span>
+        `;
+        subjList.appendChild(li);
+
+        requestAnimationFrame(() => {
+            setTimeout(() => { li.querySelector('.subj-bar').style.width = avg + '%'; }, 200 + (idx * 100));
+        });
     });
+
+    // Render Summary Stats
+    const avgOverall = Math.round(totalScorePct / attempts.length);
+    document.getElementById('summ-exams-taken').textContent = attempts.length;
+    document.getElementById('summ-avg-score').textContent = avgOverall + '%';
+    document.getElementById('summ-study-time').textContent = totalQuestions;
+    document.getElementById('summ-highest').textContent = highestScorePct + '%';
   }
 
   /* ─────────────────────────────────────────
@@ -569,14 +627,91 @@ document.addEventListener('DOMContentLoaded', () => {
       const client = window.getSupabaseClient();
       console.log('[Dashboard] Fetching data concurrently...');
 
-      // Fetch session, attempts, and limited exam metadata in parallel
-      const [sessionRes, attemptsRes, examsRes] = await Promise.all([
+      // Fetch session, attempts, assignments, and user profile in parallel
+      const [sessionRes, attemptsRes, assignmentsRes, profileRes] = await Promise.all([
         window.EliteAuth.getSession(),
         client.from('user_exam_attempts').select('*').eq('user_id', user.id),
-        client.from('exam_questions').select('exam_batch_id, exam_title, subject, duration_mins, pass_mark, created_at').order('created_at', { ascending: false })
+        client.from('exam_assignments').select('exam_batch_id').eq('user_id', user.id),
+        client.from('profiles').select('matric_number').eq('id', user.id).single()
       ]);
 
-      const attempts = attemptsRes.data;
+      let examsRes = { data: [], error: null };
+      if (!assignmentsRes.error && assignmentsRes.data && assignmentsRes.data.length > 0) {
+        const assignedIds = assignmentsRes.data.map(a => a.exam_batch_id);
+        examsRes = await client.from('exam_questions')
+          .select('exam_batch_id, exam_title, subject, duration_mins, pass_mark, created_at')
+          .in('exam_batch_id', assignedIds)
+          .order('created_at', { ascending: false });
+      }
+
+      // ── Handle Matric Number Modal ──
+      const profileData = profileRes.data;
+      const matricModal = document.getElementById('matric-modal');
+      const matricDisplay = document.getElementById('matric-display-container');
+      const matricText = document.getElementById('matric-number-text');
+      const matricCopyBtn = document.getElementById('matric-copy-btn');
+      
+      const showMatricUI = (num) => {
+        if(matricDisplay) matricDisplay.style.display = 'inline-flex';
+        if(matricText) matricText.textContent = num;
+      };
+
+      if (!profileData || !profileData.matric_number) {
+        // Show modal if no matric number
+        if(matricModal) {
+          matricModal.style.display = 'flex';
+          // Important: it needs the .visible class to override opacity:0
+          setTimeout(() => matricModal.classList.add('visible'), 10);
+          
+          const submitBtn = document.getElementById('matric-submit-btn');
+          const errorMsg = document.getElementById('matric-error-msg');
+          const nameInput = document.getElementById('matric-real-name');
+          
+          if(submitBtn) {
+            submitBtn.addEventListener('click', async () => {
+              const realName = nameInput.value.trim();
+              if(!realName) {
+                errorMsg.style.display = 'block';
+                return;
+              }
+              errorMsg.style.display = 'none';
+              submitBtn.textContent = 'Generating...';
+              submitBtn.disabled = true;
+              
+              try {
+                // Call RPC
+                const { data: matricNum, error } = await client.rpc('assign_matric_number', { p_real_name: realName });
+                if (error) throw error;
+                
+                matricModal.classList.remove('visible');
+                setTimeout(() => matricModal.style.display = 'none', 300);
+                showToast('🎉 Welcome! Your Matric Number has been generated.', 'success');
+                showMatricUI(matricNum);
+              } catch (err) {
+                console.error(err);
+                errorMsg.textContent = 'Error generating matric number. Please try again.';
+                errorMsg.style.display = 'block';
+                submitBtn.textContent = 'Generate Matric Number';
+                submitBtn.disabled = false;
+              }
+            });
+          }
+        }
+      } else {
+        // Has matric number
+        showMatricUI(profileData.matric_number);
+      }
+
+      if (matricCopyBtn && matricText) {
+        matricCopyBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(matricText.textContent).then(() => {
+            showToast('📋 Matric Number copied to clipboard!', 'info');
+          });
+        });
+      }
+
+      const attempts = attemptsRes.data || [];
+      window.userExamAttempts = attempts;
       const attErr = attemptsRes.error;
       const exams = examsRes.data;
       const examErr = examsRes.error;
@@ -938,6 +1073,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           actList.innerHTML = `<li style="text-align:center; padding: 20px; color: #888;">No recent activity yet. Go study!</li>`;
         }
+      if (document.getElementById('page-analytics').classList.contains('active')) {
+        chartsInit = false; // Reset to force re-render
+        initCharts();
       }
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
@@ -1167,5 +1305,49 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchDashboardData();
 
   initImoAssistant();
+
+  // ─────────────────────────────────────────
+  // ELITE TUTORIAL VERSION 1.1 RELEASE NOTES
+  // ─────────────────────────────────────────
+  if (!localStorage.getItem('seen_elite_v1_1')) {
+    fetch('elite_version 1.1.html')
+      .then(res => {
+        if (!res.ok) throw new Error('Could not fetch release notes');
+        return res.text();
+      })
+      .then(html => {
+        document.body.insertAdjacentHTML('beforeend', html);
+        
+        const modal = document.getElementById('v1-1-modal');
+        const closeBtn = document.getElementById('v1-close-btn');
+        const continueBtn = document.getElementById('v1-continue-btn');
+        
+        if (modal) {
+          // Trigger confetti celebration
+          if (window.confetti) {
+             var duration = 3 * 1000;
+             var animationEnd = Date.now() + duration;
+             var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10001 };
+             function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+             var interval = setInterval(function() {
+               var timeLeft = animationEnd - Date.now();
+               if (timeLeft <= 0) return clearInterval(interval);
+               var particleCount = 50 * (timeLeft / duration);
+               confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+               confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+             }, 250);
+          }
+
+          const closeModal = () => {
+            modal.style.display = 'none';
+            localStorage.setItem('seen_elite_v1_1', 'true');
+          };
+
+          if (closeBtn) closeBtn.addEventListener('click', closeModal);
+          if (continueBtn) continueBtn.addEventListener('click', closeModal);
+        }
+      })
+      .catch(err => console.error('Error loading release notes:', err));
+  }
 
 });

@@ -103,6 +103,24 @@ body {
   display: flex; align-items: center; gap: 12px;
 }
 
+.network-indicator {
+  display: flex; align-items: flex-end; gap: 3px; height: 24px; padding: 4px;
+  background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px solid var(--glass-border);
+  margin-right: 4px;
+}
+.net-bar { width: 4px; background: var(--dark-500); border-radius: 2px; transition: background 0.3s ease; }
+.net-bar-1 { height: 8px; }
+.net-bar-2 { height: 12px; }
+.net-bar-3 { height: 16px; }
+.net-bar-4 { height: 20px; }
+
+.network-indicator.online.strength-4 .net-bar { background: #34d399; }
+.network-indicator.online.strength-3 .net-bar:nth-child(-n+3) { background: #34d399; }
+.network-indicator.online.strength-3 .net-bar:nth-child(4) { background: var(--dark-500); }
+.network-indicator.online.strength-2 .net-bar:nth-child(-n+2) { background: #34d399; }
+.network-indicator.online.strength-2 .net-bar:nth-child(n+3) { background: var(--dark-500); }
+.network-indicator.offline .net-bar { background: #ff7070; }
+
 .timer-block {
   display: flex; align-items: center; gap: 6px;
   background: rgba(224,28,28,0.1);

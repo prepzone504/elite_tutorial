@@ -363,6 +363,31 @@ document.addEventListener('DOMContentLoaded', () => {
     btnQuit.addEventListener('click', quitGame);
     btnPlayAgain.addEventListener('click', startGame);
 
+    function enterFullscreen() {
+        if (!document.fullscreenElement) {
+            const el = document.documentElement;
+            if (el.requestFullscreen) {
+                el.requestFullscreen().catch(e => console.log('Fullscreen error:', e));
+            } else if (el.webkitRequestFullscreen) { /* Safari */
+                el.webkitRequestFullscreen();
+            } else if (el.msRequestFullscreen) { /* IE11 */
+                el.msRequestFullscreen();
+            }
+        }
+    }
+
+    function exitFullscreen() {
+        if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(e => console.log('Exit fullscreen error:', e));
+            } else if (document.webkitExitFullscreen) { /* Safari */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE11 */
+                document.msExitFullscreen();
+            }
+        }
+    }
+
     function quitGame() {
         stopGame();
         listView.style.display = 'flex';
@@ -406,6 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
         savePuzzleState();
         startTimer();
         loadQuestion();
+        enterFullscreen();
 
         if (gameLoopReq) cancelAnimationFrame(gameLoopReq);
         gameLoopReq = requestAnimationFrame(physicsLoop);
@@ -419,6 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
         arena.innerHTML = '';
         ballsData.length = 0;
         document.body.classList.remove('game-mode-active');
+        exitFullscreen();
     }
 
     function gameOver() {
@@ -583,10 +610,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleBallClick(e, selectedOpt, correctOpt) {
-        if (!isPlaying) return;
+        if (!isPlaying || window.isAnimatingBall) return;
 
         const isCorrect = (selectedOpt === correctOpt);
         const currentQ = questions[currentQIdx];
+        const ballEl = e.currentTarget;
 
         userAnswers.push({
             question: currentQ?.q || 'Unknown question',
@@ -605,19 +633,49 @@ document.addEventListener('DOMContentLoaded', () => {
         showFeedback(isCorrect ? "+10" : "-5", isCorrect, clientX, clientY);
 
         if (isCorrect) {
+            window.isAnimatingBall = true;
             score += 10;
             correctCount++;
             animateScoreBox(true);
-            currentQIdx++;
-            loadQuestion();
+            
+            // Show green
+            ballEl.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            ballEl.style.backgroundColor = '#10b981';
+            ballEl.style.borderColor = '#059669';
+            ballEl.style.color = '#fff';
+            ballEl.style.transform = 'scale(1.2)';
+            ballEl.style.zIndex = '100';
+            
+            savePuzzleState();
+            updateScoreUI();
+            
+            setTimeout(() => {
+                window.isAnimatingBall = false;
+                currentQIdx++;
+                loadQuestion();
+            }, 600);
         } else {
             score -= 5;
             wrongCount++;
             animateScoreBox(false);
-        }
+            
+            // Pop out beautiful animation for wrong ball
+            ballEl.style.transition = 'all 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53)';
+            ballEl.style.transform = 'scale(0) rotate(180deg)';
+            ballEl.style.opacity = '0';
+            ballEl.style.pointerEvents = 'none';
+            
+            // Remove from physics array
+            const bIdx = ballsData.findIndex(b => b.el === ballEl);
+            if (bIdx !== -1) ballsData.splice(bIdx, 1);
+            
+            setTimeout(() => {
+                if(ballEl.parentNode) ballEl.parentNode.removeChild(ballEl);
+            }, 500);
 
-        savePuzzleState();
-        updateScoreUI();
+            savePuzzleState();
+            updateScoreUI();
+        }
     }
 
     // ── PHYSICS LOOP ──
@@ -647,6 +705,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 b.y = h - b.size;
                 b.vy *= -1;
             }
+        });
+
+        // Ball-to-ball collision
+        for (let i = 0; i < ballsData.length; i++) {
+            for (let j = i + 1; j < ballsData.length; j++) {
+                const b1 = ballsData[i];
+                const b2 = ballsData[j];
+                const dx = (b1.x + b1.radius) - (b2.x + b2.radius);
+                const dy = (b1.y + b1.radius) - (b2.y + b2.radius);
+                const distSq = dx * dx + dy * dy;
+                const minDist = b1.radius + b2.radius;
+                
+                if (distSq < minDist * minDist) {
+                    const dist = Math.sqrt(distSq) || 1;
+                    const overlap = minDist - dist;
+                    const nx = dx / dist;
+                    const ny = dy / dist;
+                    
+                    b1.x += nx * (overlap / 2);
+                    b1.y += ny * (overlap / 2);
+                    b2.x -= nx * (overlap / 2);
+                    b2.y -= ny * (overlap / 2);
+                    
+                    const dvx = b1.vx - b2.vx;
+                    const dvy = b1.vy - b2.vy;
+                    const vn = dvx * nx + dvy * ny;
+                    
+                    if (vn < 0) {
+                        b1.vx -= vn * nx;
+                        b1.vy -= vn * ny;
+                        b2.vx += vn * nx;
+                        b2.vy += vn * ny;
+                    }
+                }
+            }
+        }
+
+        ballsData.forEach(b => {
+            // Keep strictly within walls after collision resolution
+            if (b.x <= 0) { b.x = 0; b.vx = Math.abs(b.vx); }
+            else if (b.x + b.size >= w) { b.x = w - b.size; b.vx = -Math.abs(b.vx); }
+            
+            if (b.y <= 0) { b.y = 0; b.vy = Math.abs(b.vy); }
+            else if (b.y + b.size >= h) { b.y = h - b.size; b.vy = -Math.abs(b.vy); }
 
             b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
             if (!b.initializedTransform) {
@@ -806,6 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isPlaying = true;
                 startTimer();
                 loadQuestion();
+                enterFullscreen();
 
                 if (gameLoopReq) cancelAnimationFrame(gameLoopReq);
                 gameLoopReq = requestAnimationFrame(physicsLoop);

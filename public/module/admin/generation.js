@@ -16,10 +16,13 @@ const DEMO_STUDENTS = [
 
 const AI_MODELS = []; // Handled manually in HTML now
 
-/* ── Mistral API key (fetched from Supabase app_settings) ── */
-let _cachedMistralKey = null;
-async function getMistralApiKey() {
-  if (_cachedMistralKey) return _cachedMistralKey;
+/* ── Mistral API keys (fetched from Supabase app_settings) ── */
+let _apiKeys = [];
+let _keysLoaded = false;
+let _keyIndex = 0;
+
+async function loadMistralApiKeys() {
+  if (_keysLoaded) return _apiKeys;
   try {
     const client = window.getSupabaseClient();
     const { data, error } = await client
@@ -27,19 +30,32 @@ async function getMistralApiKey() {
       .select('value')
       .eq('key', 'mistral_api_key')
       .single();
-    if (error || !data) throw new Error('Could not fetch Mistral API key from Supabase.');
-    _cachedMistralKey = data.value;
-    return _cachedMistralKey;
+    if (!error && data && data.value) {
+      // Support comma-separated keys in the database value
+      _apiKeys = data.value.split(',').map(k => k.trim()).filter(Boolean);
+    }
   } catch (err) {
-    console.error('getMistralApiKey error:', err);
-    throw err;
+    console.error('loadMistralApiKeys error:', err);
   }
+  _keysLoaded = true;
+  if (_apiKeys.length === 0) {
+    throw new Error('No Mistral API keys configured in database. Add comma-separated keys to app_settings → mistral_api_key.');
+  }
+  return _apiKeys;
 }
 
-/* ── Real Mistral API call ── */
-async function callMistralApi(modelId, prompt) {
-  const apiKey = await getMistralApiKey();
+function getMistralApiKey() {
+  // Round-robin selection (synchronous — keys must be loaded first)
+  if (_apiKeys.length === 0) {
+    throw new Error('API keys not loaded. Call loadMistralApiKeys() first.');
+  }
+  const key = _apiKeys[_keyIndex % _apiKeys.length];
+  _keyIndex++;
+  return key;
+}
 
+/* ── Real Mistral API call (uses a specific key) ── */
+async function callMistralApiWithKey(apiKey, modelId, prompt) {
   const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -60,6 +76,13 @@ async function callMistralApi(modelId, prompt) {
 
   const data = await response.json();
   return data.choices?.[0]?.message?.content || '';
+}
+
+/* ── Backward-compatible wrapper (round-robin key) ── */
+async function callMistralApi(modelId, prompt) {
+  await loadMistralApiKeys();
+  const apiKey = getMistralApiKey();
+  return callMistralApiWithKey(apiKey, modelId, prompt);
 }
 
 /* ── Build the prompt for Mistral ── */
@@ -105,7 +128,7 @@ function parseMistralExamResponse(rawText, subject) {
 
   return parsed.map((item, idx) => ({
     num: idx + 1,
-    question: `[${subject}] ${item.question || `Question ${idx + 1}`}`,
+    question: `${item.question || `Question ${idx + 1}`}`,
     options: (item.options || []).map(o => ({
       letter: o.letter,
       text: o.text,
@@ -353,13 +376,86 @@ function splitIntoBlocks(rawText) {
   let text = (rawText || '').replace(/\r\n/g, '\n').trim();
   if (!text) return [];
 
-  // Try splitting by numbered index if they exist
-  const numRegex = /(?=(?:^|\n)\s*\d+[\)\.\-]\s+)/;
-  let blocks = text.split(numRegex).map(b => b.trim()).filter(Boolean);
+  const lines = text.split('\n');
 
-  // If it resulted in only 1 block, fallback to splitting by blank lines
-  if (blocks.length <= 1) {
-    blocks = text.split(/\n\s*\n+/).map(b => b.trim()).filter(Boolean);
+  // ── PASS 1: Find line indices where each numbered question starts ──
+  const extractNumRegex = /^\s*(?:(?:question|q|ques)\s*:?\s*(\d+)[\)\.\-]?|(\d+)\s*[\)\.\-])(?:[ \t]+|$)/i;
+  const answerRegex = /^\s*(?:answer|ans|correct)\s*[:=-]/i;
+
+  const questionStarts = [];  // Array of { lineIdx, num }
+  let expectedNumber = 1;
+
+  for (let i = 0; i < lines.length; i++) {
+    const match = lines[i].match(extractNumRegex);
+    if (match) {
+      const num = parseInt(match[1] || match[2], 10);
+      if (num === expectedNumber) {
+        questionStarts.push({ lineIdx: i, num });
+        expectedNumber++;
+      }
+    }
+  }
+
+  // If no sequential questions found, fall back to blank-line splitting
+  if (questionStarts.length === 0) {
+    let fallback = text.split(/\n\s*\n+/).map(b => b.trim()).filter(Boolean);
+    if (fallback.length > 1) return fallback;
+
+    // Fallback 2: Aggressive splitting after ANSWER lines
+    const aggressiveBlocks = [];
+    let current = [];
+    let sawAns = false;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (sawAns && line.trim() !== '') {
+        aggressiveBlocks.push(current.join('\n'));
+        current = [];
+        sawAns = false;
+      }
+      current.push(line);
+      if (answerRegex.test(line)) sawAns = true;
+    }
+    if (current.length > 0) aggressiveBlocks.push(current.join('\n'));
+    const aggValid = aggressiveBlocks.map(b => b.trim()).filter(Boolean);
+    return aggValid.length > 1 ? aggValid : fallback;
+  }
+
+  // ── PASS 2: Extract clean blocks — one per numbered question ──
+  // Each block runs from its "Question: N." line up to (but not including)
+  // the next question's start line.  Within that range we trim off any
+  // orphan content that appears AFTER the ANSWER line.
+  const blocks = [];
+
+  for (let q = 0; q < questionStarts.length; q++) {
+    const startLine = questionStarts[q].lineIdx;
+    const endLine = (q + 1 < questionStarts.length)
+      ? questionStarts[q + 1].lineIdx
+      : lines.length;
+
+    // Collect lines for this question, but stop after the FIRST answer line
+    // plus any trailing blank lines.  Everything after that is orphan junk.
+    const blockLines = [];
+    let foundAnswer = false;
+
+    for (let i = startLine; i < endLine; i++) {
+      const line = lines[i];
+
+      if (foundAnswer) {
+        // After the answer we only allow blank lines (ignore orphan content)
+        if (line.trim() === '') continue;
+        // If we hit non-blank text after the answer, it's orphan — stop
+        break;
+      }
+
+      blockLines.push(line);
+
+      if (answerRegex.test(line)) {
+        foundAnswer = true;
+      }
+    }
+
+    const joined = blockLines.join('\n').trim();
+    if (joined) blocks.push(joined);
   }
 
   return blocks;
@@ -522,38 +618,72 @@ function parseManualPuzzleInput(raw, optionCount) {
   return items;
 }
 
-// generateExamQuestions is now async — calls Mistral AI in chunks
-async function generateExamQuestions(count, optionCount, subject, prompt, difficulty, modelId, onProgress) {
-  const BATCH_SIZE = 20; // Chunk to prevent token limit truncation
-  let allItems = [];
+// generateExamQuestions — fires CONCURRENT requests across all API keys
+async function generateExamQuestions(count, optionCount, subject, prompt, difficulty, modelId, onProgress, startItems = []) {
+  const keys = await loadMistralApiKeys();
+  const CONCURRENCY = keys.length; // Fire one request per key simultaneously
+  let allItems = [...startItems];
 
   while (allItems.length < count) {
     const remaining = count - allItems.length;
-    const currentBatchCount = Math.min(BATCH_SIZE, remaining);
+    const batchCount = Math.min(CONCURRENCY, remaining);
 
-    onProgress?.(allItems.length, count, `Generating questions`);
+    onProgress?.(allItems.length, count, `Generating ${batchCount} question(s) concurrently`, allItems);
 
-    const fullPrompt = buildExamPrompt(currentBatchCount, optionCount, subject, prompt, difficulty);
-    let retries = 3;
-    let batchItems = [];
+    // Build one prompt per concurrent slot
+    const promises = [];
+    for (let k = 0; k < batchCount; k++) {
+      const keyToUse = keys[k % keys.length];
+      const fullPrompt = buildExamPrompt(1, optionCount, subject, prompt, difficulty);
 
-    while (retries > 0) {
-      try {
-        const rawText = await callMistralApi(modelId, fullPrompt);
-        batchItems = parseMistralExamResponse(rawText, subject);
-        break; // Success
-      } catch (err) {
-        retries--;
-        if (retries === 0) throw new Error(`Generation failed after retries: ${err.message}`);
-        console.warn('Retrying Mistral API call due to error:', err);
-      }
+      const task = (async () => {
+        let retries = 3;
+        while (retries > 0) {
+          try {
+            const rawText = await callMistralApiWithKey(keyToUse, modelId, fullPrompt);
+            return parseMistralExamResponse(rawText, subject);
+          } catch (err) {
+            retries--;
+            if (retries === 0) {
+              console.error(`Key ${keyToUse.slice(0,6)}... failed after retries:`, err);
+              return []; // Return empty on total failure — other keys may succeed
+            }
+            console.warn(`Retrying with key ${keyToUse.slice(0,6)}...`, err);
+          }
+        }
+        return [];
+      })();
+
+      promises.push(task);
     }
 
-    allItems = allItems.concat(batchItems);
+    // Fire all concurrently and collect results
+    const results = await Promise.allSettled(promises);
+
+    for (const result of results) {
+      if (allItems.length >= count) break;
+      const batchItems = result.status === 'fulfilled' ? result.value : [];
+      if (!batchItems.length) continue;
+
+      const numberedBatch = batchItems.map((item, idx) => ({
+        ...item,
+        num: allItems.length + idx + 1
+      }));
+
+      allItems = allItems.concat(numberedBatch);
+      localStorage.setItem('elite_exam_partial_gen', JSON.stringify(allItems));
+      onProgress?.(allItems.length, count, `Generated question`, allItems);
+    }
+
+    // If zero results came back from all keys, throw to avoid infinite loop
+    const anySuccess = results.some(r => r.status === 'fulfilled' && r.value.length > 0);
+    if (!anySuccess) {
+      throw new Error('All API keys failed. Check your keys in app_settings.');
+    }
   }
 
-  onProgress?.(count, count, `Generation complete`);
-  return allItems.slice(0, count).map((item, idx) => ({ ...item, num: idx + 1 }));
+  onProgress?.(count, count, `Generation complete`, allItems);
+  return allItems.slice(0, count);
 }
 
 async function generateFlashCardsAI(count, subject, prompt, difficulty, modelId, onProgress) {
@@ -604,7 +734,7 @@ Rules:
   }
 
   onProgress?.(count, count, `Processing complete`);
-  return allItems.slice(0, count).map((item, idx) => ({ ...item, num: idx + 1, front: `[${subject}] ${item.front}` }));
+  return allItems.slice(0, count).map((item, idx) => ({ ...item, num: idx + 1, front: `${item.front}` }));
 }
 
 async function formatManualFlashCardsAI(rawText, subject, difficulty, modelId, onProgress) {
@@ -636,7 +766,7 @@ Rules:
       onProgress?.(parsed.length, parsed.length, `Processed ${parsed.length} questions`);
       return parsed.map((item, idx) => ({
         num: idx + 1,
-        front: `[${subject}] ${item.front}`,
+        front: `${item.front}`,
         back: item.back,
         difficulty: item.difficulty || difficulty
       }));
@@ -651,6 +781,7 @@ Rules:
 
 async function saveFlashCardsToDB(deckName, course, description, cards) {
   const client = window.getSupabaseClient();
+  const batchId = crypto.randomUUID();
   
   // Store deck metadata inside subject column as JSON
   const subjectMetadata = JSON.stringify({
@@ -660,6 +791,7 @@ async function saveFlashCardsToDB(deckName, course, description, cards) {
   });
 
   const rowsToInsert = cards.map(c => ({
+    batch_id: batchId,
     subject: subjectMetadata,
     question: c.front,
     answer: c.back,
@@ -833,7 +965,7 @@ async function simulateGeneration(loadingEl, textEl, count, modelName, onComplet
 
 function populateSubjectSelect(selectId) {
   const sel = document.getElementById(selectId);
-  if (!sel || sel.options.length > 1) return;
+  if (!sel || !sel.options || sel.options.length > 1) return;
   SUBJECTS.forEach(s => {
     const opt = document.createElement('option');
     opt.value = s;

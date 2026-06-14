@@ -1,0 +1,422 @@
+<div id="v1-1-modal" style="
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0,0,0,0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap');
+
+  @keyframes v1SlideUp {
+    0%   { transform: translateY(100%); }
+    100% { transform: translateY(0); }
+  }
+  @keyframes v1FadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes v1Shimmer {
+    0%   { transform: translateX(-200%); }
+    100% { transform: translateX(300%); }
+  }
+  @keyframes v1Pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(224,28,28,0.45); }
+    50%     { box-shadow: 0 0 0 8px rgba(224,28,28,0); }
+  }
+  @keyframes v1OrbFloat {
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(-16px); }
+  }
+
+  #v1-1-modal * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── SHEET ── */
+  #v1-1-modal .v1-sheet {
+    width: 100%;
+    max-width: 680px;
+    /* Fixed height = 88% of viewport, always */
+    height: 88vh;
+    background: #0d0d0d;
+    border-radius: 28px 28px 0 0;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-bottom: none;
+    box-shadow:
+      0 -4px 0 rgba(224,28,28,0.5),
+      0 -24px 80px rgba(224,28,28,0.14),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: v1SlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Drag pill */
+  #v1-1-modal .v1-handle {
+    width: 44px; height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    margin: 14px auto 0;
+    flex-shrink: 0;
+  }
+
+  /* ── HERO ── */
+  #v1-1-modal .v1-hero {
+    position: relative;
+    padding: 24px 24px 20px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  #v1-1-modal .v1-orb {
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(224,28,28,0.32) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: v1OrbFloat 5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  #v1-1-modal .v1-orb2 {
+    position: absolute;
+    bottom: -60px; left: -30px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(224,28,28,0.14) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  #v1-1-modal .v1-toprow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 2;
+  }
+
+  #v1-1-modal .v1-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(224,28,28,0.14);
+    border: 1px solid rgba(224,28,28,0.4);
+    color: #ff6b6b;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    animation: v1Pulse 2.5s ease-in-out infinite;
+  }
+  #v1-1-modal .v1-badge-dot {
+    width: 6px; height: 6px;
+    background: #e01c1c;
+    border-radius: 50%;
+  }
+
+  #v1-1-modal .v1-close {
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 50%;
+    color: #555;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Outfit', sans-serif;
+    transition: all 0.25s;
+    flex-shrink: 0;
+  }
+  #v1-1-modal .v1-close:hover, #v1-1-modal .v1-close:active {
+    background: rgba(224,28,28,0.2);
+    border-color: rgba(224,28,28,0.45);
+    color: #ff6060;
+    transform: rotate(90deg);
+  }
+
+  #v1-1-modal .v1-title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(2rem, 8vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0 0 6px;
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(135deg, #ffffff 30%, #ff8080 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  #v1-1-modal .v1-sub {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    color: #4a4a4a;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── SCROLL AREA ── */
+  #v1-1-modal .v1-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 4px 20px 8px;
+    -webkit-overflow-scrolling: touch;
+    min-height: 0;
+  }
+  #v1-1-modal .v1-scroll::-webkit-scrollbar { display: none; }
+
+  /* ── FEATURE LIST ── */
+  #v1-1-modal .v1-list {
+    list-style: none;
+    padding: 0; margin: 0 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #v1-1-modal .v1-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.25s, border-color 0.25s, transform 0.25s;
+  }
+  #v1-1-modal .v1-item:hover, #v1-1-modal .v1-item:active {
+    background: rgba(224,28,28,0.08);
+    border-color: rgba(224,28,28,0.22);
+    transform: translateX(4px);
+  }
+  #v1-1-modal .v1-item:nth-child(1) { animation: v1FadeUp 0.45s 0.25s ease both; }
+  #v1-1-modal .v1-item:nth-child(2) { animation: v1FadeUp 0.45s 0.38s ease both; }
+  #v1-1-modal .v1-item:nth-child(3) { animation: v1FadeUp 0.45s 0.51s ease both; }
+  #v1-1-modal .v1-item:nth-child(4) { animation: v1FadeUp 0.45s 0.64s ease both; }
+
+  #v1-1-modal .v1-emoji {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  #v1-1-modal .v1-info { flex: 1; min-width: 0; }
+  #v1-1-modal .v1-item-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: #f0f0f0;
+    margin-bottom: 3px;
+  }
+  #v1-1-modal .v1-item-desc {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    color: #444;
+    line-height: 1.5;
+  }
+
+  #v1-1-modal .v1-arrow {
+    color: #2a2a2a;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    transition: color 0.25s;
+  }
+  #v1-1-modal .v1-item:hover .v1-arrow { color: #e01c1c; }
+
+  /* ── COMING SOON ── */
+  #v1-1-modal .v1-coming {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    animation: v1FadeUp 0.45s 0.75s ease both;
+  }
+  #v1-1-modal .v1-coming-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  #v1-1-modal .v1-coming-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  #v1-1-modal .v1-coming-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    color: #4a4a4a;
+  }
+
+  /* ── FOOTER / CTA ── */
+  #v1-1-modal .v1-footer {
+    padding: 12px 20px 28px;
+    flex-shrink: 0;
+    animation: v1FadeUp 0.45s 0.85s ease both;
+  }
+
+  #v1-1-modal .v1-cta {
+    width: 100%;
+    padding: 17px;
+    background: linear-gradient(135deg, #e01c1c 0%, #900 100%);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 8px 32px rgba(224,28,28,0.4),
+      inset 0 1px 0 rgba(255,255,255,0.18);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  #v1-1-modal .v1-cta-shine {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    animation: v1Shimmer 2.5s ease-in-out 1.5s infinite;
+    pointer-events: none;
+  }
+  #v1-1-modal .v1-cta:active {
+    transform: scale(0.98);
+  }
+
+  /* ── TABLET / DESKTOP ── */
+  @media (min-width: 600px) {
+    #v1-1-modal {
+      align-items: center;
+    }
+    #v1-1-modal .v1-sheet {
+      height: auto;
+      max-height: 90vh;
+      min-height: 0;
+      border-radius: 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      animation: v1PopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+      box-shadow:
+        0 40px 80px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(224,28,28,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    @keyframes v1PopIn {
+      0%   { transform: scale(0.82) translateY(24px); opacity: 0; }
+      70%  { transform: scale(1.02); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    #v1-1-modal .v1-handle { display: none; }
+    #v1-1-modal .v1-hero { padding: 36px 36px 28px; }
+    #v1-1-modal .v1-scroll { padding: 4px 28px 12px; }
+    #v1-1-modal .v1-footer { padding: 12px 28px 36px; }
+  }
+</style>
+
+  <div class="v1-sheet">
+    <div class="v1-handle"></div>
+
+    <!-- HERO -->
+    <div class="v1-hero">
+      <div class="v1-orb"></div>
+      <div class="v1-orb2"></div>
+      <div class="v1-toprow">
+        <div class="v1-badge">
+          <span class="v1-badge-dot"></span>
+          New Release
+        </div>
+        <button id="v1-close-btn" class="v1-close">&times;</button>
+      </div>
+      <h2 class="v1-title">Elite Tutorial v1.1</h2>
+      <p class="v1-sub">Here's everything new in this update</p>
+    </div>
+
+    <!-- LIST -->
+    <div class="v1-scroll">
+      <ul class="v1-list">
+        <li class="v1-item">
+          <div class="v1-emoji" style="background:rgba(224,28,28,0.12);border:1px solid rgba(224,28,28,0.22);">✨</div>
+          <div class="v1-info">
+            <div class="v1-item-title">Exam Submission Resolved</div>
+            <div class="v1-item-desc">Submit an exam and instantly see your full result and score breakdown.</div>
+          </div>
+          <span class="v1-arrow">›</span>
+        </li>
+        <li class="v1-item">
+          <div class="v1-emoji" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.22);">🧩</div>
+          <div class="v1-info">
+            <div class="v1-item-title">Elite Puzzle Added</div>
+            <div class="v1-item-desc">A new puzzle mode — test your logic and compete on the leaderboard.</div>
+          </div>
+          <span class="v1-arrow">›</span>
+        </li>
+        <li class="v1-item">
+          <div class="v1-emoji" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.22);">🗂️</div>
+          <div class="v1-info">
+            <div class="v1-item-title">Flashcards Added</div>
+            <div class="v1-item-desc">Study smarter and retain knowledge with interactive flashcards.</div>
+          </div>
+          <span class="v1-arrow">›</span>
+        </li>
+        <li class="v1-item">
+          <div class="v1-emoji" style="background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.22);">🛠️</div>
+          <div class="v1-info">
+            <div class="v1-item-title">More Bugs Fixed</div>
+            <div class="v1-item-desc">Dozens of fixes for a smoother and more reliable experience.</div>
+          </div>
+          <span class="v1-arrow">›</span>
+        </li>
+      </ul>
+
+      <div class="v1-coming">
+        <div class="v1-coming-icon">🚀</div>
+        <div>
+          <div class="v1-coming-label">Coming Soon</div>
+          <div class="v1-coming-text">Version 1.2 — arriving end of June 2025</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="v1-footer">
+      <button id="v1-continue-btn" class="v1-cta">
+        <span class="v1-cta-shine"></span>
+        Continue to Dashboard →
+      </button>
+    </div>
+  </div>
+
+</div>

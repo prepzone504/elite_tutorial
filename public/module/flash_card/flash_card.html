@@ -88,15 +88,20 @@
       <div class="cv-center-arena">
         <div class="flashcard" id="flashcard">
           <div class="flashcard-inner" id="flashcard-inner">
-            <!-- FRONT -->
             <div class="flashcard-front">
-              <div class="fc-subject-tag">Question</div>
+              <div class="fc-front-header">
+                <div class="fc-subject-tag">Question</div>
+                <div class="fc-view-count" id="fc-view-count"><span class="fc-view-icon">👀</span> Viewed (0 times)</div>
+              </div>
               <p class="fc-question" id="fc-question">Loading...</p>
               <div class="fc-tap-hint">Tap card to flip ↺</div>
             </div>
             <!-- BACK -->
             <div class="flashcard-back">
-              <div class="fc-subject-tag">Answer</div>
+              <div class="fc-front-header">
+                <div class="fc-subject-tag">Answer</div>
+                <div class="fc-view-count" id="fc-view-count-back"><span class="fc-view-icon">👀</span> Viewed (0 times)</div>
+              </div>
               <p class="fc-answer" id="fc-answer">Loading...</p>
               <p class="fc-explanation" id="fc-explanation"></p>
             </div>
@@ -109,7 +114,7 @@
         <div class="fc-controls-inner">
           <button class="fc-nav-btn" id="btn-prev">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><polyline points="15 18 9 12 15 6"/></svg>
-            <span class="nav-label">Previous</span>
+            <span class="fc-nav-label">Previous</span>
           </button>
           <div class="fc-rate-row" id="rate-row" style="opacity: 0; pointer-events: none; transform: translateY(10px);">
             <button class="fc-rate-btn wrong" id="btn-wrong">
@@ -120,7 +125,7 @@
             </button>
           </div>
           <button class="fc-nav-btn" id="btn-next">
-            <span class="nav-label">Next</span>
+            <span class="fc-nav-label">Next</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         </div>
@@ -159,16 +164,17 @@
 
   </div><!-- /main-wrapper -->
 
+  <!-- Supabase + Auth must load BEFORE sidebar so user name can populate -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../js/supabase-config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="../../js/auth.js"></script>
   <script src="../../js/sidebar.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       initSharedSidebar({ activePage: 'flashcard', rootPath: '../../' });
     });
   </script>
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../../js/supabase-config.js"></script>
-  <script src="../../js/supabase-client.js"></script>
   <script src="flash_card.js"></script>
 </body>
 </html>

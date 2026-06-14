@@ -107,17 +107,16 @@
                   </div>
                 </div>
                 <div id="manual-section" class="mode-section hidden">
+                  <div class="form-field" id="count-wrap-manual" style="display:none"></div>
                   <div class="form-field">
-                    <label>Fixed AI Prompt <span class="hint">(Instructions given to AI)</span></label>
-                    <textarea readonly style="background: rgba(0,0,0,0.03); cursor: not-allowed; resize: none; color: #888; border-color: rgba(0,0,0,0.1); min-height: 60px;">Return exactly the question, options a - d, correct answer, explanation (optional).</textarea>
-                  </div>
-                  <div class="form-field">
-                    <label for="manual-puzzle">Paste Puzzle Rounds <span class="hint">(tell the AI do not change or modify the question)</span></label>
+                    <label for="manual-puzzle">Paste Puzzle Rounds <span class="hint">(tell the AI do not change or
+                        modify the question)</span></label>
                     <textarea id="manual-puzzle"
                       placeholder="Example (repeat blocks):\n\n1) Find the missing number: 2, 4, 8, ?, 32\nA) 12\nB) 16\nC) 20\nD) 14\nE) 18\nAnswer: B\n\n2) Which organelle is the powerhouse of the cell?\nA) Nucleus\nB) Mitochondria\nC) Ribosome\nD) Golgi\nAnswer: B"></textarea>
                     <div class="manual-help">Manual mode: Do not change or modify the question. You can manual paste
                       (question, short options, answer and explanation) and the API will do the arrangement manually.
                     </div>
+                    <div id="manual-count" class="manual-question-count" style="display:none">0 rounds detected</div>
                   </div>
                 </div>
               </div>
@@ -177,20 +176,7 @@
                 </div>
               </div>
 
-              <div class="form-section">
-                <div class="form-section-title">Dispatch to Students</div>
-                <div class="dispatch-toggle">
-                  <button type="button" class="dispatch-btn active" id="puzzle-dispatch-all">📢 All Students</button>
-                  <button type="button" class="dispatch-btn" id="puzzle-dispatch-selected">👥 Selected Only</button>
-                </div>
-                <div class="user-select-panel hidden" id="puzzle-user-panel">
-                  <div class="user-select-toolbar">
-                    <input type="text" id="puzzle-user-search" placeholder="Search students…" />
-                    <button type="button" class="btn-select-all" id="puzzle-user-list-select-all">Select All</button>
-                  </div>
-                  <div class="user-list" id="puzzle-user-list"></div>
-                </div>
-              </div>
+
 
               <div class="gen-loading" id="gen-loading" style="display:none;">
                 <div class="gen-spinner"></div>
@@ -203,7 +189,7 @@
                 </button>
                 <button type="button" class="btn-secondary-gen" id="btn-clear">Clear</button>
                 <button type="button" class="btn-send" id="btn-send">
-                  <span>🚀</span> Approve & Launch Puzzle
+                  <span>💾</span> Save to Database
                 </button>
               </div>
             </form>
@@ -244,11 +230,81 @@
       const getDiff = initDifficultyChips('puzzle-difficulty-chips');
       const getOptions = initOptionPills('puzzle-option-pills', 5);
       const getCount = initQuestionRange('round-count', 'round-count-display', 15);
-      const dispatch = initUserDispatch('puzzle-user-list', 'puzzle-user-search', 'puzzle-dispatch-all', 'puzzle-dispatch-selected', 'puzzle-user-panel');
-      const getMode = initModeToggle('mode-auto', 'mode-manual', 'auto-section', 'manual-section', 'auto', (mode) => {
+      const MANUAL_INSTRUCTION = 'You are a formatting assistant. Take the block of text you receive. Do NOT modify, delete, or rewrite any question, option, or answer. Your task is to convert it into the JSON schema used by our puzzle database. Return a JSON array of objects with keys: question, options (array), correctAnswer, and difficulty.';
+
+      let savedAutoPrompt = '';
+      const manualCount = document.getElementById('manual-count');
+      const manualTextarea = document.getElementById('manual-puzzle');
+      function validateQuestionSequence(rawText) {
+        const lines = rawText.split(/\r?\n/);
+        let expectedNumber = 1;
+        // Regex matches standard numbering e.g. '1.', '1)', '1-', 'Q1', 'Question 1', etc.
+        const questionStartRegex = /^\s*(?:(?:question|q|ques)\s*:?\s*(\d+)[\)\.\-]?|(\d+)\s*[\)\.\-])(?:[ \t]+|$)/i;
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          const match = line.match(questionStartRegex);
+          if (match) {
+            const numStr = match[1] || match[2];
+            if (numStr) {
+              const num = parseInt(numStr, 10);
+              if (num !== expectedNumber) {
+                let snippet = line.trim();
+                if (snippet.length > 30) snippet = snippet.substring(0, 30) + '...';
+                return {
+                  valid: false,
+                  error: `Sequence broken at line ${i + 1}: Expected ${expectedNumber}, found ${num} ("${snippet}")`
+                };
+              }
+              expectedNumber++;
+            }
+          }
+        }
+        return { valid: true };
+      }
+
+      function updateManualCount() {
+        const raw = manualTextarea.value.trim();
+        if (!raw) { manualCount.style.display = 'none'; return; }
+
+        const seqCheck = validateQuestionSequence(raw);
+        if (!seqCheck.valid) {
+          manualCount.innerHTML = `<span style="color: #ef4444; font-weight: bold;">[!] ${seqCheck.error}</span>`;
+          manualCount.style.display = '';
+          return;
+        }
+
+        const blocks = splitIntoBlocks(raw);
+        const count = blocks.length;
+        manualCount.innerHTML = count + ' round' + (count !== 1 ? 's' : '') + ' detected <span style="color: #10b981;">[OK]</span>';
+        manualCount.style.display = '';
+      }
+      if (manualTextarea) {
+        manualTextarea.addEventListener('input', updateManualCount);
+      }
+
+      const getMode = initModeToggle('mode-auto', 'mode-manual', null, 'manual-section', 'auto', (mode) => {
         const countWrap = document.getElementById('count-wrap');
-        if (countWrap) {
-          countWrap.style.display = mode === 'auto' ? 'block' : 'none';
+        const promptEl = document.getElementById('puzzle-prompt');
+        const promptLabel = promptEl?.previousElementSibling;
+
+        if (mode === 'manual') {
+          savedAutoPrompt = promptEl.value;
+          promptEl.value = MANUAL_INSTRUCTION;
+          promptEl.readOnly = true;
+          promptEl.style.opacity = '0.65';
+          promptEl.style.cursor = 'not-allowed';
+          promptEl.style.background = 'rgba(255,255,255,0.04)';
+          if (promptLabel) promptLabel.innerHTML = 'AI Instruction <span class="hint">(read-only -- sent automatically in manual mode)</span>';
+          if (countWrap) countWrap.style.display = 'none';
+        } else {
+          promptEl.value = savedAutoPrompt;
+          promptEl.readOnly = false;
+          promptEl.style.opacity = '';
+          promptEl.style.cursor = '';
+          promptEl.style.background = '';
+          if (promptLabel) promptLabel.innerHTML = 'AI Prompt';
+          if (countWrap) countWrap.style.display = 'block';
         }
       });
 
@@ -259,8 +315,9 @@
       const previewStats = document.getElementById('preview-stats');
       const previewStatus = document.getElementById('preview-status');
       const btnSend = document.getElementById('btn-send');
+      const btnGenerate = document.getElementById('btn-generate');
 
-      document.getElementById('btn-generate').addEventListener('click', async () => {
+      btnGenerate.addEventListener('click', async () => {
         const subject = document.getElementById('puzzle-subject-select').value.trim();
         const title = document.getElementById('puzzle-title').value.trim();
 
@@ -278,7 +335,7 @@
 
         if (mode === 'auto') {
           const prompt = document.getElementById('puzzle-prompt').value.trim();
-          if (!prompt) { showToast('Please enter an AI prompt.', 'error'); document.getElementById('btn-generate').disabled = false; return; }
+          if (!prompt) { showToast('Please enter an AI prompt.', 'error'); btnGenerate.disabled = false; return; }
 
           setGenerating(loading, true, loadingText, `AI is generating <strong>${count}</strong> rounds…`);
           try {
@@ -295,33 +352,229 @@
             showToast(err.message, 'error');
           } finally {
             setGenerating(loading, false);
-            document.getElementById('btn-generate').disabled = false;
+            btnGenerate.disabled = false;
           }
           return;
         }
 
-        const raw = document.getElementById('manual-puzzle').value;
-        const parsed = parseManualPuzzleInput(raw, optionCount);
-        if (!parsed.length) { showToast('Paste at least one puzzle round.', 'error'); document.getElementById('btn-generate').disabled = false; return; }
+        if (mode === 'manual') {
+          const raw = document.getElementById('manual-puzzle').value.trim();
+          if (!raw) { showToast('Paste at least one puzzle round.', 'error'); btnGenerate.disabled = false; return; }
 
-        const diff = getDiff();
-        await simulateGeneration(loading, loadingText, parsed.length, modelName, () => {
-          generatedItems = parsed.map((p, idx) => ({
-            num: idx + 1,
-            question: `[${subject}] ${p.question}`,
-            correctAnswer: p.correctAnswer,
-            options: p.options,
-            difficulty: randomDiff(diff),
-            points: pts,
-            penalty: pen,
-          }));
-          renderPuzzlePreview(previewList, generatedItems);
-          updatePreviewStats(previewStats, generatedItems.length, subject, model);
-          previewStatus.textContent = `${generatedItems.length} rounds · ${document.getElementById('time-limit').value} min`;
-          btnSend.classList.add('visible');
-          showToast(`✅ Arranged ${generatedItems.length} manual puzzle rounds for "${title}"`, 'success');
-          document.getElementById('btn-generate').disabled = false;
-        });
+          const seqCheck = validateQuestionSequence(raw);
+          if (!seqCheck.valid) {
+            showToast('Validation Error: ' + seqCheck.error, 'error');
+            btnGenerate.disabled = false;
+            return;
+          }
+
+          const diff = getDiff();
+          const blocks = splitIntoBlocks(raw);
+          if (!blocks.length) { showToast('Paste at least one puzzle round.', 'error'); btnGenerate.disabled = false; return; }
+
+          generatedItems = [];
+          setGenerating(loading, true, loadingText, 'Sending to <strong>Mistral AI</strong> for arrangement...');
+
+          try {
+            const BATCH_SIZE = 5;
+            const keys = await loadMistralApiKeys();
+
+            const totalBatches = Math.ceil(blocks.length / BATCH_SIZE);
+            const batches = [];
+            for (let i = 0; i < blocks.length; i += BATCH_SIZE) {
+              batches.push({ index: batches.length, blocks: blocks.slice(i, i + BATCH_SIZE), startIndex: i });
+            }
+
+            let batchGroupIndex = 0;
+            const batchResults = new Array(totalBatches).fill(null);
+
+            // -- SMART RESUME: skip already-completed batches --
+            const savedPartial = localStorage.getItem('elite_puzzle_partial_gen');
+            if (savedPartial) {
+              try {
+                const partial = JSON.parse(savedPartial);
+                if (partial.length > 0 && partial.length < blocks.length) {
+                  generatedItems = partial;
+                  for (let i = 0; i < partial.length; i += BATCH_SIZE) {
+                    const bIdx = Math.floor(i / BATCH_SIZE);
+                    batchResults[bIdx] = partial.slice(i, i + BATCH_SIZE);
+                  }
+                  batchGroupIndex = Math.floor(partial.length / BATCH_SIZE);
+                  showToast('Resuming from round ' + (partial.length + 1) + '...', 'info');
+                  renderPuzzlePreview(previewList, generatedItems);
+                } else if (partial.length >= blocks.length) {
+                  generatedItems = partial;
+                  batchGroupIndex = totalBatches;
+                }
+              } catch (e) {
+                generatedItems = [];
+              }
+            }
+
+            const batchQueue = [];
+            for (let i = batchGroupIndex; i < batches.length; i++) { batchQueue.push(batches[i]); }
+            let queuePointer = 0;
+            let hasFatalError = false;
+            const startTime = Date.now();
+            let lastRenderedCount = generatedItems.length;
+
+            const updateUI = () => {
+              let currentFlatted = [];
+              for (let i = 0; i < batchResults.length; i++) {
+                if (batchResults[i]) currentFlatted = currentFlatted.concat(batchResults[i]);
+                else break;
+              }
+
+              generatedItems = currentFlatted.map((item, idx) => ({
+                num: idx + 1,
+                question: `${item.question || ('Round ' + (idx + 1))}`,
+                options: item.options || [],
+                correctAnswer: item.correctAnswer || (item.options && item.options[0]) || '',
+                difficulty: item.difficulty || diff,
+                points: pts,
+                penalty: pen,
+              }));
+
+              localStorage.setItem('elite_puzzle_partial_gen', JSON.stringify(generatedItems));
+
+              const newItems = generatedItems.slice(lastRenderedCount);
+              if (newItems.length > 0) {
+                const fragment = document.createDocumentFragment();
+                newItems.forEach(item => {
+                  const card = document.createElement('div');
+                  card.className = 'preview-card';
+                  card.style.animationDelay = (item.num * 0.02) + 's';
+                  card.innerHTML = `<div class="preview-card-header">
+                        <span class="preview-card-num">Round ${item.num}</span>
+                        <span class="preview-card-diff diff-${item.difficulty}">${item.difficulty}</span>
+                      </div>
+                      <p class="preview-card-q">${item.question}</p>
+                      <div class="preview-options">
+                        ${item.options.map(o => `<div class="preview-opt ${o === item.correctAnswer ? 'correct' : ''}">${o}</div>`).join('')}
+                      </div>
+                      <p style="font-size:0.75rem;color:var(--text-muted);margin-top:8px;">✅ +${item.points} pts · ❌ −${item.penalty} pts</p>`;
+                  fragment.appendChild(card);
+                });
+                previewList.appendChild(fragment);
+                lastRenderedCount = generatedItems.length;
+              }
+
+              const done = generatedItems.length;
+              const remaining = blocks.length - done;
+              const elapsed = (Date.now() - startTime) / 1000;
+              const doneThisSession = done - (batchGroupIndex * BATCH_SIZE);
+              let etaText = '';
+              if (doneThisSession > 0) {
+                const secsPerQ = elapsed / doneThisSession;
+                const etaSecs = Math.round(secsPerQ * remaining);
+                etaText = etaSecs >= 60 ? ` | ~${Math.floor(etaSecs / 60)}m ${etaSecs % 60}s left` : ` | ~${etaSecs}s left`;
+              }
+
+              let percent = Math.round((done / blocks.length) * 100);
+              if (loadingText) loadingText.innerHTML = `Arranging... &nbsp;<strong>${done} / ${blocks.length} (${percent}%)</strong>`;
+
+              updatePreviewStats(previewStats, done, subject, model);
+              previewStatus.textContent = `${done} / ${blocks.length} done | ${remaining} remaining${etaText}`;
+              previewList.scrollTop = previewList.scrollHeight;
+            };
+
+            updateUI(); // Initial call to show 0/N immediately
+
+            const worker = async (keyToUse, keyIndex) => {
+              while (!hasFatalError) {
+                if (queuePointer >= batchQueue.length) break;
+                const batch = batchQueue[queuePointer++];
+                if (batchResults[batch.index]) continue;
+
+                const chunkText = batch.blocks.join('\n\n');
+                const manualPrompt = [
+                  'You are a formatting assistant. The admin has pasted puzzle questions below.',
+                  '',
+                  'CRITICAL RULES:',
+                  '- Do NOT change, rephrase, or alter any question text, option text, or answer.',
+                  '- Do NOT add, remove, or reorder questions.',
+                  '- Your ONLY job is to read each question block and output it as valid JSON.',
+                  '- Return a JSON array with NO markdown, NO code fences -- pure JSON only.',
+                  '- CRITICAL JSON RULE: Use ONLY standard double quotes (") for JSON structure.',
+                  '- CRITICAL JSON RULE: For ANY quotes inside the actual text, use SINGLE QUOTES (\') ONLY.',
+                  '- Each object must have exactly these keys:',
+                  '    "question"      -- the question text exactly as written (strip leading numbers)',
+                  '    "options"       -- array of strings representing the options',
+                  '    "correctAnswer" -- the exact text of the correct option',
+                  '    "difficulty"    -- use "' + (diff === 'mixed' ? 'medium' : diff) + '"',
+                  '',
+                  'PASTED QUESTIONS:',
+                  chunkText
+                ].join('\n');
+
+                let retries = 3;
+                let delay = 1500;
+                let success = false;
+
+                while (!success && !hasFatalError) {
+                  try {
+                    const rawText = await callMistralApiWithKey(keyToUse, model, manualPrompt);
+                    let clean = rawText.trim();
+                    if (clean.startsWith('\`\`\`')) { const nl = clean.indexOf('\n'); clean = nl !== -1 ? clean.slice(nl + 1) : clean; }
+                    if (clean.endsWith('\`\`\`')) { const nl = clean.lastIndexOf('\n'); clean = nl !== -1 ? clean.slice(0, nl) : clean; }
+                    clean = clean.trim();
+
+                    let parsed = null;
+                    try { parsed = JSON.parse(clean); }
+                    catch (e) {
+                      const arrStart = clean.indexOf('[');
+                      const arrEnd = clean.lastIndexOf(']');
+                      if (arrStart === -1 || arrEnd === -1) throw new Error('AI returned invalid JSON.');
+                      parsed = JSON.parse(clean.slice(arrStart, arrEnd + 1));
+                    }
+                    if (!Array.isArray(parsed) || !parsed.length) throw new Error('AI returned no questions.');
+
+                    batchResults[batch.index] = parsed.slice(0, batch.blocks.length);
+                    success = true;
+                    updateUI();
+                  } catch (err) {
+                    retries--;
+                    if (retries <= 0) {
+                      console.warn('Key ' + keyIndex + ' failed batch ' + batch.index + ': ' + err.message + '. Re-queuing for another key.');
+                      batchQueue.push(batch);
+                      break;
+                    }
+                    await new Promise(r => setTimeout(r, delay));
+                    delay = Math.min(delay * 2, 16000);
+                  }
+                }
+              }
+            };
+
+            await Promise.all(keys.map((key, idx) => worker(key, idx)));
+
+            const incomplete = batchResults.filter(r => r === null).length;
+            if (incomplete > 0) throw new Error(incomplete * BATCH_SIZE + ' questions could not be generated. Try again.');
+
+            renderPuzzlePreview(previewList, generatedItems);
+            window._puzzleAutoRetryCount = 0;
+            setGenerating(loading, false);
+            localStorage.removeItem('elite_puzzle_partial_gen');
+            previewStatus.textContent = generatedItems.length + ' questions arranged. Done!';
+            btnSend.classList.add('visible');
+            showToast('Arranged ' + generatedItems.length + ' questions for "' + title + '"', 'success');
+          } catch (err) {
+            setGenerating(loading, false);
+            console.error(err);
+            window._puzzleAutoRetryCount = (window._puzzleAutoRetryCount || 0) + 1;
+            if (window._puzzleAutoRetryCount <= 5) {
+              showToast('Error: ' + err.message + '. Auto-retrying (' + window._puzzleAutoRetryCount + '/5) in 3s...', 'error');
+              setTimeout(() => {
+                if (btnGenerate && !btnGenerate.disabled) btnGenerate.click();
+              }, 3000);
+            } else {
+              showToast('Fatal Error: ' + err.message, 'error');
+            }
+          } finally {
+            btnGenerate.disabled = false;
+          }
+          return;
+        }
       });
 
       document.getElementById('btn-clear').addEventListener('click', () => {
@@ -337,11 +590,6 @@
 
       document.getElementById('btn-send').addEventListener('click', async () => {
         if (!generatedItems.length) { showToast('Generate puzzle rounds first.', 'error'); return; }
-        const d = dispatch.getDispatch();
-        if (d.mode === 'selected' && !d.users.length) {
-          showToast('Select at least one student.', 'error');
-          return;
-        }
 
         const title = document.getElementById('puzzle-title').value.trim() || 'Untitled Puzzle';
         const courseCode = document.getElementById('puzzle-subject-select').value.trim() || 'General';
@@ -355,9 +603,8 @@
         try {
           await saveElitePuzzle(title, courseCode, timeLimit, levelLabel, generatedItems);
 
-          const target = d.mode === 'all' ? 'all students' : `${d.users.length} selected student(s)`;
-          showToast(`🚀 Puzzle "${title}" launched for ${target}!`, 'success');
-          previewStatus.textContent = `Live for ${target}`;
+          showToast(`🚀 Puzzle "${title}" saved to database!`, 'success');
+          previewStatus.textContent = `Saved to Database [OK]`;
         } catch (err) {
           showToast('Failed to save puzzle: ' + err.message, 'error');
         } finally {

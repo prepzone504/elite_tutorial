@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guidelines | Elite Tutorial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --accent-primary: #e01c1c;
+            --accent-glow: rgba(224, 28, 28, 0.4);
+            --bg-dark: #080808;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+        body {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Outfit', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Background Glows */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -20%; left: -10%;
+            width: 50%; height: 60%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
+        .start-box {
+            margin: auto; /* Centers perfectly and falls back to top-alignment if overflowing */
+            background: rgba(20, 20, 20, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 560px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            box-sizing: border-box;
+        }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .start-icon {
+            width: 72px; height: 72px;
+            background: linear-gradient(135deg, rgba(224, 28, 28, 0.2), rgba(224, 28, 28, 0.05));
+            border: 1px solid rgba(224, 28, 28, 0.3);
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 24px auto;
+            box-shadow: 0 10px 20px rgba(224, 28, 28, 0.15);
+        }
+        .start-title { 
+            font-size: 2.2rem; 
+            font-weight: 800;
+            margin: 0 0 12px 0; 
+            background: linear-gradient(to right, #fff, #a1a1aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        .start-desc { 
+            color: var(--text-muted); 
+            margin: 0 0 32px 0; 
+            line-height: 1.6; 
+            font-size: 1.1rem; 
+        }
+        .rules-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 32px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            text-align: left;
+        }
+        .rules-list li { 
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px 20px;
+            border-radius: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #d1d5db;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .rules-list li:hover {
+            transform: translateX(4px);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .rule-icon {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .rule-text strong {
+            color: #fff;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .btn-start-game, .btn-back-list {
+            width: 100%;
+            padding: 18px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-family: inherit;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-start-game {
+            background: linear-gradient(135deg, var(--accent-primary), #990000);
+            color: white;
+            box-shadow: 0 10px 20px rgba(224, 28, 28, 0.3);
+            border: 1px solid rgba(255, 100, 100, 0.3);
+        }
+        .btn-start-game:hover:not(:disabled) { 
+            transform: translateY(-2px); 
+            box-shadow: 0 15px 30px rgba(224, 28, 28, 0.4);
+            filter: brightness(1.1);
+        }
+        .btn-start-game:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-back-list {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-back-list:hover { 
+            background: rgba(255,255,255,0.1); 
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px 16px; justify-content: flex-start; }
+            .start-box { margin: 0 auto; padding: 32px 20px; }
+            .start-icon { width: 60px; height: 60px; font-size: 2rem; margin-bottom: 20px; }
+            .start-title { font-size: 1.8rem; }
+            .start-desc { font-size: 1rem; margin-bottom: 24px; }
+            .rules-list { gap: 10px; margin-bottom: 24px; }
+            .rules-list li { padding: 14px 16px; gap: 12px; font-size: 0.95rem; }
+            .rule-icon { font-size: 1.2rem; }
+            .btn-start-game, .btn-back-list { padding: 16px; font-size: 1.05rem; }
+        }
+    </style>
+</head>
+<body>
+    <div style="position: absolute; bottom: -20%; right: -10%; width: 50%; height: 60%; background: radial-gradient(circle, rgba(52, 211, 153, 0.2) 0%, transparent 60%); filter: blur(100px); z-index: -1; opacity: 0.5; pointer-events: none;"></div>
+
+    <div class="container">
+        <div class="start-box">
+            <div class="start-icon">📜</div>
+            <h2 class="start-title">Discussion Guidelines</h2>
+            <p class="start-desc">Please review the rules below before entering the live chat room.</p>
+
+            <ul class="rules-list">
+                <li>
+                    <div class="rule-icon">⏱️</div>
+                    <div class="rule-text">
+                        <strong>Fastest Fingers First</strong>
+                        You have 30 seconds to vote (A-D). The round ends early if 5 people answer correctly.
+                    </div>
+                </li>
+                <li>
+                    <div class="rule-icon">🔒</div>
+                    <div class="rule-text">
+                        <strong>Lock Your Vote</strong>
+                        Votes cannot be changed once confirmed. Your selection remains hidden from others.
+                    </div>
+                </li>
+                <li>
+                    <div class="rule-icon">👑</div>
+                    <div class="rule-text">
+                        <strong>Top Scorer</strong>
+                        Speed matters! The fastest correct answer gets crowned Top Scorer for the round.
+                    </div>
+                </li>
+                <li>
+                    <div class="rule-icon">🎙️</div>
+                    <div class="rule-text">
+                        <strong>Open Discussion</strong>
+                        After the answer is revealed, a 1-minute open chat begins. You can text or send voice notes.
+                    </div>
+                </li>
+                <li>
+                    <div class="rule-icon">🤝</div>
+                    <div class="rule-text">
+                        <strong>Respect & Focus</strong>
+                        Be polite and keep the discussion strictly focused on the exam topic.
+                    </div>
+                </li>
+            </ul>
+
+            <div class="btn-group">
+                <button class="btn-start-game" id="btn-agree">
+                    <span>Yes, I Agree</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+                <button class="btn-back-list" onclick="location.href='list_of_exam_discusion.html'">
+                    ← Go Back
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../js/supabase-config.js"></script>
+    <script src="../../js/supabase-client.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const batchId = urlParams.get('batch_id');
+            const btnAgree = document.getElementById('btn-agree');
+            const client = window.getSupabaseClient();
+            
+            btnAgree.addEventListener('click', async () => {
+                if (!batchId) {
+                    alert("No batch ID found.");
+                    return;
+                }
+                
+                btnAgree.disabled = true;
+                const span = btnAgree.querySelector('span');
+                if(span) span.textContent = "Loading...";
+
+                try {
+                    const { data: { user } } = await client.auth.getUser();
+                    if (!user) {
+                        location.href = '../../login.html';
+                        return;
+                    }
+
+                    const { data, error } = await client.from('exam_discussion_assignments')
+                        .select('start_mode, start_time')
+                        .eq('batch_id', batchId)
+                        .eq('user_id', user.id)
+                        .single();
+
+                    if (error) {
+                        console.error("Assignment fetch error:", error);
+                        location.href = 'exam_discussion_chat_bot.html?batch_id=' + batchId;
+                        return;
+                    }
+
+                    const mode = data.start_mode;
+                    const timeStr = data.start_time;
+
+                    if (mode === 'now' || !timeStr) {
+                        location.href = 'exam_discussion_chat_bot.html?batch_id=' + batchId;
+                        return;
+                    }
+
+                    const now = new Date();
+                    const scheduledTime = new Date();
+                    const [hours, mins] = timeStr.split(':').map(Number);
+                    scheduledTime.setHours(hours, mins, 0, 0);
+
+                    if (scheduledTime <= now) {
+                        location.href = 'exam_discussion_chat_bot.html?batch_id=' + batchId;
+                    } else {
+                        location.href = 'time_for_discussion.html?batch_id=' + batchId + '&time=' + encodeURIComponent(timeStr);
+                    }
+                } catch(err) {
+                    console.error("Error:", err);
+                    location.href = 'exam_discussion_chat_bot.html?batch_id=' + batchId;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

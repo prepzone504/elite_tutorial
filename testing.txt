@@ -1,0 +1,1767 @@
+
+Question: 1.
+Which vessel carries oxygenated blood to the heart muscle? 
+A. Coronary sinus 
+B. Coronary arteries 
+C. Pulmonary arteries 
+D. Great cardiac vein
+ANSWER:B
+Question: 2.
+Which chamber has the thickest wall? 
+A. Right atrium 
+B. Right ventricle 
+C. Left atrium 
+D. Left ventricle
+ANSWER:D
+Question: 3.
+Foramen ovale in fetal circulation allows blood to: 
+A. Bypass the liver 
+B. Bypass the lungs 
+C. Mix oxygenated/deoxygenated blood in liver 
+D. Flow from aorta to pulmonary artery
+ANSWER:B
+Question: 4.
+T wave inversion on ECG suggests: 
+A. Myocardial infarction 
+B. Myocardial ischemia 
+C. Myocardial injury 
+D. Normal variant
+ANSWER:B
+Question: 5.
+Which is NOT a determinant of stroke volume? 
+A. Preload 
+B. Afterload 
+C. Contractility 
+D. Heart rate
+ANSWER:D
+Question: 6.
+Which valve disorder causes wide pulse pressure? 
+A. Aortic stenosis 
+B. Mitral stenosis 
+C. Aortic regurgitation 
+D. Tricuspid regurgitation
+ANSWER:C
+Question: 7.
+Which enzyme rises first after MI? 
+A. Troponin 
+B. CK-MB 
+C. Myoglobin 
+D. LDH
+ANSWER:C
+Question: 8.
+Normal potassium range: 
+A. 2.5-3.5 mEq/L 
+B. 3.5-5.0 mEq/L 
+C. 5.0-6.0 mEq/L 
+D. 1.5-2.5 mEq/L
+ANSWER:B
+Question: 9.
+Absolute contraindication to stress test: 
+A. Unstable angina 
+B. Controlled HTN 
+C. Obesity 
+D. Old age
+ANSWER:A
+Question: 10.
+Gold standard to diagnose DVT: 
+A. Homans’ sign 
+B. D-dimer 
+C. Venous duplex ultrasound 
+D. ABG
+ANSWER:C
+Question: 11.
+Which test diagnoses congenital heart defects best? 
+A. ECG 
+B. Chest X-ray 
+C. Echocardiogram 
+D. Stress test
+ANSWER:C
+Question: 12.
+Cardiac enzymes: CK-MB peaks at: 
+A. 3-6 hours 
+B. 12-24 hours 
+C. 24-48 hours 
+D. 3-5 days
+ANSWER:B
+Question: 13.
+Which is highest risk factor for CAD? 
+A. HDL 70 
+B. Age 35
+C. BMI 24 
+D. Diabetes mellitus
+ANSWER:D
+Question: 14.
+Before giving metoprolol, hold for: 
+A. HR 58
+B. HR 72
+C. BP 128/76 
+D. RR 18
+ANSWER:A
+Question: 15.
+Antidote for heparin: 
+A. Vitamin K 
+B.Narcan
+C. Protamine sulfate
+D. Flumazenil
+ANSWER:C
+Question: 16.
+Which electrolyte increases digoxin toxicity? 
+A. Hypokalemia 
+B. Hyperkalemia 
+C. Hypernatremia 
+D. Hypocalcemia
+ANSWER:A
+Question: 17.
+Clopidogrel is a: 
+A. Anticoagulant 
+B. Thrombolytic 
+C. Antiplatelet 
+D. Beta blocker
+ANSWER:C
+Question: 18.
+ECG in pericarditis shows: 
+A. ST elevation in all leads 
+B. ST depression 
+C. Q waves 
+D. T wave inversion only
+ANSWER:A
+Question: 19.
+Patient with HF teaching. Which indicates need for further teaching?
+A. “I weigh daily” 
+B. “I take extra furosemide if I’m short of breath” 
+C. “I limit salt” 
+D. “I report 3 lb gain in 2 days”
+ANSWER:B
+Question: 20.
+Patient with chest pain. Which order to do FIRST? 
+A. ECG 
+B. Troponin 
+C. Nitroglycerin 
+D. Oxygen if SpO2 <90%
+ANSWER:D
+Question: 21.
+The posterior communicating artery connects the:
+A. Basilar and vertebral arteries
+B. Internal carotid and posterior cerebral arteries
+C. Anterior cerebral artery and internal carotid artery
+D. External carotid arteries and the posterior cerebral artery
+ANSWER:B
+Question: 22.
+Prolonged occlusion of the right coronary artery produces an infarction in which of the following areas of the heart?
+A. Anterior
+B. Apical
+C. Inferior
+D. Lateral
+ANSWER:C
+Question: 23.
+When teaching a patient why spironolactone (Aldactone) and furosemide (Lasix) are prescribed together, the nurse bases teaching on the knowledge that:
+A. Moderate doses of two different types of diuretics are more effective than a large dose of one type.
+B. This combination promotes diuresis but decreases the risk of hypokalemia.
+C. This combination prevents dehydration and hypovolemia.
+D. Using two drugs increases osmolality of plasma and the glomerular filtration rate.
+ANSWER:B
+Question: 24.
+To evaluate a client’s condition following cardiac catheterization, the nurse will palpate the pulse:
+A. In all extremities
+B. At the insertion site
+C. Distal to the catheter insertion
+D. Above the catheter insertion
+ANSWER:C
+Question: 25.
+Direct-acting vasodilators have which of the following effects on the heart rate?
+A. Heart rate decreases.
+B. Heart rate remains significantly unchanged.
+C. Heart rate increases.
+D. Heart rate becomes irregular.
+ANSWER:C
+Question: 26.
+A 45-year-old male client with leg ulcers and arterial insufficiency is admitted to the hospital. The nurse understands that leg ulcers of this nature are usually caused by:
+A. Decreased arterial blood flow secondary to vasoconstriction.
+B. Decreased arterial blood flow leading to hyperemia.
+C. Atherosclerotic obstruction of the arteries.
+D. Trauma to the lower extremities.
+ANSWER:C
+Question: 27.
+In which of the following types of cardiomyopathy does cardiac output remain normal?
+A. Dilated
+B. Hypertrophic
+C. Obliterative
+D. Restrictive
+ANSWER:B
+Question: 28.
+A patient with chest pain is most likely experiencing MI if pain:
+A. Improves with rest
+B. Lasts < 2 minutes
+C. Radiates to jaw and left arm
+D. Occurs after meals
+ANSWER:C
+Question: 29.
+Early sign of shock is:
+A. Hypotension
+B. Tachycardia
+C. Cyanosis
+D. Bradycardia
+ANSWER:B
+Question: 30.
+A client comes into the E.R. with acute shortness of breath and a cough that produces pink, frothy sputum. Admission assessment reveals crackles and wheezes, a BP of 85/46, a HR of 122 BPM, and a respiratory rate of 38 breaths/minute. The client’s medical history included DM, HTN, and heart failure. Which of the following disorders should the nurse suspect?
+A. Pulmonary edema
+B. Pneumothorax
+C. Cardiac tamponade
+D. Pulmonary embolism
+ANSWER:A
+Question: 31.
+A nurse in a clinic is caring for a client who has suspected anemia. Which of the following laboratory test results should the nurse expect?
+A. Iron 90 mcg/dL
+B. RBC 6.5 million/uL
+C. WBC 4,800 mm3
+D. Hgb 10 g/dL
+ANSWER:D
+Question: 32.
+A nurse is preparing to administer
+Packed RBCs to a client who
+Has a Hgb of 8 g/dL. Which of
+The following actions should the
+Nurse plan to take during the
+First 15 min of the transfusion?
+A. Obtain consent from the Client for the transfusion.
+B. Assess for an acute Hemolytic reaction.
+C.Explain the transfusion Procedure to the client.
+D.Obtain blood culture Specimens to send to the lab
+ANSWER:B
+Question: 33.
+Malignant disorders that arise from granulocytic cells in the bone marrow will have the primary effect of causing
+A. risk for hemorrhage.
+b. altered oxygenation.
+c. decreased production of antibodies.
+d. decreased phagocytosis of bacteria.
+ANSWER:D
+Question: 34.
+When reviewing laboratory results of an 83-year-old patient with an infection, the nurse would expect to find
+A. minimal leukocytosis.
+b. decreased platelet count.
+c. increased hemoglobin and hematocrit levels.
+d. decreased erythrocyte sedimentation rate (ESR)
+ANSWER:A
+Question: 35.
+Significant information obtained from the patient’s health history that relates to the hematologic system includes
+A. jaundice.
+b. bladder surgery.
+c. early menopause.
+d. multiple pregnancies.
+ANSWER:A
+Question: 36.
+If a lymph node is palpated, what is a normal finding?
+a. Hard, fixed nodes
+b. Firm, mobile nodes
+c. Enlarged, tender nodes
+d. Hard, nontender node
+ANSWER:B
+Question: 37.
+You are taking care of a male patient who has the following laboratory values from his CBC: WBC 6.5 × 103/µL, Hgb 13.4 g/dL, Hct 40%, platelets 50 × 103/µL. What are you most concerned about?
+A. Your patient is neutropenic.
+b. Your patient has an infection.
+c. Your patient is at risk for bleeding.
+d. Your patient is at fall risk due to his anemia
+ANSWER:C
+Question: 38.
+A nurse is assessing a client and suspects the client is experiencing DIC. Which of the following physical findings should the nurse anticipate?
+A. Bradycardia
+B. Hypertension
+C. Epistaxis
+D. Xerostomia
+ANSWER:C
+Question: 39.
+The nurse would anticipate that a patient with von Willebrand disease undergoing surgery would be treated with administration of vWF and
+A. thrombin.
+b. factor VI.
+c. factor VII.
+d. factor VIII.
+ANSWER:D
+Question: 40.
+The most common type of leukemia in older adults is
+a. acute myelocytic leukemia.
+b. acute lymphocytic leukemia.
+c. chronic myelocytic leukemia.
+d. chronic lymphocytic leukemia.
+ANSWER:D
+Question: 41.
+Multiple drugs are often used in combinations to treat leukemia and lymphoma because
+a. there are fewer toxic and side effects.
+b. the chance that one drug will be effective is increased.
+c. the drugs are more effective without causing side effects.
+d. the drugs work by different mechanisms to maximize killing of malignant cells.
+ANSWER:D
+Question: 42.
+The patient has been diagnosed with Hodgkins lymphoma. The nurse is aware that this patient has which type of cells present in the blood?
+A. Abnormal B cells
+b. Abnormal T cells
+c. Cytotoxic T cells
+d. Reed-Sternberg (R-S) cells
+ANSWER:D
+Question: 43.
+The nurse cautions the 79-year-old male who had a gastrectomy a month ago that he is at risk for _____ anemia.
+A. Megaloblastic
+b. pernicious
+c. iron deficiency
+d. nutritional
+ANSWER:B
+Question: 44.
+Because of a deficiency of iron, the person with iron deficiency anemia is unable to make sufficient:
+A. plasma.
+b. WBCs.
+c. hemoglobin.
+d. antibodies.
+ANSWER:C
+Question: 45.
+The nurse anticipates that the patient with iron deficiency anemia will have red cells that are:
+a. normochromic and normocytic.
+b. hypochromic and microcytic.
+c. hyperchromic and macrocytic.
+d. normochromic and microcytic.
+ANSWER:B
+Question: 46.
+A patient is suspected as having a blood transfusion reaction. Which laboratory test should the nurse expect to be done to confirm this diagnosis?
+A. Skin testing
+b. Direct Coombs test
+c. White blood cell count
+d. C-reactive protein level
+ANSWER:B
+Question: 47.
+The nurse is reinforcing teaching provided to a patient with pernicious anemia. Which patient statement indicates that teaching has been effective?
+A. I can miss a month or two of injections if I am feeling better.
+b. I will need to take vitamin B12 injections for the rest of my life.
+c. I will take the vitamin B12 injections until my strength returns.
+d. I can take a vitamin B12 injection when I feel tired or fatigued.
+ANSWER:B
+Question: 48.
+A patient is being started on a blood transfusion. For how many minutes should the nurse stay with the patient during this transfusion?
+A. 5
+b. 10
+c. 15
+d. 20
+ANSWER:C
+Question: 49.
+A patient is receiving a transfusion of packed RBCs. Ten minutes after the infusion begins the patient reports low back pain and a headache. Which action should the nurse take first?
+A. Stop the blood infusion.
+b. Notify the physician STAT.
+c. Start the new 0.9% normal saline infusion.
+d. Prepare a new 0.9% normal saline infusion.
+ANSWER:A
+Question: 50.
+A woman is Rh-negative. Which partner blood type increases risk for hemolytic disease of the newborn?
+A. Rh-negative
+B. Rh-positive
+C. AB negative
+D. O negative
+ANSWER:B
+
+ A patient falls on outstretched hand. Presents with dinner fork deformity. Diagnosis? 
+A) Scaphoid fracture
+B) Colles fracture
+C) Smith fracture
+D) Monteggia fracture
+ANSWER: B
+
+Question: 51.
+Which situation makes Rho(D) immunoglobulin ineffective?
+A. Given at 28 weeks gestation
+B. Given within 72 hours postpartum
+C. Already sensitized mother (anti-D present)
+D. After miscarriage
+ANSWER:C
+Question: 52.
+A nurse suspects aplastic anemia. Which combination of findings is expected?
+A. Leukocytosis, thrombocytosis, polycythemia
+B. Pancytopenia
+C. High hemoglobin only
+D. High reticulocyte count
+ANSWER:B
+Question: 53.
+A patient with thrombocytopenia should be taught to avoid:
+A. Iron-rich diet
+B. Vitamin C intake
+C. High-protein diet
+D. Aspirin use
+ANSWER:D
+Question: 54.
+Which is the MOST sensitive early marker of bleeding disorder?
+A. Hemoglobin
+B. Platelet count
+C. INR/PT
+D. WBC
+ANSWER:C
+Question: 55.
+Universal Recipient
+A. AB+
+B. AB-
+C. O +
+D. O-
+ANSWER:A
+Question: 56.
+A patient repeatedly washes hands despite knowing they are clean. This is:
+A. Delusion
+B. Compulsion
+C. Hallucination
+D. Illusion
+ANSWER:B
+Question: 57.
+The primary purpose of a therapeutic milieu is to: 
+A. Punish maladaptive behavior 
+B. Provide a structured, safe environment that promotes learning and socialization 
+C. Keep patients busy so staff can chart 
+D. Isolate patients from outside stressors permanently
+ANSWER:B
+Question: 58.
+Skinner is known for:
+A. Cognitive learning
+B. Classical conditioning
+C. Observational learning
+D. Operant conditioning
+ANSWER:D
+Question: 59.
+Insight learning was studied by:
+A. Thorndike
+B. Kohler
+C. Skinner
+D. Watson
+ANSWER:B
+Question: 60.
+Short-term memory is also called:
+A. Sensory memory
+B. Procedural memory
+C. Long-term memory
+D. Working memory
+ANSWER:D
+Question: 61.
+Sensory memory lasts for:
+A. Hours
+B. Days
+C. Seconds
+D. Weeks
+ANSWER:C
+Question: 62.
+Encoding means:
+A. Storing information
+B. Retrieving information
+C. Processing information into memory
+D. Forgetting information
+ANSWER:C
+Question: 63.
+Forgetting due to old learning interfering is:
+A. Proactive interference
+B. Retrograde amnesia
+C. Suppression
+D. Encoding failure
+ANSWER:A
+Question: 64.
+Memory of skills like riding bicycle is:
+A. Episodic memory
+B. Procedural memory
+C. Semantic memory
+D. Sensory memory
+ANSWER:B
+Question: 65.
+Id operates on:
+A. Reality principle
+B. Moral principle
+C. Pleasure principle
+D. Logic principle
+ANSWER:C
+Question: 66.
+Erikson’s theory is:
+A. Psychosexual
+B. Psychosocial
+C. Biopsychosocial
+D. Cognitive only
+ANSWER:B
+Question: 67.
+Defense mechanisms are used by:
+A. Conscious mind
+B. Id
+C. Ego
+D. Superego only
+ANSWER:C
+Question: 68.
+Thorndike’s law of effect states:
+A. Behavior is random
+B. Reward strengthens behavior
+C. Memory decays
+D. Learning is genetic
+ANSWER:B
+Question: 69.
+Carl Rogers emphasized:
+A. Behavior
+B. Reflex
+C. Self concept
+D. Conditioning
+ANSWER:C
+Question: 70.
+Maslow is known for:
+A. Conditioning theory
+B. Hierarchy of needs
+C. Psychoanalysis
+D. Memory theory
+ANSWER:B
+Question: 71.
+Liza says, “Give me 10 minutes to recall the name of our college professor who failed many students in our anatomy class.” She is operating on her:
+A. Subconscious
+B. Conscious
+C. Unconscious
+D. Ego
+ANSWER:A
+Question: 72.
+The wife admits that she is a victim of abuse and opens up about her persistent distaste for sex. This sexual disorder is:
+A.Sexual desire disorder
+B Sexual arousal Disorder
+C.Orgasm Disorder
+D.Sexual Pain Disorder
+ANSWER:A
+Question: 73.
+According to Piaget a 5 year old is in what stage of development
+A.Sensory motor stage
+B.Concrete operations
+C.Pre-operational
+D.Formal operation
+ANSWER:C
+Question: 74.
+Primary level of prevention is exemplified by:
+A.Helping the client resume self care.
+B.Ensuring the safety of a suicidal client in the institution.
+C.Teaching the client stress management techniques
+D.Case finding and surveillance in the community
+ANSWER:C
+Question: 75.
+founder of modern psychology
+A. Wilhelm wundt
+B. Sigmund Freud
+C. Hildegard peplau
+D. Erick Erickson
+ANSWER:A
+Question: 76.
+A competent adult refuses a blood transfusion for religious reasons. The nurse’s best action is:
+A. Override refusal to save life
+B. Respect decision and document refusal
+C. Seek court order immediately
+D. Ask family to decide
+ANSWER:B
+Question: 77.
+Family requests not to disclose cancer diagnosis, but patient asks directly. Nurse should:
+A. Respect family wishes
+B. Tell partial truth
+C. Tell full truth to patient
+D. Refuse to answer
+ANSWER:C
+Question: 78.
+Emergency unconscious patient is treated without consent. This is justified by:
+A. Autonomy
+B. Beneficence
+C. Justice
+D. Non maleficence
+ANSWER:B
+Question: 79.
+Patient refuses antibiotics but family insists. Nurse should prioritize:
+A. Family decision
+B. Physician order
+C. Patient autonomy
+D. Justice
+ANSWER:C
+Question: 80.
+A nurse believes that lying is always wrong regardless of outcome. This position is:
+A. Utilitarianism
+B. Deontology
+C. Relativism
+D. Egoism
+ANSWER:B
+Question: 81.
+Murder is wrong” is objectively true regardless of opinion. This view is:
+A. Moral relativism
+B. Moral realism
+C. Emotivism
+D. Subjectivism
+ANSWER:B
+Question: 82.
+The MOST binding source of nursing practice is:
+A. Ethics
+B. Personal values
+C. Law
+D. Religion
+ANSWER:C
+Question: 83.
+A court order compels disclosure of patient information. This overrides:
+A. Beneficence
+B. Confidentiality
+C. Justice
+D. Fidelity
+ANSWER:B
+Question: 84.
+A nurse gives wrong medication due to carelessness. This is: A. Assault
+B. Battery
+C. Negligence
+D. Defamation
+ANSWER:C
+Question: 85.
+Touching a patient without consent is:
+A. Negligence
+B. Assault
+C. Battery
+D. Libel
+ANSWER:C
+Question: 86.
+Choosing action that benefits most people regardless of rules is:
+A. Deontology
+B. Utilitarianism
+C. Legalism
+D. Virtue ethics
+ANSWER:B
+Question: 87.
+Which theory best supports the idea that “what is right in one culture may be wrong in another”?
+A. Realism
+B. Absolutism
+C. Intuitionism
+D. Relativism
+ANSWER:D
+
+Question: 88.
+Stealing is wrong everywhere and always” aligns most with:
+A. Relativism
+B. Realism
+C. Cultural relativism
+D. Emotivism
+ANSWER:B
+Question: 89.
+What is moral distress in nursing?
+a. The feeling of being unable to act according to one’s moral values
+b. The feeling of being uncertain about what is morally right
+c. The feeling of being conflicted between two or more moral values
+d. The feeling of being harmed by someone else’s immoral actions
+ANSWER:A
+Question: 90.
+The first code of ethics in nursing profession was adopted in-
+A. 1948
+B. 1953
+C. 1965
+D. 1978
+ANSWER:B
+Question: 91.
+written law which has been formally passed by the government, is called as-
+A. Bill
+B. Act
+C. Decision
+D. Code of ethics
+ANSWER:B
+Question: 92.
+A ideal nurse should be poise. Here word poise means-
+A. Silent
+B. Knowledge
+C. Control of emotions.
+D. Self confident
+ANSWER:C
+Question: 93.
+Which of the following is NOT a function of NMCN?
+A. Nurse registration
+B. Curriculum regulation
+C. Drug approval
+D. Licensing nurses
+ANSWER:C
+Question: 94.
+Which muscle is the primary initiator of shoulder abduction?
+A) Deltoid 
+B) Supraspinatus
+C) Infraspinatus
+D) Trapezius
+ANSWER:B
+Question: 95.
+Which carpal bone is most commonly dislocated? 
+A) Scaphoid
+B) Lunate 
+C) Triquetrum
+D) Capitate
+ANSWER:B
+Question: 96.
+Duchenne muscular dystrophy is due to a defect in which protein? 
+A) Dystrophin
+B) Actin
+C) Myosin
+D) Troponin
+ANSWER:A
+Question: 97.
+Which muscle flexes the hip and extends the knee? 
+A) Rectus femoris
+B) Sartorius
+C) Iliopsoas
+D) Tensor fasciae latae
+ANSWER:A
+Question: 98.
+Bamboo spine” on X-ray is pathognomonic for? 
+A) Rheumatoid arthritis   B) Ankylosing spondylitis
+C) DISH
+D) Psoriatic arthritis
+ANSWER:B
+Question: 99.
+Which gout drug inhibits xanthine oxidase? 
+A) Colchicine
+B) Allopurinol
+C) Probenecid
+D) NSAIDs
+ANSWER:B
+Question: 100.
+ A patient falls on outstretched hand. Presents with dinner fork deformity. Diagnosis? 
+A) Scaphoid fracture
+B) Colles fracture
+C) Smith fracture
+D) Monteggia fracture
+ANSWER:B
+
+Question: 101.
+Which muscle is NOT part of the rotator cuff? 
+A) Supraspinatus
+B) Infraspinatus
+C) Teres minor
+D) Teres major
+ANSWER:D
+Question: 102.
+Most common nerve injured in anterior shoulder dislocation? 
+A) Musculocutaneous   B) Axillary
+C) Radial
+D) Suprascapular
+ANSWER:B
+Question: 103.
+A patient with compartment syndrome will most likely present first with:
+A. Pulselessness
+B. Pallor
+C. Severe pain unrelieved by analgesics
+D. Paralysis
+ANSWER:C
+Question: 104.
+Which electrolyte imbalance is most associated with tetany and muscle spasms?
+A. Hypernatremia
+B. Hypocalcemia
+C. Hyperkalemia
+D. Hypermagnesemia
+ANSWER:B
+Question: 105.
+A patient with osteomyelitis usually has elevated:
+A. Troponin
+B. ESR
+C. Bilirubin
+D. Lipase
+ANSWER:B
+Question: 106.
+A patient with carpal tunnel syndrome has compression of the:
+A. Ulnar nerve
+B. Radial nerve
+C. Median nerve
+D. Musculocutaneous nerve
+ANSWER:C
+Question: 107.
+A client with gout most commonly experiences pain initially in the:
+A. Knee
+B. Hip
+C. Great toe
+D. Shoulder
+ANSWER:C
+Question: 108.
+Which laboratory finding supports a diagnosis of rheumatoid arthritis?
+A. Increased uric acid
+B. Positive rheumatoid factor
+C. Elevated troponin
+D. Reduced creatinine
+ANSWER:B
+Question: 109.
+A patient has bone pain, hearing loss, and enlarged skull bones. Which disorder is suspected?
+A. Osteomalacia
+B. Paget disease
+C. Rickets
+D. Scoliosis
+ANSWER:B
+Question: 110.
+Which joint is most commonly dislocated?
+A. Hip
+B. Knee
+C. Shoulder
+D. Elbow
+ANSWER:C
+Question: 111.
+The diagnostic gold standard for osteoporosis is:
+A. X-ray
+B. MRI
+C. DEXA scan
+D. Bone biopsy
+ANSWER:C
+Question: 112.
+A fracture in which bone pierces the skin is called:
+A. Greenstick fracture
+B. Spiral fracture
+C. Open fracture
+D. Impacted fracture
+ANSWER:C
+Question: 113.
+Which disease is characterized by autoimmune destruction of the neuromuscular junction?
+A. Multiple sclerosis
+B. Parkinson disease
+C. Myasthenia gravis
+D. Guillain-Barré syndrome
+ANSWER:C
+Question: 114.
+The “5 Ps” of acute compartment syndrome include all except:
+A. Pain
+B. Pallor
+C. Polyuria
+D. Paresthesia
+ANSWER:C
+Question: 115.
+Which drug is commonly used as a muscle relaxant?
+A. Diazepam
+B. Digoxin
+C. Metformin
+D. Furosemide
+ANSWER:A
+Question: 116.
+The patella is classified as a:
+A. Flat bone
+B. Long bone
+C. Sesamoid bone
+D. Irregular bone
+ANSWER:C
+Question: 117.
+Which hormone increases blood calcium levels by stimulating bone resorption?
+A. Calcitonin
+B. Insulin
+C. Parathyroid hormone
+D. Thyroxine
+ANSWER:C
+Question: 118.
+Which drug is commonly prescribed for osteoporosis?
+A. Alendronate
+B. Omeprazole
+C. Salbutamol
+D. Atropine
+ANSWER:A
+Question: 119.
+The primary protein in muscle fibers responsible for contraction is:
+A. Keratin
+B. Elastin
+C. Actin and myosin
+D. Collagen
+ANSWER:C
+Question: 120.
+Which drug is used to treat gout by reducing uric acid production?
+A. Clochicine
+B. Prednisolone
+C. Allopurinol
+D. Calcium gluconate
+ANSWER:C
+Question: 121.
+The movement of decreasing the angle between two bones is called:
+A. Extension
+B. Rotation
+C. Flexion
+D. Abduction
+ANSWER:C
+Question: 122.
+Which cranial nerve supplies the muscles of mastication?
+A. Facial nerve
+B. Trigeminal nerve
+C. Glossopharyngeal nerve
+D. Hypoglossal nerve
+ANSWER:B
+Question: 123.
+Atropine increases heart rate by blocking the effects of:
+A. Dopamine
+B. Acetylcholine
+C. Adrenaline
+D. Serotonin
+ANSWER:B
+Question: 124.
+The neurotransmitter primarily involved in memory and learning is:
+A. Dopamine
+B. Acetylcholine
+C. Histamine
+D. Epinephrine
+ANSWER:B
+Question: 125.
+Which electrolyte imbalance commonly increases seizure risk?
+A. Hypernatremia
+B. Hypercalcemia
+C. Hypocalcemia
+D. Hyperkalemia
+ANSWER:C
+Question: 126.
+Which lobe is mainly responsible for personality and judgment?
+A. Occipital lobe
+B. Frontal lobe
+C. Temporal lobe
+D. Parietal lobe
+ANSWER:B
+Question: 127.
+A patient with temporal lobe seizures may initially experience:
+A. Aura
+B. Hemiplegia
+C. Blindness
+D. Hyperreflexia
+ANSWER:A
+Question: 128.
+Which cranial nerve is tested by asking a patient to shrug the shoulders?
+A. CN VII
+B. CN IX
+C. CN XI
+D. CN XII
+ANSWER:C
+Question: 129.
+Which drug is commonly used in Alzheimer disease to increase acetylcholine levels?
+A. Donepezil
+B. Haloperidol
+C. Diazepam
+D. Levodopa
+ANSWER:A
+Question: 130.
+A positive Kernig’s sign indicates irritation of the:
+A. Peripheral nerves
+B. Meninges
+C. Cerebellum
+D. Retina
+ANSWER:B
+Question: 131.
+Which structure relays sensory impulses to the cerebral cortex?
+A. Cerebellum
+B. Medulla oblongata
+C. Thalamus
+D. Pons
+ANSWER:C
+Question: 132.
+Which type of stroke results from rupture of a cerebral blood vessel?
+A. Ischemic stroke
+B. Transient stroke
+C. Hemorrhagic stroke
+D. Embolic stroke
+ANSWER:C
+Question: 133.
+Which anticonvulsant drug may cause Stevens–Johnson syndrome?
+A. Carbamazepine
+B. Mannitol
+C. Levodopa
+D. Atropine
+ANSWER:A
+Question: 134.
+A 23-year-old patient with a recent history of encephalitis is admitted to the medical unit with new onset generalized tonic-clonic seizures. Which nursing activities included in the patient’s care will be best to delegate to an LPN/LVN whom you are supervising?
+A. Document the onset time, nature of seizure activity, and postictal behaviors for all seizures.
+B. Administer phenytoin (Dilantin) 200 mg PO daily.
+C. Teach the patient about the need for good oral hygiene.
+D. Develop a discharge plan, including physician visits and referral to the Epilepsy Foundation.
+ANSWER:B
+Question: 135.
+A client is at risk for increased ICP. Which of the following would be a priority for the nurse to monitor?
+A. Unequal pupil size
+B. Decreasing systolic blood pressure
+C. Tachycardia
+D. Decreasing body temperature
+ANSWER:A
+Question: 136.
+The nurse is discussing the purpose of an electroencephalogram (EEG) with the family of a client with massive cerebral hemorrhage and loss of consciousness. It would be most accurate for the nurse to tell family members that the test measures which of the following conditions?
+A. Extent of intracranial bleeding.
+B. Sites of brain injury.
+C. Activity of the brain.
+D. Percent of functional brain tissue.
+ANSWER:C
+Question: 137.
+The nurse is planning care for the client in spinal shock. Which of the following actions would be least helpful in minimizing the effects of vasodilation below the level of the injury?
+A. Monitoring vital signs before and during position changes.
+B. Using vasopressor medications as prescribed.
+  C. Moving the client quickly as one unit.
+D. Applying Teds or compression stockings.
+ANSWER:C
+Question: 138.
+A client is admitted with a spinal cord injury at the level of T12. He has limited movement of his upper extremities. Which of the following medications would be used to control edema of the spinal cord?
+A. acetazolamide (Diamox)
+B. furosemide (Lasix)
+C. methylprednisolone (Solu-Medrol)
+D. sodium bicarbonate
+ANSWER:C
+Question: 139.
+After a hypophysectomy, vasopressin is given IM for which of the following reasons?
+A. To treat growth failure.
+B. To prevent syndrome of inappropriate antidiuretic hormone (SIADH).
+C. To reduce cerebral edema and lower intracranial pressure.
+D. To replace antidiuretic hormone (ADH) normally secreted by the pituitary
+ANSWER:D
+Question: 140.
+A client with a T1 spinal cord injury arrives at the emergency department with a BP of 82/40, pulse 34, dry skin, and flaccid paralysis of the lower extremities. Which of the following conditions would most likely be suspected?
+A. Hypovolemic shock
+B. Cardiogenic shock
+C. Neurogenic shock
+D. Septic shock
+ANSWER:C
+Question: 141.
+A client with head trauma develops a urine output of 300 ml/hr, dry skin, and dry mucous membranes. Which of the following nursing interventions is the most appropriate to perform initially?
+A. Evaluate urine specific gravity.
+B. Anticipate treatment for renal failure.
+C. Provide emollients to the skin to prevent breakdown.
+D. Slow down the IV fluids and notify the physician.
+ANSWER:A
+Question: 142.
+A client with C7 quadriplegia is flushed and anxious and complains of a pounding headache. Which of the following symptoms would also be anticipated?
+A. Decreased urine output or oliguria
+B. Hypertension and bradycardia
+C. Respiratory depression
+D. Symptoms of shock
+ANSWER:B
+Question: 143.
+A 30-year-old was admitted to the progressive care unit with a C5 fracture from a motorcycle accident. Which of the following assessments would take priority?
+A. Bladder distension
+B. Neurological deficit
+C. Pulse ox readings
+D. The client’s feelings
+about the injury
+ANSWER:C
+Question: 144.
+When evaluating an ABG from a client with a subdural hematoma, the nurse notes the PaCO2 is 30 mm Hg. Which of the following responses best describes this result?
+A. Appropriate; lowering carbon dioxide (CO2) reduces intracranial pressure (ICP).
+B. Emergent; the client is poorly oxygenated.
+C. Normal
+D. Significant; the client has alveolar hypoventilation
+ANSWER:A
+Question: 145.
+A client with a C6 spinal injury would most likely have which of the following symptoms?
+A. Aphasia
+B. Hemiparesis
+C. Paraplegia
+D. Tetraplegia
+ANSWER:D
+Question: 146.
+Which statement made by an adult patient demonstrates an understanding of healthy nutrition teaching?
+A. I need to stop eating red meat.
+B. I will increase the servings of fruit juice to four a day.
+C. I will make sure that I eat a balanced diet and exercise regularly.
+D. I will not eat so many dark green vegetables and eat more yellow vegetables.
+ANSWER:C
+Question: 147.
+The nurse suspects that the patient receiving parenteral nutrition (PN) through a central venous catheter (CVC) has an air embolus. What action does the nurse need to take first?
+A. Raise the head of the bed to 90 degrees
+B. Turn patient to left lateral decubitus position
+C. Notify health care provider immediately
+D. Have the patient perform the Valsalva maneuver
+ANSWER:B
+Question: 148.
+The acceptable macronutrient distribution range for carbohydrates is
+a. 20-30% of cal
+b. 45-65% of cal
+c. 10-25% of cal
+d. 30-45% of cal
+ANSWER:B
+Question: 149.
+Which correctly defines the total fiber adequate intake?
+a. 25 g/day for women and 38 g/day for men
+b. 10 g/day for women and 15 g/day for men
+c. 30 g/day for women and 35 g/day for men
+d. 28 g/day for women and 33 g/day for men
+ANSWER:A
+Question: 150.
+Based on the knowledge of peptic ulcer disease (PUD), the nurse anticipates the presence of which bacteria when reviewing the laboratory data for a patient suspected of having PUD?
+A.Micrococcus
+B.Staphylococcus
+C.Corynebacterium
+D.Helicobacter pylori
+ANSWER:D
+
+Question: 151.
+Which vitamin aids in iron absorption?
+a. vitamin B
+b. vitamin C
+c. vitamin E
+d. vitamin D
+ANSWER:B
+Question: 152.
+is used for synthesis of thyroxine, the thyroid hormone that helps regulate metabolism.
+A. Iron
+b. Sulfur
+c. Iodine
+d. Phosphorus
+ANSWER:C
+Question: 153.
+A medication that decreases BMR is
+a. Epinephrine
+b. Levothyroxine
+c. Amitriptyline
+d. All of the above
+ANSWER:C
+Question: 154.
+A patient who has been hospitalized after experiencing a heart attack will most likely receive a diet consisting of:
+A. Low fat, low sodium, and low carbohydrates
+B. Low fat, low sodium, and high carbohydrates
+C. Low fat, high protein, and high carbohydrates
+D. Liquids for several days, progressing to a soft and then a regular diet
+ANSWER:B
+Question: 155.
+In the continuous infusion method of enteral feeding, the feeding tubes should be flushed with water every ___ hr.
+A. 1
+b. 4
+c. 8
+d. 12
+ANSWER:B
+Question: 156.
+Which diet is recommended for a patient with gout?
+A. High purine diet
+B. Low purine diet
+C. High protein diet
+D. High fructose diet
+ANSWER:B
+Question: 157.
+A patient with liver cirrhosis should avoid which nutrient most?
+A. Carbohydrates
+B. Fats
+C. Protein
+D. Fiber
+ANSWER:C
+Question: 158.
+Which electrolyte imbalance is common in dehydration?
+A. Hypernatremia
+B. Hyponatremia
+C. Hypocalcemia
+D. Hypermagnesemia
+ANSWER:A
+Question: 159.
+A patient with pancreatitis should receive:
+A. High fat diet
+B. Low fat diet
+C. High protein diet only
+D. No carbohydrate intake
+ANSWER:B
+Question: 160.
+Which nutrient provides the body with the highest energy per gram?
+A. Carbohydrates
+B. Proteins
+C. Fats
+D. Minerals
+ANSWER:C
+Question: 161.
+A patient with osteoporosis should increase intake of:
+A. Iron
+B. Calcium
+C. Sodium
+D. Potassium
+ANSWER:B
+Question: 162.
+Which condition requires fluid restriction?
+A. Diarrhea
+B. SIADH
+C. Diabetic insipidus
+D. Vomiting
+ANSWER:B
+Question: 163.
+Which vitamin deficiency causes scurvy?
+A. Vitamin A
+B. Vitamin B12
+C. Vitamin C
+D. Vitamin D
+ANSWER:C
+Question: 164.
+Which food is a complete protein?
+A. Beans
+B. Rice
+C. Egg
+D. Vegetables
+ANSWER:C
+Question: 165.
+Which diet is best for a patient with diarrhea?
+A. High fiber diet
+B. Low residue diet
+C. High fat diet
+D. High protein diet
+ANSWER:B
+Question: 166.
+QALY stands for: 
+A. Quality Adjusted Life Year 
+B. Quantity Adjusted Life Yield 
+C. Quick Access to Life Years 
+D. Qualified Annual Life Year
+ANSWER:A
+Question: 167.
+Cost-effectiveness analysis compares interventions using: 
+A. Monetary costs vs monetary benefits 
+B. Cost per natural unit of outcome, e.g. cost per life saved 
+C. Total budget impact only 
+D. Patient satisfaction scores
+ANSWER:B
+Question: 168.
+If Treatment A costs $10,000 and gives 2 QALYs, and Treatment B costs $15,000 and gives 4 QALYs, which is more cost-effective? 
+Question: A.
+Treatment B Is more cost-effective 
+B. Treatment A is more cost-effective 
+C. Both are equal 
+D. Cannot determine
+ANSWER:A
+Question: 169.
+Capitation payment means: 
+A. Hospitals are paid per bed occupied 
+B. Providers receive a set amount per patient for a time period, regardless of services used 
+C. Patients pay at point of service 
+D. Payment is based on health outcomes only
+ANSWER:B
+Question: 170.
+DALY stands for: 
+A. Disability Adjusted Life Year 
+B. Daily Adjusted Life Yield 
+C. Disease Assessment Level Year 
+D. Direct Allocation for Life Years
+ANSWER:A
+Question: 171.
+Price elasticity of demand for emergency surgery is likely to be: 
+A. Highly elastic 
+B. Highly inelastic 
+C. Unit elastic 
+D. Perfectly elastic
+ANSWER:B
+Question: 172.
+A programme costs $20,000 and saves 5 lives. Cost-effectiveness ratio is: A. $4,000 per life saved
+B. $5,000 per life saved
+C. $10,000 per life saved
+D. $25,000 per life saved
+ANSWER:A
+Question: 173.
+Marginal cost refers to: A. Total hospital expenditure
+B. Cost of producing one additional unit of service
+C. Average cost of care
+D. Cost of building a hospital
+ANSWER:B
+Question: 174.
+Cost-benefit analysis expresses both inputs and outcomes in: A. QALYs
+B. DALYs
+C. Monetary terms
+D. Utility scores
+ANSWER:C
+Question: 175.
+Which is an example of indirect cost in healthcare? A. Drug cost
+B. Surgery fee
+C. Loss of productivity due to illness
+D. Hospital
+ANSWER:C
+Question: 176.
+Cost-minimization analysis is used when: A. Outcomes differ
+B. Outcomes are identical
+C. Costs are unknown
+D. Benefits are uncertain
+ANSWER:B
+Question: 177.
+Which is a variable cost?
+A. Building rent
+B. Equipment purchase
+C. Drugs and consumables
+D. Depreciation
+ANSWER:C
+Question: 178.
+Which is a macroeconomic factor affecting healthcare demand?
+A. Patient age
+B. National income
+C. Drug side effects
+D. Doctor skill
+ANSWER:B
+Question: 179.
+Opportunity cost in nursing decisions is best illustrated by:
+A. Choosing one patient over another due to time constraints
+B. Buying cheap drugs
+C. Using hospital insurance
+D. Increasing staffing
+ANSWER:A
+Question: 180.
+If cost increases and effectiveness remains the same, ICER:
+A. Decreases
+B. Increases
+C. Becomes zero
+D. Becomes negative
+ANSWER:B
+Question: 181.
+Risk in entrepreneurship refers to:
+A. Guaranteed failure
+B. Uncertainty of outcomes
+C. Fixed profit
+D. Government control
+ANSWER:B
+Question: 182.
+Gross Domestic Product (GDP) differs from GNP because GDP:
+A. Includes foreign income
+B. Excludes depreciation
+C. Measures production within a country’s borders
+D. Includes remittances
+ANSWER:C
+Question: 183.
+Which item is NOT included in national income calculation?
+A. Wages
+B. Rent
+C. Transfer payments
+D. Profits
+ANSWER:C
+Question: 184.
+Disposable income is:
+A. Total income before tax
+B. Income after taxes
+C. Government revenue
+D. Income before taxes
+ANSWER:B
+Question: 185.
+Per capita income is calculated as:
+A. GDP × population
+B. GDP ÷ population
+C. National debt ÷ population
+D. Tax revenue ÷ population
+ANSWER:B
+Question: 186.
+Oligopoly refers to:
+A. One seller
+B. Many small firms
+C. Few large firms dominate market
+D. No competition
+ANSWER:C
+Question: 187.
+A subsidy in healthcare is used to:
+A. Increase cost
+B. Reduce affordability
+C. Make services more affordable
+D. Reduce supply
+ANSWER:C
+Question: 188.
+Which vitamin deficiency is most commonly associated with chronic malabsorption of fats?
+A. Vitamin B9
+B. Vitamin C
+C. Vitamin A
+D. Vitamin B12
+ANSWER:C
+Question: 189.
+The myenteric plexus is located in which layer of the alimentary canal?
+A. mucosa
+B. serosa
+C. lamina propria
+D. muscularis
+ANSWER:D
+Question: 190.
+The nerve plexus that controls secretions by the gastrointestinal tract is located in the
+A. mucosa
+B. submucosa
+C. muscularis
+D. serosa
+ANSWER:B
+Question: 191.
+Which two regions of the large intestine are retroperitoneal?
+A. ascending colon and sigmoid colon
+B. descending colon and sigmoid colon
+C. ascending colon and descending colon
+D. transverse colon and sigmoid colon
+ANSWER:C
+Question: 192.
+The crypts of Lieberkuhn (intestinal glands) are found in the
+A. gastric pits
+B. large intestine
+C. small intestine
+D. pancreas
+ANSWER:C
+Question: 193.
+All lipids are absorbed through the brush border of the small intestine by the process of:
+A. facilitated diffusion
+B. simple diffusion
+C. active transport
+D. pinocytosis
+ANSWER:B
+Question: 194.
+The nurse is caring for a client following a gastrojejunostomy (Billroth II procedure). Which postoperative prescription should the nurse question and verify?
+A. Leg exercises
+B. Early ambulation
+C. Irrigating the nasogastric tube
+D. Coughing and deep-breathing exercises
+ANSWER:C
+Question: 195.
+The nurse is providing discharge instructions to a client following gastrectomy and should instruct the client to take which measure to assist in preventing dumping syndrome?
+A. Ambulate following a meal.
+B. Eat high-carbohydrate foods.
+C. Limit the fluids taken with meals.
+D. Sit in a high Fowler’s position during meals.
+ANSWER:C
+Question: 196.
+The nurse is doing an admission assessment on a client with a history of duodenal ulcer. To determine whether the problem is currently active, the nurse should assess the client for which sign(s)/symptom(s) of duodenal ulcer?
+A. Weight loss
+B. Nausea and vomiting
+C. Pain relieved by food intake
+D. Pain radiating down the right arm
+ANSWER:C
+Question: 197.
+A client with hiatal hernia chronically experiences heartburn following meals. The nurse should plan to teach the client to avoid which action because it is contraindicated with a hiatal hernia?
+A. Lying recumbent following meals
+B. Consuming small, frequent, bland meals
+C. Taking H2-receptor antagonist medication
+D. Raising the head of the bed on 6-inch (15 cm) blocks
+ANSWER:A
+Question: 198.
+The nurse provides instructions to a client about measures to treat inflammatory bowel syndrome (IBS). Which statement by the client indicates a need for further teaching?
+A. "I need to limit my intake of dietary fiber.”
+B. “I need to drink plenty, at least 8 to 10 cups daily.”
+C. “I need to eat regular meals and chew my food well.”
+D. “I will take the prescribed medications because they will regulate my bowel patterns.”
+ANSWER:A
+Question: 199.
+The nurse inspects the color of the drainage from a nasogastric tube on a postoperative client approximately 24 hours after gastric surgery. Which finding indicates the need to notify the health care provider (HCP)?
+A. Dark red drainage
+B. Dark brown drainage
+C. Green-tinged drainage
+D. Light yellowish-brown drainage
+ANSWER:A
+Question: 200.
+After undergoing Billroth I gastric surgery, the client experiences fatigue and complains of numbness and tingling in the feet and difficulties with balance. On the basis of these symptoms, the nurse suspects which postoperative complication?
+A. Stroke
+B. Pernicious anemia
+C. Megaloblastic anemia
+D. Peripheral arterial disease
+ANSWER:B
+
+Question: 201.
+Sulfasalazine is prescribed for a client with a diagnosis of ulcerative colitis, and the nurse instructs the client about the medication. Which statement made by the client indicates a need for further teaching?
+A. “The medication will cause constipation.”
+B. “I need to take the medication with meals.”
+C. “I may have increased sensitivity to sunlight.”
+D. “This medication should be taken as prescribed.”
+ANSWER:A
+Question: 202.
+A client with peptic ulcer disease suddenly develops severe epigastric pain, a rigid abdomen, and absent bowel sounds. What complication should the nurse suspect first?
+A. Gastritis
+B. Intestinal obstruction
+C. Perforation
+D. Appendicitis
+ANSWER:C
+Question: 203.
+A nurse is caring for a client with liver cirrhosis. Which assessment finding should be reported immediately?
+A. Spider angiomas
+B. Jaundice
+C. Hematemesis
+D. Ascites
+ANSWER:C
+Question: 204.
+Which laboratory value is most indicative of acute pancreatitis?
+A. Elevated troponin
+B. Elevated amylase and lipase
+C. Low hemoglobin
+D. Elevated creatinine
+ANSWER:B
+Question: 205.
+A client with hepatitis asks how the disease spreads. Which response by the nurse is correct for hepatitis A?
+A. “It spreads mainly through contaminated food and water.”
+B. “It spreads primarily through sexual contact.”
+C. “It spreads through blood transfusion only.”
+D. “It spreads through airborne droplets.”
+ANSWER:A
+Question: 206.
+A client develops dumping syndrome after gastric surgery. Which instruction should the nurse provide?
+A. Drink liquids with meals
+B. Eat high-carbohydrate meals
+C. Lie flat after eating
+D. Eat small frequent meals
+ANSWER:D
+Question: 207.
+A client with liver failure becomes confused and restless. Which substance accumulation is most likely responsible?
+A. Calcium
+B. Ammonia
+C. Insulin
+D. Albumin
+ANSWER:B
+Question: 208.
+A client with Crohn disease develops fever, abdominal mass, and persistent diarrhea. Which complication does the nurse suspect?
+A. Intussusception
+B. Fistula formation
+C. Pyloric stenosis
+D. Achalasia
+ANSWER:B
+Question: 209.
+Which of the following conditions can cause a hiatal hernia?
+A. Increased intrathoracic pressure.
+B. Weakness of the esophageal muscle.
+C. Increased esophageal muscle pressure.
+D. Weakness of the diaphragmatic muscle.
+ANSWER:D
+Question: 210.
+Which assessment finding most strongly suggests paralytic ileus rather than mechanical intestinal obstruction?
+A. Colicky abdominal pain
+B. High-pitched bowel sounds
+C. Absent bowel sounds
+D. Visible peristaltic waves
+ANSWER:C
+Question: 211.
+A client with hepatic encephalopathy is prescribed Lactulose. Which laboratory value is most important for the nurse to monitor?
+A. Troponin
+B. Serum ammonia
+C. Creatinine kinase
+D. Calcium
+ANSWER:B
+Question: 212.
+Which medication would the nurse expect to administer to a client with bleeding esophageal varices?
+A. Octreotide
+B. Metformin
+C. Digoxin
+D. Furosemide
+ANSWER:A
+Question: 213.
+A client with prolonged vomiting is most likely to exhibit which arterial blood gas result?
+A. Metabolic acidosis
+B. Respiratory acidosis
+C. Metabolic alkalosis
+D. Respiratory alkalosis
+ANSWER:C
+Question: 214.
+A client receiving chemotherapy develops oral ulcers. This is called:
+A. Anaphylaxis
+B. Mucositis
+C. Stomatitis
+D. Xerostomia
+ANSWER:B
+Question: 215.
+Which cancer marker is most associated with prostate cancer?
+A. AFP
+B. CA-125
+C. PSA
+D. CEA
+ANSWER:C
+Question: 216.
+Which drug class is most associated with hemorrhagic cystitis?
+A. Anthracyclines
+B. Alkylating agents (cyclophosphamide)
+C. Antimetabolites
+D. Taxanes
+ANSWER:B
+Question: 217.
+Which cancer is most associated with Epstein-Barr virus?
+A. Lung cancer
+B. Burkitt lymphoma
+C. Pancreatic cancer
+D. Colon cancer
+ANSWER:B
+Question: 218.
+Tumor staging T3 means:
+A. No metastasis
+B. Tumor invasion into deeper tissues
+C. Distant metastasis
+D. Benign tumor
+ANSWER:B
+Question: 219.
+A nurse prioritizes which complication in leukemia?
+A. Infection
+B. Hypertension
+C. Bradycardia
+D. Jaundice
+ANSWER:A
+Question: 220.
+Which electrolyte imbalance is common in bone metastasis?
+A. Hypocalcemia
+B. Hypercalcemia
+C. Hypokalemia
+D. Hypernatremia
+ANSWER:B
+Question: 221.
+Which drug is used for chemotherapy-induced nausea?
+A. Ondansetron
+B. Digoxin
+C. Heparin
+D. Furosemide
+ANSWER:A
+Question: 222.
+Turner syndrome karyotype is:
+A. XXY
+B. XY
+C. XXX
+D. XO
+ANSWER:D
+Question: 223.
+Which condition results from nondisjunction?
+A. Sickle cell disease
+B. Albinism
+C. Hemophilia
+D. Down syndrome
+ANSWER:D
+Question: 224.
+A client with Stage IV metastatic lung cancer tells the nurse during a quiet moment, “I am so tired of the chemotherapy, the nausea, and the pain. I just want to stop all these treatments and go home to be in my own bed, but I’m afraid my family will be angry and think I’m giving up.”
+Which response by the nurse is the most therapeutic and demonstrates effective client advocacy?
+A. “You really should try to continue the treatment for a few more weeks; your family just wants you to get better.”
+B. “I will call the doctor immediately and tell them to cancel your chemotherapy orders and discharge you today.”
+C. “It sounds like you are feeling very conflicted between what you want and what your family wants. Would you be open to a family meeting with the Palliative Care team to discuss your goals?”
+D. “You shouldn’t feel that way. Stopping treatment now would mean letting the cancer win after you have
+fought so hard.”
+ANSWER:C
+Question: 225.
+During a class on exercise for diabetic clients, a female client asks the nurse educator how often to exercise. The nurse educator advises the clients to exercise how often to meet the goals of planned exercise?
+A. At least once a week
+b. At least three times a week
+c. At least five times a week
+d. Every day
+ANSWER:B
+Question: 226.
+A female client with hypothyroidism (myxedema) is receiving levothyroxine (Synthroid), 25 mcg P.O. daily. Which finding should nurse Bliss recognize as an adverse drug effect?
+A. Dysuria
+b. Leg cramps
+c. Tachycardia
+d. Blurred vision
+ANSWER:C
+Question: 227.
+A 67-year-old male client has been complaining of sleeping more, increased urination, anorexia, weakness, irritability, depression, and bone pain that interferes with her going outdoors. Based on these assessment findings, nurse Richard would suspect which of the following disorders?
+A. Diabetes mellitus
+b. Diabetes insipidus
+c. Hypoparathyroidism
+d. Hyperparathyroidism
+ANSWER:B
+Question: 228.
+When caring for a male client with diabetes insipidus, nurse Juliet expects to administer:
+a. vasopressin (Pitressin Synthetic).
+b. furosemide (Lasix).
+c. regular insulin.
+d. 10% dextrose.
+ANSWER:A
+Question: 229.
+The nurse is aware that the following is the most common cause of hyperaldosteronism?
+a. Excessive sodium intake
+b. A pituitary adenoma
+c. Deficient potassium intake
+d. An adrenal adenoma
+ANSWER:D
+Question: 230.
+A male client with type 1 diabetes mellitus has a highly elevated glycosylated hemoglobin (Hb) test result. In discussing the result with the client, nurse Sharmaine would be most accurate in stating:
+A. “The test needs to be repeated following a 12-hour fast.”
+b. “It looks like you aren’t following the prescribed diabetic diet.”
+c. “It tells us about your sugar control for the last 3 months.”
+d. “Your insulin regimen needs to be altered significantly.”
+ANSWER:C
+Question: 231.
+Following a unilateral adrenalectomy, nurse Betty would assess for hyperkalemia shown by which of the following?
+A. Muscle weakness
+b. Tremors
+c. Diaphoresis
+d. Constipation
+ANSWER:A
+Question: 232.
+Early this morning, a female client had a subtotal thyroidectomy. During evening rounds, nurse Tina assesses the client, who now has nausea, a temperature of 105° F (40.5° C), tachycardia, and extreme restlessness. What is the most likely cause of these signs?
+A. Diabetic ketoacidosis
+b. Thyroid crisis
+c. Hypoglycemia
+d. Tetany
+ANSWER:B
+Question: 233.
+For a male client with hyperglycemia, which assessment finding best supports a nursing diagnosis of Deficient fluid volume?
+A. Cool, clammy skin
+b. Distended neck veins
+c. Increased urine osmolarity
+d. Decreased serum sodium level
+ANSWER:C
+Question: 234.
+When assessing a male client with pheochromocytoma, a tumor of the adrenal medulla that secretes excessive catecholamine, nurse April is most likely to detect:
+A. a blood pressure of 130/70 mm Hg.
+b. a blood glucose level of 130 mg/dl.
+c. bradycardia.
+d. a blood pressure of 176/88 mm Hg.
+ANSWER:D
+Question: 235.
+A male client is admitted for treatment of the syndrome of inappropriate antidiuretic hormone (SIADH). Which nursing intervention is appropriate?
+A. Infusing I.V. fluids rapidly as ordered
+b. Encouraging increased oral intake
+c. Restricting fluids
+d. Administering glucose-containing I.V. fluids as ordered
+ANSWER:C
+Question: 236.
+A female client has a serum calcium level of 7.2 mg/dl. During the physical examination, nurse Esther expects to assess:
+a. Trousseau's sign.
+b. Homans’ sign.
+c. Hegar’s sign.
+d. Goodell’s sign.
+ANSWER:A
+Question: 237.
+Which outcome indicates that treatment of a male client with diabetes insipidus has been effective?
+a. Fluid intake is less than 2,500 ml/day.
+b. Urine output measures more than 200 ml/hour.
+c. Blood pressure is 90/50 mm Hg.
+d. The heart rate is 126 beats/minute
+ANSWER:A
+Question: 238.
+Jemma, who weighs 210 lb (95 kg) and has been diagnosed with hyperglycemia tells the nurse that her husband sleeps in another room because her snoring keeps him awake. The nurse notices that she has large hands and a hoarse voice. Which of the following would the nurse suspect as a possible cause of the client’s hyperglycemia?
+A. Acromegaly
+b. Type 1 diabetes mellitus
+c. Hypothyroidism
+d. Deficient growth hormone
+ANSWER:A
+Question: 239.
+An indication of Chvostek’ sign is:
+Answers:
+A. Twitching of the lips after tapping the face
+B. Elevated blood sugar after glucose infusion
+C. Inability to hold one’s arms straight
+D. Spasms of the hand after blood circulation is cut off
+ANSWER:A
+Question: 240.
+Which of the following would be an indication of Androgen Insensitivity Syndrome?
+Answers:
+A. A 33 year old woman with a karyotype of XY
+B. A 16 year old male with reduced kidney function
+C. Failure to respond to cortisol therapy
+D. Several pregnancies all of which ended in miscarriages
+ANSWER:A
+Question: 241.
+A client with Graves’ disease experiences a thyroid storm and has tachycardia and hypertension. What medication is most likely to be used?
+Answers:
+A. Levofloxcin
+B. Chlorothiazide
+C. Percocet
+D. Propylthiouracil
+ANSWER:D
+Question: 242.
+What group is the largest subculture of the healthcare system?
+a. Nurses
+b. Physicians
+c. Social workers
+d. Physical therapists
+ANSWER:A
+Question: 243.
+A nurse states, “I know I am cleaner than most of my patients.” What does this statement indicate?
+A. Cultural assimilation
+b. Negligence
+c. Ethnocentrism
+d. Stereotyping
+ANSWER:C
+Question: 244.
+Although all of the following are important to culturally competent nursing care, which one is the most basic?
+a. Learning another language
+b. Having significant information
+c. Treating each person as an individual
+d. Recognizing the importance of family
+ANSWER:C
+Question: 245.
+A nurse has volunteered to give influenza injections at a local clinic. What level of care is he demonstrating?
+A. Tertiary
+b. Secondary
+c. Primary
+d. Promotive
+ANSWER:C
+Question: 246.
+A nurse is asked to teach a group of young adults a health lifestyle. One young man says, “ I stopped eating fast foods to lose weight.” What model of health or illness explains this behavior?
+A. Health-illness continuum
+b. Agent-host-environment model
+c. Health promotion model
+d. Health belief model
+ANSWER:C
+Question: 247.
+What is the best broad definition of family?
+a. A father, a mother, and children
+b. A group whose members are biologically related
+c. A unit that includes aunts, uncles, and cousins
+d. A group of people who live together
+ANSWER:D
+Question: 248.
+John and Mary, each parents of one child are both divorce. When they marry, the family structure that is formed will be described as which of the following?
+A. Nuclear family
+b. Extended family
+c. Blended family
+d. Cohabiting family
+ANSWER:C
+Question: 249.
+A nurse develops a care plan that focuses on helping patients perform activities necessary to maintain health and well-being independently. The nurse believes that nursing is required only when individuals are unable to meet their own self-care needs. Which nursing theory best reflects this perspective?
+A. Science of Unitary Human Beings
+B. Goal Attainment Theory
+C. Self-Care Deficit Nursing Theory
+D. Adaptation Model
+ANSWER:C
+Question: 250.
+A nurse assesses a hospitalized client and identifies several internal and external stressors, including infection, anxiety, and environmental noise, that may disrupt the client’s stability. The nurse plans interventions aimed at reducing these stressors and maintaining system stability. Which nursing theory best supports this approach?
+A. Systems Model
+B. Human Caring Theory
+C. Adaptation Model
+D. Self-Care Deficit Nursing Theory
+ANSWER:A

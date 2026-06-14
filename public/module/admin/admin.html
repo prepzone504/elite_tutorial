@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,15 +8,18 @@
   <title>Admin Panel | Elite Tutorial</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@1,700&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="admin.css" />
-  
+
   <!-- Supabase & Auth -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../../js/supabase-config.js"></script>
   <script src="../../js/supabase-client.js"></script>
   <script src="../../js/auth.js"></script>
 </head>
+
 <body>
 
   <!-- No sidebar in admin -->
@@ -71,10 +75,13 @@
           </svg>
         </button>
         <a href="../dashboard/dashboard.html" class="admin-back-btn" title="Back to Dashboard">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
         </a>
         <div class="admin-topbar-brand">
-          <div class="admin-topbar-logo">Z</div>
+          <div class="admin-topbar-logo">E</div>
           <span class="admin-topbar-title">🛡️ Admin Panel</span>
         </div>
       </div>
@@ -96,7 +103,7 @@
       <div class="admin-tabs">
         <button class="admin-tab active" data-tab="admin-dashboard">📊 Dashboard</button>
         <button class="admin-tab" data-tab="admin-studio">✨ Content Studio</button>
-
+        <button class="admin-tab" data-tab="admin-sharing">🔗 Sharing of Questions</button>
       </div>
 
       <!-- Admin Tab: Dashboard -->
@@ -135,7 +142,8 @@
         <div class="admin-recent-card">
           <div class="card-header">
             <h3 class="card-title">⚡ Recent Submissions</h3>
-            <span class="card-badge" style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);color:#9d6aff;">Live</span>
+            <span class="card-badge"
+              style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);color:#9d6aff;">Live</span>
           </div>
           <div class="table-scroll">
             <table class="admin-table">
@@ -150,7 +158,9 @@
               </thead>
               <tbody id="admin-submissions-list">
                 <!-- Dynamically populated -->
-                <tr><td colspan="5" style="text-align:center; padding: 20px;">Loading submissions...</td></tr>
+                <tr>
+                  <td colspan="5" style="text-align:center; padding: 20px;">Loading submissions...</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -161,7 +171,8 @@
       <div class="admin-tab-panel" id="admin-studio">
         <div class="studio-intro">
           <h3 class="studio-intro-title">AI Content Studio</h3>
-          <p class="studio-intro-desc">Generate exam sets, flash card decks, and Elite Puzzle arenas with AI — then deploy to all students or selected cohorts.</p>
+          <p class="studio-intro-desc">Generate exam sets, flash card decks, and Elite Puzzle arenas with AI — then
+            deploy to all students or selected cohorts.</p>
         </div>
         <div class="studio-cards-grid">
           <a href="exam_question_generation.html" class="studio-card studio-card-exam">
@@ -169,7 +180,8 @@
             <div class="studio-card-icon">📋</div>
             <div class="studio-card-body">
               <h4 class="studio-card-title">Exam Question Generator</h4>
-              <p class="studio-card-desc">Prompt AI to build full exam sets — e.g. 40 Mathematics questions with A–D/E options, difficulty tiers, and model selection.</p>
+              <p class="studio-card-desc">Prompt AI to build full exam sets — e.g. 40 Mathematics questions with A–D/E
+                options, difficulty tiers, and model selection.</p>
               <ul class="studio-card-features">
                 <li>Custom AI prompt & subject</li>
                 <li>4 or 5 options per question</li>
@@ -183,7 +195,8 @@
             <div class="studio-card-icon">🃏</div>
             <div class="studio-card-body">
               <h4 class="studio-card-title">Flash Card Generator</h4>
-              <p class="studio-card-desc">Create study decks with AI-generated front/back pairs. Package by subject and push decks to your students.</p>
+              <p class="studio-card-desc">Create study decks with AI-generated front/back pairs. Package by subject and
+                push decks to your students.</p>
               <ul class="studio-card-features">
                 <li>Deck name & description</li>
                 <li>5–50 cards per generation</li>
@@ -197,7 +210,8 @@
             <div class="studio-card-icon">🧩</div>
             <div class="studio-card-body">
               <h4 class="studio-card-title">Elite Puzzle Generator</h4>
-              <p class="studio-card-desc">Build timed puzzle arenas with scoring rules, round count, and catch-the-ball answer options for the game module.</p>
+              <p class="studio-card-desc">Build timed puzzle arenas with scoring rules, round count, and catch-the-ball
+                answer options for the game module.</p>
               <ul class="studio-card-features">
                 <li>Timer & +/- scoring</li>
                 <li>Configurable rounds</li>
@@ -205,6 +219,46 @@
               </ul>
             </div>
             <span class="studio-card-cta">Open Studio <span>→</span></span>
+          </a>
+          <a href="exam_discussion_generation.html" class="studio-card" style="border-color: rgba(224, 28, 28, 0.3);">
+            <div class="studio-card-glow" style="background: radial-gradient(circle at top right, rgba(224,28,28,0.2), transparent 70%);"></div>
+            <div class="studio-card-icon" style="color: #e01c1c; background: rgba(224,28,28,0.1);">💬</div>
+            <div class="studio-card-body">
+              <h4 class="studio-card-title">Exam Discussion Generator</h4>
+              <p class="studio-card-desc">Create guided chat-based discussion rounds with AI. Generate multiple phases of questions and explanations for the Exam Discussion chat bot.</p>
+              <ul class="studio-card-features">
+                <li>Timed vote phases</li>
+                <li>Detailed explanations</li>
+                <li>Simulated or real-time voting</li>
+              </ul>
+            </div>
+            <span class="studio-card-cta">Open Studio <span>→</span></span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Admin Tab: Sharing of Questions -->
+      <div class="admin-tab-panel" id="admin-sharing">
+        <div class="studio-intro">
+          <h3 class="studio-intro-title">Sharing of Questions</h3>
+          <p class="studio-intro-desc">Assign specific exams to selected students. Unassigned exams will remain hidden
+            from students.</p>
+        </div>
+        <div class="studio-cards-grid" style="grid-template-columns: 1fr; max-width: 500px;">
+          <a href="sharing_question.html" class="studio-card studio-card-exam">
+            <div class="studio-card-glow"></div>
+            <div class="studio-card-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">🔗</div>
+            <div class="studio-card-body">
+              <h4 class="studio-card-title">Manage Assignments</h4>
+              <p class="studio-card-desc">Select an exam batch and explicitly choose which students can view and attempt
+                it.</p>
+              <ul class="studio-card-features">
+                <li>Assign exams dynamically</li>
+                <li>View selected/unselected cohorts</li>
+                <li>Control exam visibility</li>
+              </ul>
+            </div>
+            <span class="studio-card-cta">Manage Sharing <span>→</span></span>
           </a>
         </div>
       </div>
@@ -219,12 +273,15 @@
 
   <!-- User Detail Modal -->
   <div class="login-overlay" id="user-detail-modal" style="z-index: 10000; align-items: center; padding: 20px;">
-    <div class="admin-recent-card" style="width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative;">
-      <div class="card-header" style="position: sticky; top: -24px; background: var(--dark-700); z-index: 10; padding: 24px 0 20px 0; border-bottom: 1px solid var(--glass-border); margin-bottom: 20px; margin-top: -24px;">
+    <div class="admin-recent-card"
+      style="width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative;">
+      <div class="card-header"
+        style="position: sticky; top: -24px; background: var(--dark-700); z-index: 10; padding: 24px 0 20px 0; border-bottom: 1px solid var(--glass-border); margin-bottom: 20px; margin-top: -24px;">
         <h3 class="card-title" id="ud-student-name">Student Detail</h3>
-        <button id="ud-close-btn" style="background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+        <button id="ud-close-btn"
+          style="background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--text-muted);">&times;</button>
       </div>
-      
+
       <div class="admin-stats-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 30px;">
         <div class="admin-stat-card" style="--a-color:#3b82f6;">
           <div class="admin-stat-icon" style="background:rgba(59,130,246,0.12);color:#60a5fa;">📋</div>
@@ -264,4 +321,5 @@
 
   <script src="admin.js"></script>
 </body>
+
 </html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #080808;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+    .logo span {
+      color: #e01c1c;
+    }
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+    .desc {
+      color: #a0a0a0;
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 30px;
+    }
+    .otp-code {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: 8px;
+      color: #e01c1c;
+      background-color: #1e1e1e;
+      padding: 20px 0;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      display: inline-block;
+      width: 100%;
+    }
+    .footer {
+      font-size: 13px;
+      color: #6a6a6a;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">Elite <span>Tutorial</span></div>
+    <div class="title">Your Verification Code</div>
+    <div class="desc">
+      Use the following One-Time Password (OTP) to securely sign in or register to your Elite Tutorial account. This code expires in <strong>10 minutes</strong>.
+    </div>
+    <div class="otp-code">{{ .Token }}</div>
+    <div class="desc" style="font-size: 14px; margin-bottom: 0;">
+      If you didn't request this code, you can safely ignore this email.
+    </div>
+    <div class="footer">
+      &copy; Elite Tutorial. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>

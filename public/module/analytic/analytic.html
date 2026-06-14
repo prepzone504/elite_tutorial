@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics Dashboard | Elite Tutorial</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="analytic.css" />
+</head>
+<body>
+  <!-- Sidebar / Navbar (Simplified for mobile) -->
+  <nav class="navbar">
+    <a href="../dashboard/dashboard.html" class="nav-brand">
+      <div class="brand-icon">Z</div>
+      <span>Elite <strong>Tutorial</strong></span>
+    </a>
+    <a href="../dashboard/dashboard.html" class="back-link">← Back</a>
+  </nav>
+
+  <main class="analytics-container">
+    <header class="page-header">
+      <h1 class="page-title">Performance Analytics</h1>
+      <p class="page-subtitle">Track your progress, view detailed statistics, and analyze your exam results.</p>
+    </header>
+
+    <!-- Top KPIs -->
+    <section class="kpi-grid" id="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon">📝</div>
+        <div class="kpi-info">
+          <p class="kpi-label">Exams Taken</p>
+          <h2 class="kpi-value" id="kpi-total-exams">--</h2>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🎯</div>
+        <div class="kpi-info">
+          <p class="kpi-label">Average Score</p>
+          <h2 class="kpi-value" id="kpi-avg-score">--%</h2>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🔥</div>
+        <div class="kpi-info">
+          <p class="kpi-label">Highest Score</p>
+          <h2 class="kpi-value" id="kpi-highest-score">--%</h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="charts-grid">
+      <div class="chart-card">
+        <h3 class="chart-title">Score Progress (Over Time)</h3>
+        <div class="chart-wrapper">
+          <canvas id="progressLineChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-card">
+        <h3 class="chart-title">Performance by Subject</h3>
+        <div class="chart-wrapper">
+          <canvas id="subjectBarChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Exams Table -->
+    <section class="recent-exams">
+      <h3 class="section-title">Recent Exam Results</h3>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Exam Title</th>
+              <th>Subject</th>
+              <th>Score</th>
+              <th>Percentage</th>
+            </tr>
+          </thead>
+          <tbody id="recent-exams-body">
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 20px;">Loading exam data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../../js/supabase-config.js"></script>
+  <script src="../../js/supabase-client.js"></script>
+  <script src="../../js/auth.js"></script>
+  <script src="analytic.js"></script>
+</body>
+</html>

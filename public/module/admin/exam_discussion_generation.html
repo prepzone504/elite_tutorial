@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
     content="Elite Tutorial -- AI Exam Question Generator. Create and deploy exam sets to students." />
-  <title>Exam Generator | Elite Tutorial Admin</title>
+  <title>Exam Discussion Generator | Elite Tutorial Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -40,7 +40,7 @@
         <div class="studio-brand">
           <div class="studio-brand-icon"></div>
           <div class="studio-brand-text">
-            <h1>Exam Question Studio</h1>
+            <h1>Exam Discussion Studio</h1>
             <p>AI Content Generator</p>
           </div>
         </div>
@@ -50,8 +50,8 @@
 
     <main class="studio-main">
       <div class="studio-hero">
-        <h2>Generate & Deploy Exam Sets</h2>
-        <p>Create full exam question banks with AI -- e.g. 40 Mathematics questions with configurable options,
+        <h2>Generate & Deploy Exam Discussions</h2>
+        <p>Create full discussion rounds with AI -- e.g. 40 Mathematics questions with configurable options,
           difficulty, and model. Preview, approve, then push to all students or a selected cohort.</p>
         <div class="studio-hero-meta">
           <span class="hero-pill">✨ Multi-option (A–E)</span>
@@ -311,7 +311,7 @@ Answer: A"></textarea>
       });
 
       // --- AUTOSAVE LOGIC ---
-      const STATE_KEY = 'elite_exam_gen_state';
+      const STATE_KEY = 'elite_discussion_gen_state';
       function saveFormState() {
         const state = {
           title: document.getElementById('exam-title').value,
@@ -384,7 +384,7 @@ Answer: A"></textarea>
       restoreFormState();
 
       function autoResumeIfPaused() {
-        const savedPartial = localStorage.getItem('elite_exam_partial_gen');
+        const savedPartial = localStorage.getItem('elite_discussion_partial_gen');
         if (!savedPartial) return;
         try {
           const partial = JSON.parse(savedPartial);
@@ -412,7 +412,7 @@ Answer: A"></textarea>
             } else {
                document.getElementById('btn-send').classList.add('visible');
                previewStatus.textContent = `${partial.length} questions ready [OK]`;
-               localStorage.removeItem('elite_exam_partial_gen');
+               localStorage.removeItem('elite_discussion_partial_gen');
             }
           }
         } catch (e) {
@@ -503,7 +503,7 @@ Answer: A"></textarea>
             const batchResults = new Array(totalBatches).fill(null);
 
             // -- SMART RESUME: skip already-completed batches --
-            const savedPartial = localStorage.getItem('elite_exam_partial_gen');
+            const savedPartial = localStorage.getItem('elite_discussion_partial_gen');
             if (savedPartial) {
                try {
                   const partial = JSON.parse(savedPartial);
@@ -556,7 +556,7 @@ Answer: A"></textarea>
                     explanation: item.explanation || 'No explanation provided.',
                 }));
 
-                localStorage.setItem('elite_exam_partial_gen', JSON.stringify(generatedItems));
+                localStorage.setItem('elite_discussion_partial_gen', JSON.stringify(generatedItems));
 
                 // Only append NEW cards (prevents preview from flashing)
                 const newItems = generatedItems.slice(lastRenderedCount);
@@ -704,7 +704,7 @@ Answer: A"></textarea>
 
             window._examAutoRetryCount = 0;
             setGenerating(loading, false);
-            localStorage.removeItem('elite_exam_partial_gen');
+            localStorage.removeItem('elite_discussion_partial_gen');
             previewStatus.textContent = generatedItems.length + ' questions arranged. Done!';
             btnSend.classList.add('visible');
             showToast('Arranged ' + generatedItems.length + ' questions for "' + title + '"', 'success');
@@ -739,7 +739,7 @@ Answer: A"></textarea>
           `Connecting to <strong>Mistral AI (${modelName})</strong>...`);
 
         let startIndex = 0;
-        const savedPartial = localStorage.getItem('elite_exam_partial_gen');
+        const savedPartial = localStorage.getItem('elite_discussion_partial_gen');
         if (savedPartial) {
           try {
             const partial = JSON.parse(savedPartial);
@@ -771,7 +771,7 @@ Answer: A"></textarea>
           // Reset auto-retry on success
           window._examAutoRetryCount = 0;
           setGenerating(loading, false);
-          localStorage.removeItem('elite_exam_partial_gen');
+          localStorage.removeItem('elite_discussion_partial_gen');
           previewStatus.textContent = `${generatedItems.length} questions ready [OK]`;
           btnSend.classList.add('visible');
           showToast(`[OK] Generated ${generatedItems.length} exam questions for "${title}"`, 'success');
@@ -803,7 +803,7 @@ Answer: A"></textarea>
         document.getElementById('ai-prompt').value = '';
         const m = document.getElementById('manual-questions');
         if (m) m.value = '';
-        localStorage.removeItem('elite_exam_partial_gen');
+        localStorage.removeItem('elite_discussion_partial_gen');
       });
 
       /* -- APPROVE & SEND button -- saves to Supabase -- */
@@ -840,7 +840,7 @@ Answer: A"></textarea>
           }));
 
           const { error } = await client
-            .from('exam_questions')
+            .from('exam_discussions')
             .insert(rows);
 
           if (error) throw new Error(error.message);

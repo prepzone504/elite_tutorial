@@ -726,7 +726,7 @@
         </a>
 
         <a href="../../index.html" class="bp-logo">
-            <div class="bp-logo-icon">Z</div>
+            <div class="bp-logo-icon">E</div>
             <span class="bp-logo-text">Elite <span>Tutorial</span></span>
         </a>
 
@@ -1011,9 +1011,17 @@
                     showMessage(`Welcome, ${firstName}! Redirecting...`, 'success');
                     setTimeout(() => { window.location.href = '../dashboard/dashboard.html'; }, 600);
                 } else {
-                    showMessage('Account created! Check your email to confirm, then sign in.', 'success');
-                    btn.classList.remove('loading');
-                    btn.disabled = false;
+                    try {
+                        await window.EliteAuth.sendOtp(email);
+                        showMessage('Verification code sent! Redirecting...', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'otp.html?email=' + encodeURIComponent(email);
+                        }, 600);
+                    } catch (err) {
+                        showMessage(err.message || 'Registration failed.', 'error');
+                        btn.classList.remove('loading');
+                        btn.disabled = false;
+                    }
                 }
             } catch (err) {
                 showMessage(err.message || 'Registration failed.', 'error');
@@ -1030,7 +1038,7 @@
             }
         });
 
-        window.EliteAuth.redirectIfAuthenticated().catch(() => {});
+        window.EliteAuth.redirectIfAuthenticated().catch(() => { });
     </script>
 
 </body>

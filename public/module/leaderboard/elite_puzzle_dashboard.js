@@ -8,20 +8,15 @@
     // ── STATE ──
     let currentUser = null;
     let currentTab = 'exam';
-    let currentSubject = '';
-    let allSubjects = [];
     let currentPuzzle = '';
     let allPuzzles = [];
-    let puzzleIdTitleMap = {};
 
     /**
-     * ADVANCED ALGORITHM — Backward-Compatibility Maps
-     *
-     * batchSubjectMap: { exam_batch_id → subject }
-     *   Solves the problem where older exam attempts were saved without a subject.
-     *   We look up the subject from the exam_questions table by batch ID.
+     * puzzleIdTitleMap: { String(puzzle_id) → title }
+     *   Solves the problem where puzzle_id may be stored as integer or UUID
+     *   but compared as a string. All IDs are coerced to String() for safe comparison.
      */
-    let batchSubjectMap = {};
+    let puzzleIdTitleMap = {};
 
     let leaderboardData = [];
     let realtimeChannel = null;
@@ -86,8 +81,16 @@
 
     async function initLeaderboardCore() {
         const tabs = document.querySelectorAll('#page-leaderboard .lb-tab');
-        const examSelectWrapper = document.getElementById('exam-select-wrapper');
-        const subjectSelect = document.getElementById('lb-subject-select');
+        // Wire up tab navigation
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.getAttribute('data-tab');
+                if (target === 'exam') {
+                    window.location.href = 'leaderboard.html';
+                }
+            });
+        });
+
         const puzzleSelectWrapper = document.getElementById('puzzle-select-wrapper');
         const puzzleSelect = document.getElementById('lb-puzzle-select');
         const podium1 = document.getElementById('podium-1');
@@ -99,30 +102,6 @@
         const usbAvatar = document.getElementById('usb-avatar');
         const usbName = document.getElementById('usb-name');
         const usbScore = document.getElementById('usb-score');
-
-        // Wire up tab navigation
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const target = tab.getAttribute('data-tab');
-                currentTab = target;
-                
-                // Update active tab styles
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                // Toggle filters
-                if (currentTab === 'exam') {
-                    if (examSelectWrapper) examSelectWrapper.style.display = 'block';
-                    if (puzzleSelectWrapper) puzzleSelectWrapper.style.display = 'none';
-                } else if (currentTab === 'puzzle') {
-                    if (examSelectWrapper) examSelectWrapper.style.display = 'none';
-                    if (puzzleSelectWrapper) puzzleSelectWrapper.style.display = 'block';
-                }
-                
-                // Reload data
-                loadLeaderboard(podium1, podium2, podium3, lbList, stickyBar, usbRank, usbScore);
-            });
-        });
 
         if (!lbList) return;
         if (!window.getSupabaseClient) {
@@ -147,28 +126,22 @@
             console.warn('[Leaderboard] Auth error:', e);
         }
 
-        // ── FETCH SUBJECTS & PUZZLES ──
-        await fetchSubjects(subjectSelect);
+        // ── FETCH PUZZLES ──
         await fetchPuzzles(puzzleSelect);
 
-        if (currentTab === 'exam' && examSelectWrapper) examSelectWrapper.style.display = 'block';
-        if (currentTab === 'puzzle' && puzzleSelectWrapper) puzzleSelectWrapper.style.display = 'block';
+        currentTab = 'puzzle';
+        if (puzzleSelectWrapper) puzzleSelectWrapper.style.display = 'block';
 
         await loadLeaderboard(podium1, podium2, podium3, lbList, stickyBar, usbRank, usbScore);
 
         if (!initialized) {
             initialized = true;
 
-            if (subjectSelect) {
-                subjectSelect.addEventListener('change', (e) => {
-                    currentSubject = e.target.value;
-                    if (currentTab === 'exam') loadLeaderboard(podium1, podium2, podium3, lbList, stickyBar, usbRank, usbScore);
-                });
-            }
             if (puzzleSelect) {
                 puzzleSelect.addEventListener('change', (e) => {
+                    // Always coerce to String for type-safe comparison
                     currentPuzzle = String(e.target.value);
-                    if (currentTab === 'puzzle') loadLeaderboard(podium1, podium2, podium3, lbList, stickyBar, usbRank, usbScore);
+                    loadLeaderboard(podium1, podium2, podium3, lbList, stickyBar, usbRank, usbScore);
                 });
             }
 
@@ -176,51 +149,11 @@
         }
     }
 
-    // ── FETCH SUBJECTS (EXAM) ──
-    // Advanced algorithm: also builds batchSubjectMap for backward-compat with old attempts
-    async function fetchSubjects(subjectSelect) {
-        if (!subjectSelect) return;
-        const client = window.getSupabaseClient();
 
-        const { data, error } = await client
-            .from('exam_questions')
-            .select('exam_batch_id, subject, created_at')
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            console.error('[Leaderboard] Failed to fetch subjects', error);
-            return;
-        }
-
-        if (data) {
-            const unique = [];
-            data.forEach(d => {
-                // Build batch → subject lookup for backward-compat
-                if (d.exam_batch_id && d.subject) {
-                    batchSubjectMap[d.exam_batch_id] = d.subject;
-                }
-                // Deduplicate subjects (newest first order preserved)
-                if (d.subject && !unique.includes(d.subject)) unique.push(d.subject);
-            });
-
-            allSubjects = unique;
-            subjectSelect.innerHTML = '';
-            allSubjects.forEach(sub => {
-                const opt = document.createElement('option');
-                opt.value = sub;
-                opt.textContent = sub;
-                subjectSelect.appendChild(opt);
-            });
-
-            // Default: most recently added subject
-            if (allSubjects.length > 0) {
-                subjectSelect.value = allSubjects[0];
-                currentSubject = allSubjects[0];
-            }
-        }
-    }
 
     // ── FETCH PUZZLES (ELITE PUZZLE) ──
+    // Advanced algorithm: builds puzzleIdTitleMap with String-coerced keys
+    // so puzzle_id matches regardless of whether stored as int or string
     async function fetchPuzzles(puzzleSelect) {
         if (!puzzleSelect) return;
         const client = window.getSupabaseClient();
@@ -241,6 +174,7 @@
 
             puzzleSelect.innerHTML = '';
             data.forEach(p => {
+                // Coerce to String for safe cross-type comparison
                 const pid = String(p.id);
                 puzzleIdTitleMap[pid] = p.title;
 
@@ -250,6 +184,7 @@
                 puzzleSelect.appendChild(opt);
             });
 
+            // Default: most recently created puzzle
             if (data.length > 0) {
                 const firstId = String(data[0].id);
                 puzzleSelect.value = firstId;
@@ -275,38 +210,18 @@
 
         let rawData = [];
 
-        if (currentTab === 'exam') {
-            // ── EXAM TAB: fetch all attempts, filter in JS for backward-compat ──
-            if (!currentSubject) return;
+        // ── PUZZLE TAB: fetch ONLY puzzle_attempts — no exam data ever ──
+        // Type-safe: coerce all puzzle_id values to String before comparison
+        if (!currentPuzzle) return;
 
-            const { data, error } = await client
-                .from('user_exam_attempts')
-                .select('user_id, student_name, score, subject, exam_batch_id');
+        const { data, error } = await client
+            .from('puzzle_attempts')
+            .select('user_id, student_name, score, puzzle_id');
 
-            if (error) {
-                console.error('[Leaderboard] Error fetching exams:', error);
-            } else if (data) {
-                rawData = data.filter(row => {
-                    let resolved = row.subject;
-                    if (!resolved || resolved === 'General') {
-                        resolved = batchSubjectMap[row.exam_batch_id] || 'General';
-                    }
-                    return resolved === currentSubject;
-                });
-            }
-        } else if (currentTab === 'puzzle') {
-            // ── PUZZLE TAB: fetch ONLY puzzle_attempts ──
-            if (!currentPuzzle) return;
-
-            const { data, error } = await client
-                .from('puzzle_attempts')
-                .select('user_id, student_name, score, puzzle_id');
-
-            if (error) {
-                console.warn('[Leaderboard] Puzzle fetch error:', error);
-            } else if (data) {
-                rawData = data.filter(row => String(row.puzzle_id) === currentPuzzle);
-            }
+        if (error) {
+            console.warn('[Leaderboard] Puzzle fetch error:', error);
+        } else if (data) {
+            rawData = data.filter(row => String(row.puzzle_id) === currentPuzzle);
         }
 
         // ── AGGREGATE: sum scores per user (handles multiple attempts) ──
@@ -473,11 +388,8 @@
         if (realtimeChannel) client.removeChannel(realtimeChannel);
 
         realtimeChannel = client.channel('leaderboard_realtime')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'user_exam_attempts' }, () => {
-                if (currentTab === 'exam') loadLeaderboard(podium1, podium2, podium3, lbList, stickyBar, usbRank, usbScore);
-            })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'puzzle_attempts' }, () => {
-                if (currentTab === 'puzzle') loadLeaderboard(podium1, podium2, podium3, lbList, stickyBar, usbRank, usbScore);
+                loadLeaderboard(podium1, podium2, podium3, lbList, stickyBar, usbRank, usbScore);
             })
             .subscribe();
     }

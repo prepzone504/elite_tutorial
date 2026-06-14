@@ -33,7 +33,7 @@
 
     <!-- Logo -->
     <a href="../../index.html" class="sidebar-logo">
-      <div class="logo-icon">Z</div>
+      <div class="logo-icon">E</div>
       <span class="logo-text">Elite <span>Tutorial</span></span>
     </a>
 
@@ -82,6 +82,18 @@
               </svg>
             </span>
             <span class="nav-label">Flash Card</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="../exam_discussion/list_of_exam_discusion.html" class="nav-link" id="nav-exam-discussion" data-page="exam-discussion">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+              </svg>
+            </span>
+            <span class="nav-label">Exam Discussion</span>
           </a>
         </li>
 
@@ -223,6 +235,20 @@
               You have <span class="highlight-pill" id="welcome-pending-count">0 pending exams</span> waiting for you
               today. Keep up the momentum!
             </p>
+
+            <div class="matric-display" id="matric-display-container"
+              style="display: none; margin-top: 15px; margin-bottom: 20px;">
+              <span class="matric-label">Matric Number:</span>
+              <span class="matric-value" id="matric-number-text">ELITE/26/----</span>
+              <button class="matric-copy-btn" id="matric-copy-btn" title="Copy Matric Number">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+
             <a href="#exam" class="btn-start-exam" id="start-exam-link">
               Take Exam Now
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
@@ -481,42 +507,8 @@
             <div class="card-header">
               <h3 class="card-title">📚 Subject Scores</h3>
             </div>
-            <ul class="subject-scores">
-              <li class="subj-row">
-                <span class="subj-name">Mathematics</span>
-                <div class="subj-bar-wrap">
-                  <div class="subj-bar" style="width:87%;background:#e01c1c;"></div>
-                </div>
-                <span class="subj-pct">87%</span>
-              </li>
-              <li class="subj-row">
-                <span class="subj-name">Physics</span>
-                <div class="subj-bar-wrap">
-                  <div class="subj-bar" style="width:92%;background:#9d6aff;"></div>
-                </div>
-                <span class="subj-pct">92%</span>
-              </li>
-              <li class="subj-row">
-                <span class="subj-name">Chemistry</span>
-                <div class="subj-bar-wrap">
-                  <div class="subj-bar" style="width:74%;background:#fbbf24;"></div>
-                </div>
-                <span class="subj-pct">74%</span>
-              </li>
-              <li class="subj-row">
-                <span class="subj-name">Biology</span>
-                <div class="subj-bar-wrap">
-                  <div class="subj-bar" style="width:80%;background:#34d399;"></div>
-                </div>
-                <span class="subj-pct">80%</span>
-              </li>
-              <li class="subj-row">
-                <span class="subj-name">English</span>
-                <div class="subj-bar-wrap">
-                  <div class="subj-bar" style="width:88%;background:#60a5fa;"></div>
-                </div>
-                <span class="subj-pct">88%</span>
-              </li>
+            <ul class="subject-scores" id="subject-scores-list">
+              <div style="text-align:center; padding: 20px; color: #888;">Loading subjects...</div>
             </ul>
           </div>
 
@@ -525,22 +517,22 @@
             <div class="card-header">
               <h3 class="card-title">🏅 Summary</h3>
             </div>
-            <div class="summary-stats">
+            <div class="summary-stats" id="summary-stats-container">
               <div class="summ-item">
-                <span class="summ-num" style="color:#e01c1c;">12</span>
+                <span class="summ-num" id="summ-exams-taken" style="color:#e01c1c;">--</span>
                 <span class="summ-label">Exams Taken</span>
               </div>
               <div class="summ-item">
-                <span class="summ-num" style="color:#34d399;">87%</span>
+                <span class="summ-num" id="summ-avg-score" style="color:#34d399;">--%</span>
                 <span class="summ-label">Average Score</span>
               </div>
               <div class="summ-item">
-                <span class="summ-num" style="color:#fbbf24;">14h</span>
-                <span class="summ-label">Study Time</span>
+                <span class="summ-num" id="summ-study-time" style="color:#fbbf24;">--</span>
+                <span class="summ-label">Total Questions</span>
               </div>
               <div class="summ-item">
-                <span class="summ-num" style="color:#9d6aff;">🔥 7</span>
-                <span class="summ-label">Day Streak</span>
+                <span class="summ-num" id="summ-highest" style="color:#9d6aff;">--%</span>
+                <span class="summ-label">Highest Score</span>
               </div>
             </div>
           </div>
@@ -568,11 +560,21 @@
               <button class="lb-tab" data-tab="puzzle">Elite Puzzle</button>
             </div>
 
-            <!-- Filters (Exam specific) -->
+            <!-- Filters -->
             <div class="lb-filters" id="lb-filters-container">
-              <div class="custom-select-wrapper">
+              <div class="custom-select-wrapper" id="exam-select-wrapper">
                 <select class="lb-subject-select" id="lb-subject-select">
                   <option value="all">All Subjects</option>
+                  <!-- Injected via JS -->
+                </select>
+                <svg class="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+              <div class="custom-select-wrapper" id="puzzle-select-wrapper" style="display: none;">
+                <select class="lb-subject-select" id="lb-puzzle-select">
+                  <option value="all">All Puzzles</option>
                   <!-- Injected via JS -->
                 </select>
                 <svg class="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -657,10 +659,37 @@
     </div>
   </div>
 
+  <!-- Matric Number Mandatory Modal -->
+  <div class="modal-overlay" id="matric-modal"
+    style="display: none; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);">
+    <div class="modal-box" style="max-width: 420px;">
+      <div class="modal-icon" style="background: linear-gradient(135deg, #10b981, #059669);">🎓</div>
+      <h3 class="modal-title">Welcome to Elite Tutorial!</h3>
+      <p class="modal-sub" style="margin-bottom: 20px;">To officially join and access the dashboard, please enter your
+        real full name. This will generate your unique Matric Number.</p>
+
+      <div style="text-align: left; margin-bottom: 20px;">
+        <label
+          style="display:block; font-size: 0.85rem; color: var(--text-silver); margin-bottom: 8px; font-weight: 600;">Full
+          Real Name</label>
+        <input type="text" id="matric-real-name" placeholder="e.g. John Doe"
+          style="width: 100%; padding: 14px 16px; background: var(--dark-600); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-family: inherit; font-size: 1rem; outline: none; transition: border-color 0.3s;" />
+        <p id="matric-error-msg" style="color: #ff7070; font-size: 0.85rem; margin-top: 8px; display: none;">Please
+          enter your full name to proceed.</p>
+      </div>
+
+      <button class="modal-btn confirm" id="matric-submit-btn"
+        style="width: 100%; padding: 14px; background: linear-gradient(135deg, #2563eb, #1d4ed8); font-size: 1rem; margin: 0;">
+        Generate Matric Number
+      </button>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../../js/supabase-config.js"></script>
   <script src="../../js/supabase-client.js"></script>
   <script src="../../js/auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="../leaderboard/leaderboard.js?v=2"></script>
   <script src="dashboard.js?v=2"></script>
 </body>
